@@ -64,6 +64,8 @@ typedef int errno_t;
 #include "CLIcore.h"
 #include "COREMOD_tools/COREMOD_tools.h"
 #include "COREMOD_memory/COREMOD_memory.h"
+#include "CLIcore_setSHMdir.h"
+
 #define SHAREDSHMDIR    data.shmdir  /**< default location of file mapped semaphores, can be over-ridden by env variable MILK_SHM_DIR */
 
 #include "streamCTRL.h"
@@ -255,7 +257,6 @@ int find_streams(
     int NBstream = 0;
     DIR *d;
     struct dirent *dir;
-
 
     d = opendir(SHAREDSHMDIR);
     if(d)
@@ -1302,7 +1303,9 @@ errno_t streamCTRL_CTRLscreen()
     char  monstring[200];
 
 
-
+    if(strlen(SHAREDSHMDIR) == 0) {
+        setSHMdir();
+    }
 
 
     int SORTING = 0;
