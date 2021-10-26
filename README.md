@@ -15,7 +15,7 @@ Module inclues key frameworks :
 
 	git clone --recurse-submodules -b dev https://github.com/asgardner/milk.git chai
 	cd chai
-	./fetch_chai_dev.sh
+	. fetch_chai_dev.sh
 
 
 ## Compile
