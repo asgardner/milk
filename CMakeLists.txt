@@ -190,8 +190,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # ADD SOURCE DIRECTORIES
 # recursively add libraries to be compiled
-execute_process(COMMAND bash -c "find ${PROJECT_SOURCE_DIR}/plugins -mindepth 2 -maxdepth 2 -type d| fgrep -v .git"
-                OUTPUT_VARIABLE libextradir)
+execute_process(COMMAND bash -c "find ${PROJECT_SOURCE_DIR}/plugins -mindepth 2 -maxdepth 2 -type d | fgrep -v .git" OUTPUT_VARIABLE libextradir)
 string(REGEX REPLACE "\n" "; " libextradir "${libextradir}")
 
 foreach(lsrcdir IN LISTS libsrcdir libextradir)
