@@ -13,9 +13,9 @@ Module inclues key frameworks :
 
 ## Download
 
-	git clone https://github.com/asgardner/milk.git
-	cd milk
-	./fetch_milk_dev.sh
+	git clone --recurse-submodules -b dev https://github.com/asgardner/milk.git chai
+	cd chai
+	./fetch_chai_dev.sh
 
 
 ## Compile
