@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
 
-
 # Examples :
 # cmake .. -DUSE_CUDA=ON -DINSTALLMAKEDEFAULT=ON
 # cmake .. -DUSE_CUDA=ON -DUSE_MAGMA=ON
@@ -33,27 +32,19 @@ endif(USE_CUDA)
 
 enable_language(C)
 
-
-project(milk LANGUAGES C)
+project(milk LANGUAGES C CXX)
 
 # Version number
-set ( VERSION_MAJOR 1 )
-set ( VERSION_MINOR 03 )
-set ( VERSION_PATCH 00 )
-set ( MILK_VERSION_OPTION "" )
-set ( PROJECT_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
-set ( PROJECT_DESCRIPTION "Modular Image processing tooLKit" )
-
-
-
-
-option ( INSTALLMAKEDEFAULT "Make this installation the system default" OFF )
-
-# turn VERBOSE ON
-#set(CMAKE_VERBOSE_MAKEFILE ON)
-
+set(VERSION_MAJOR 1 )
+set(VERSION_MINOR 03 )
+set(VERSION_PATCH 00 )
+set(MILK_VERSION_OPTION "" )
+set(PROJECT_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
+set(PROJECT_DESCRIPTION "Modular Image processing tooLKit" )
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/milk-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 
+option(INSTALLMAKEDEFAULT "Make this installation the system default" OFF )
 
 # Configure a header file to pass some of the CMake settings
 # to the source code
@@ -105,16 +96,15 @@ endif()
 
 list(APPEND libsrcdir src/CommandLineInterface)
 list(APPEND libname CLIcore)
-
 list(APPEND libsrcdir src/ImageStreamIO)
 list(APPEND libname ImageStreamIO m)
-
 list(APPEND modulelist COREMOD_arith COREMOD_iofits COREMOD_memory COREMOD_tools)
+
 foreach(mname IN LISTS modulelist)
-string(REPLACE "_" "" mname1 "${mname}")
-list(APPEND libsrcdir src/${mname})
-list(APPEND libname milk${mname1})
-message("======= adding module  ${mname}")
+  string(REPLACE "_" "" mname1 "${mname}")
+  list(APPEND libsrcdir src/${mname})
+  list(APPEND libname milk${mname1})
+  message("======= adding module  ${mname}")
 endforeach()
 
 # =======================================
@@ -130,7 +120,6 @@ set(CMAKE_C_FLAGS_DEBUG     "-O0 -g -Wall -Wextra")
 # cmake -DCMAKE_BUILD_TYPE=Release
 set(CMAKE_C_FLAGS_RELEASE     "-Ofast -DNDEBUG")
 
-
 # Set a default build type if none was specified
 set(default_build_type "Release")
 if(NOT CMAKE_BUILD_TYPE)
@@ -139,8 +128,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 message("CMAKE_BUILD_TYPE : ${CMAKE_BUILD_TYPE}")
-
-
 
 # =======================================
 # COMPILE OPTIONS
@@ -158,7 +145,6 @@ add_compile_options($<$<COMPILE_LANGUAGE:C>:-fwhole-program>)
 # NOTE: -fstack-usage is incompatible with link-time optimizer
 #add_compile_options(-fstack-usage)
 
-
 # A common flag is -pipe. This flag has no effect on the generated code,
 # but it makes the compilation process faster. It tells the compiler
 # to use pipes instead of temporary files during the different stages
@@ -174,19 +160,13 @@ message("====================================================")
 message("CMAKE_THREAD_LIBS_INIT  :  ${CMAKE_THREAD_LIBS_INIT}")
 message("PROJECT_SOURCE_DIR       = ${PROJECT_SOURCE_DIR}")
 message("PROJECT_BINARY_DIR       = ${PROJECT_BINARY_DIR}")
-
-
 message("CMAKE_INSTALL_PREFIX     = ${CMAKE_INSTALL_PREFIX}")
-
 message("USE_CUDA                 = ${USE_CUDA}")
 message("USE_MAGMA                = ${USE_MAGMA}")
-
 message("EXTRAMODULES             = ${EXTRAMODULES}")
-
 
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
 
 # ADD SOURCE DIRECTORIES
 # recursively add libraries to be compiled
@@ -204,24 +184,17 @@ endforeach()
 add_subdirectory(src/milk_module_example)
 
 # main
-add_executable(milk src/CLImain.c)
-
+add_executable(milk src/CLImain.cc)
 
 # note: set -SOURCEDIR=\\\"${CMAKE_INSTALL_PREFIX}\\\" for autoload
 set(BUILD_FLAGS "-DPACKAGE_NAME=\\\"milk\\\" -DCONFIGDIR=\\\"${PROJECT_SOURCE_DIR}/config\\\" -DINSTALLDIR=\\\"${CMAKE_INSTALL_PREFIX}\\\" -DSOURCEDIR=\\\"${PROJECT_SOURCE_DIR}\\\" -DABSSRCTOPDIR=\\\"${PROJECT_SOURCE_DIR}\\\" -DPACKAGE_BUGREPORT=\\\"https://github.com/milk-org/milk/issues\\\"" )
 
-
-target_link_libraries (milk PUBLIC
-${libname}
-)
-
+target_link_libraries(milk PUBLIC ${libname})
 
 if(USE_CUDA)
 target_link_libraries (milk PUBLIC ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
 set(BUILD_FLAGS "${BUILD_FLAGS} -DHAVE_CUDA" )
 endif(USE_CUDA)
-
-
 
 set_target_properties(milk PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}" )
 
@@ -246,16 +219,12 @@ message("CMAKE_CURRENT_BINARY_DIR      : ${CMAKE_CURRENT_BINARY_DIR}")
 message("INSTALL_PKGCONFIG_DIR         : ${INSTALL_PKGCONFIG_DIR}")
 message("====================================================")
 
-
 set(PROGRAM_PERMISSIONS_DEFAULT
     OWNER_WRITE OWNER_READ OWNER_EXECUTE
     GROUP_READ GROUP_EXECUTE
     WORLD_READ WORLD_EXECUTE)
 
-
 install(TARGETS milk DESTINATION bin PERMISSIONS ${PROGRAM_PERMISSIONS_DEFAULT} SETUID)
-
-
 
 # =======================================
 # MAKE DEFAULT
@@ -267,8 +236,6 @@ if(INSTALLMAKEDEFAULT)
     EXECUTE_PROCESS(COMMAND ln -snf ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX_LINK})
     ")
 endif(INSTALLMAKEDEFAULT)
-
-
 
 # =======================================
 # PKG-CONFIG
@@ -294,7 +261,6 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/milk_config.h
               ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h
         DESTINATION include
         )
-
 
 if(build_python_module)
 add_subdirectory (python_module)
@@ -328,7 +294,6 @@ install(PROGRAMS
 			scripts/tmuxsessionname
 			scripts/waitforfile
         DESTINATION bin)
-
 
 # ====================================
 # TESTING
