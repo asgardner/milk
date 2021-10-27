@@ -2,8 +2,7 @@
 set(LIBNAME "milkCOREMODtools")
 set(SRCNAME "COREMOD_tools")
 
-message("")
-message(" SRCNAME = ${SRCNAME} -> LIBNAME = ${LIBNAME}")
+message("SRCNAME = ${SRCNAME} -> LIBNAME = ${LIBNAME}")
 
 set(SOURCEFILES
 	${SRCNAME}.c

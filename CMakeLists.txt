@@ -6,14 +6,7 @@ cmake_minimum_required(VERSION 3.14)
 # cmake .. -DCMAKE_BUILD_TYPE=Debug
 
 option(build_python_module "Compile Python Wrappers" OFF)
-
 include(CheckLanguage)
-
-# =======================================
-# GPU ACCELERATION
-# =======================================
-
-# options
 option(USE_CUDA  "Use CUDA        library" OFF)
 option(USE_MAGMA "Use MAGMA       library" OFF)
 
@@ -174,10 +167,10 @@ execute_process(COMMAND bash -c "find ${PROJECT_SOURCE_DIR}/plugins -mindepth 2 
 string(REGEX REPLACE "\n" "; " libextradir "${libextradir}")
 
 foreach(lsrcdir IN LISTS libsrcdir libextradir)
-string(REGEX REPLACE " " "" lsrcdir "${lsrcdir}")
-if (NOT ${lsrcdir} EQUAL "")
-add_subdirectory ( ${lsrcdir} )
-endif()
+  string(REGEX REPLACE " " "" lsrcdir "${lsrcdir}")
+  if (NOT ${lsrcdir} EQUAL "")
+    add_subdirectory ( ${lsrcdir} )
+  endif()
 endforeach()
 
 # add example module

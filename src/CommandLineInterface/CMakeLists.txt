@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
-
-
 set(SRCNAME "CommandLineInterface")
-
-
 option(python_module "Compile Python Wrappers" OFF)
-
 project(CLIcore C)
 
 find_package(PkgConfig REQUIRED)

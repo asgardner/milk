@@ -2,8 +2,7 @@
 set(LIBNAME "milkCOREMODarith")
 set(SRCNAME "COREMOD_arith")
 
-message("")
-message(" SRCNAME = ${SRCNAME} -> LIBNAME = ${LIBNAME}")
+message("SRCNAME = ${SRCNAME} -> LIBNAME = ${LIBNAME}")
 
 set(SOURCEFILES
 	${SRCNAME}.c
