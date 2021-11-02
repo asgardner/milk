@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 
   if (data.quiet == 0) {
     printf(STYLE_BOLD);
-    printf("\n        milk  v %s\n", versionstring);
+    printf("\n        milk v %s (GCC %d.%d.%d)\n", versionstring, __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
 #ifndef NDEBUG
     printf(
         "        === DEBUG MODE : assert() & DEBUG_TRACEPOINT  enabled ===\n");
