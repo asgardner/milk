@@ -1,31 +1,14 @@
 cmake_minimum_required(VERSION 3.14)
 
-# Examples :
-# cmake .. -DUSE_CUDA=ON -DINSTALLMAKEDEFAULT=ON
-# cmake .. -DUSE_CUDA=ON -DUSE_MAGMA=ON
-# cmake .. -DCMAKE_BUILD_TYPE=Debug
+project(milk LANGUAGES C CXX)
+
+include(~/vcpkg/scripts/buildsystems/vcpkg.cmake)
+set(Boost_NO_WARN_NEW_VERSIONS true)
 
 option(build_python_module "Compile Python Wrappers" OFF)
-include(CheckLanguage)
-option(USE_CUDA  "Use CUDA        library" OFF)
-option(USE_MAGMA "Use MAGMA       library" OFF)
-
-if(USE_CUDA)
-#find_package(CUDA 9.0 REQUIRED)
-check_language(CUDA)
-if(CMAKE_CUDA_COMPILER)
-  enable_language(CUDA)
-else()
-  #message(FATAL_ERROR "No CUDA support")
-  message(WARNING "No CUDA support found")
-  set(CMAKE_CUDA_COMPILER "/usr/bin/nvcc")
-  message(" setting CMAKE_CUDA_COMPILER to ${CMAKE_CUDA_COMPILER}")
+if(build_python_module)
+add_subdirectory (python_module)
 endif()
-endif(USE_CUDA)
-
-enable_language(C)
-
-project(milk LANGUAGES C CXX)
 
 # Version number
 set(VERSION_MAJOR 1 )
@@ -51,41 +34,11 @@ configure_file (
   "${PROJECT_SOURCE_DIR}/src/config.h"
   )
 
-
 # select most recent version available
 SET(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL)
 SET(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
 
-#
 # main libraries
-# linked to executable by default
-#
-
-# =======================================
-# MODULES INCLUDED
-# =======================================
-# modules are added to two lists:
-# libsrcdir : source code directory
-# libname   : shared object name
-
-find_package(Git QUIET)
-if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-# Update submodules as needed
-    option(GIT_SUBMODULE "Check submodules during build" ON)
-    if(GIT_SUBMODULE)
-        message(STATUS "Submodule update")
-        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
-        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-            message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-        endif()
-    endif()
-endif()
-
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/src/ImageStreamIO/CMakeLists.txt")
-    message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
-endif()
 
 list(APPEND libsrcdir src/CommandLineInterface)
 list(APPEND libname CLIcore)
@@ -107,11 +60,11 @@ endforeach()
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Debug
 # option: add -fanalyzer if gcc10+
-set(CMAKE_C_FLAGS_DEBUG     "-O0 -g -Wall -Wextra")
+set(CMAKE_C_FLAGS_DEBUG "-O0 -g -Wall -Wextra")
 
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Release
-set(CMAKE_C_FLAGS_RELEASE     "-Ofast -DNDEBUG")
+set(CMAKE_C_FLAGS_RELEASE "-Ofast -DNDEBUG")
 
 # Set a default build type if none was specified
 set(default_build_type "Release")
@@ -134,19 +87,11 @@ add_compile_options($<$<COMPILE_LANGUAGE:C>:-march=native>)
 # link-time optimizer
 add_compile_options($<$<COMPILE_LANGUAGE:C>:-flto>)
 add_compile_options($<$<COMPILE_LANGUAGE:C>:-fwhole-program>)
-#add_compile_options(-fwhole-program)
 # NOTE: -fstack-usage is incompatible with link-time optimizer
 #add_compile_options(-fstack-usage)
-
-# A common flag is -pipe. This flag has no effect on the generated code,
-# but it makes the compilation process faster. It tells the compiler
-# to use pipes instead of temporary files during the different stages
-# of compilation, which uses more memory. On systems with low memory,
-# GCC might get killed. In those cases do not use this flag.
 add_compile_options($<$<COMPILE_LANGUAGE:C>:-pipe>)
 
 message("COMPILE_OPTIONS:  ${COMPILE_OPTIONS}")
-
 message("====================================================")
 message("VERSION  ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 message("====================================================")
@@ -154,8 +99,6 @@ message("CMAKE_THREAD_LIBS_INIT  :  ${CMAKE_THREAD_LIBS_INIT}")
 message("PROJECT_SOURCE_DIR       = ${PROJECT_SOURCE_DIR}")
 message("PROJECT_BINARY_DIR       = ${PROJECT_BINARY_DIR}")
 message("CMAKE_INSTALL_PREFIX     = ${CMAKE_INSTALL_PREFIX}")
-message("USE_CUDA                 = ${USE_CUDA}")
-message("USE_MAGMA                = ${USE_MAGMA}")
 message("EXTRAMODULES             = ${EXTRAMODULES}")
 
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
@@ -178,17 +121,8 @@ add_subdirectory(src/milk_module_example)
 
 # main
 add_executable(milk src/CLImain.cc)
-
-# note: set -SOURCEDIR=\\\"${CMAKE_INSTALL_PREFIX}\\\" for autoload
-set(BUILD_FLAGS "-DPACKAGE_NAME=\\\"milk\\\" -DCONFIGDIR=\\\"${PROJECT_SOURCE_DIR}/config\\\" -DINSTALLDIR=\\\"${CMAKE_INSTALL_PREFIX}\\\" -DSOURCEDIR=\\\"${PROJECT_SOURCE_DIR}\\\" -DABSSRCTOPDIR=\\\"${PROJECT_SOURCE_DIR}\\\" -DPACKAGE_BUGREPORT=\\\"https://github.com/milk-org/milk/issues\\\"" )
-
 target_link_libraries(milk PUBLIC ${libname})
-
-if(USE_CUDA)
-target_link_libraries (milk PUBLIC ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
-set(BUILD_FLAGS "${BUILD_FLAGS} -DHAVE_CUDA" )
-endif(USE_CUDA)
-
+set(BUILD_FLAGS "-DPACKAGE_NAME=\\\"milk\\\" -DCONFIGDIR=\\\"${PROJECT_SOURCE_DIR}/config\\\" -DINSTALLDIR=\\\"${CMAKE_INSTALL_PREFIX}\\\" -DSOURCEDIR=\\\"${PROJECT_SOURCE_DIR}\\\" -DABSSRCTOPDIR=\\\"${PROJECT_SOURCE_DIR}\\\" -DPACKAGE_BUGREPORT=\\\"https://github.com/milk-org/milk/issues\\\"" )
 set_target_properties(milk PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}" )
 
 message("====================================================")
@@ -255,47 +189,4 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/milk_config.h
         DESTINATION include
         )
 
-if(build_python_module)
-add_subdirectory (python_module)
-endif()
-
 install(TARGETS CLIcore DESTINATION bin)
-install(PROGRAMS
-			scripts/milk-all
-			scripts/milk-argparse
-			scripts/milk-exec
-			scripts/milk-streamCTRL
-			scripts/milk-procCTRL
-			scripts/milk-fpsCTRL
-			scripts/milk-cr2tofits
-			scripts/milk-FITS2shm
-			scripts/milk-fpsmkcmd
-			scripts/milk-fpsinit
-			scripts/milk-logshim
-			scripts/milk-logshimkill
-			scripts/milk-logshimoff
-			scripts/milk-logshimon
-			scripts/milk-logshimstat
-      scripts/milk-makecsetandrt
-			scripts/merge3DfitsTelemetry
-			scripts/milk-script-std-config
-			scripts/milk-streamlink
-			scripts/milk-shm2FITS
-			scripts/milk-shm2FITSloop
-			scripts/milk-shmimmon
-			scripts/tmuxkillall
-			scripts/tmuxsessionname
-			scripts/waitforfile
-        DESTINATION bin)
-
-# ====================================
-# TESTING
-# ====================================
-
-include(CTest)
-
-# test that milk CLI launches and list modules
-add_test(milkCLIlaunch milk-exec "-T" "m?")
-set_tests_properties(milkCLIlaunch PROPERTIES TIMEOUT 120)
-
-add_test(milksemspeedtest milk-semtestspeed "100000" "1")

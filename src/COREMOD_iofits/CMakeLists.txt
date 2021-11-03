@@ -1,3 +1,6 @@
+set(CMAKE_TOOLCHAIN_FILE ~/vcpkg/scripts/buildsystems/vcpkg.cmake)
+find_package(unofficial-cfitsio REQUIRED SHARED)
+
 # library name
 set(LIBNAME "milkCOREMODiofits")
 
@@ -51,18 +54,8 @@ project(lib_${LIBNAME}_project)
 
 add_library(${LIBNAME} SHARED ${SRCNAME}.c ${SOURCEFILES})
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(CFITSIO cfitsio)
-if(${CFITSIO_FOUND})
-message("Found cfitsio")
-  link_directories(${CFITSIO_LIBRARY_DIRS})
-  target_compile_definitions(${LIBNAME} PUBLIC USE_CFITSIO=1)
-  target_include_directories(${LIBNAME} PUBLIC ${CFITSIO_INCLUDE_DIRS})
-  target_link_directories(${LIBNAME} PUBLIC ${CFITSIO_LIBRARY_DIRS})
-endif()
-
 target_include_directories(${LIBNAME} PRIVATE ${PROJECT_SOURCE_DIR}/.. ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(${LIBNAME} PRIVATE m ${CFITSIO_LIBRARIES})
+target_link_libraries(${LIBNAME} PRIVATE m cfitsio)
 
 message(" CFITSIO_LIBRARIES : ${CFITSIO_LIBRARIES}")
 
