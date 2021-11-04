@@ -59,12 +59,13 @@ endforeach()
 
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Debug
-# option: add -fanalyzer if gcc10+
-set(CMAKE_C_FLAGS_DEBUG "-O0 -g -Wall -Wextra")
+set(CMAKE_C_FLAGS_DEBUG "-O0 -g -Wall -Wextra -march=skylake-avx512 -fanalyzer -std=c11 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -Wall -Wextra -march=skylake-avx512 -fanalyzer -std=c++17 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
 
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Release
-set(CMAKE_C_FLAGS_RELEASE "-Ofast -DNDEBUG")
+set(CMAKE_C_FLAGS_RELEASE "-Ofast -DNDEBUG -Wall -Wextra -march=skylake-avx512 -std=c11 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -DNDEBUG -Wall -Wextra -march=skylake-avx512 -std=c++17 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
 
 # Set a default build type if none was specified
 set(default_build_type "Release")
@@ -79,16 +80,9 @@ message("CMAKE_BUILD_TYPE : ${CMAKE_BUILD_TYPE}")
 # COMPILE OPTIONS
 # =======================================
 
-# add gnu17 option only for C, don't add for nvcc
-# TODO: should use set_property(TARGET tgt PROPERTY C_STANDARD 17)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-std=gnu17>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-march=native>)
-
 # link-time optimizer
 add_compile_options($<$<COMPILE_LANGUAGE:C>:-flto>)
 add_compile_options($<$<COMPILE_LANGUAGE:C>:-fwhole-program>)
-# NOTE: -fstack-usage is incompatible with link-time optimizer
-#add_compile_options(-fstack-usage)
 add_compile_options($<$<COMPILE_LANGUAGE:C>:-pipe>)
 
 message("COMPILE_OPTIONS:  ${COMPILE_OPTIONS}")
