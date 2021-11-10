@@ -1,9 +1,10 @@
-cmake_minimum_required(VERSION 3.14)
-
-project(milk LANGUAGES C CXX)
-
-include(~/vcpkg/scripts/buildsystems/vcpkg.cmake)
+set(CMAKE_TOOLCHAIN_FILE ~/vcpkg/scripts/buildsystems/vcpkg.cmake)
 set(Boost_NO_WARN_NEW_VERSIONS true)
+set(ENV{LD_LIBRARY_PATH} "$ENV{HOME}/vcpkg/installed/x64-linux/lib:$ENV{HOME}/vcpkg/installed/x64-linux/lib")
+
+cmake_minimum_required(VERSION 3.14)
+project(milk LANGUAGES C CXX)
+message("CMake version: ${CMAKE_VERSION}")
 
 option(build_python_module "Compile Python Wrappers" OFF)
 if(build_python_module)
@@ -29,7 +30,7 @@ configure_file (
   "${PROJECT_SOURCE_DIR}/src/milk_config.h"
   )
 
-configure_file (
+configure_file ( 
   "${PROJECT_SOURCE_DIR}/src/config.h.in"
   "${PROJECT_SOURCE_DIR}/src/config.h"
   )

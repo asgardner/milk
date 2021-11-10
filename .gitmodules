@@ -1,7 +1,3 @@
-[submodule "src/ImageStreamIO"]
-	path = src/ImageStreamIO
-	url = https://github.com/milk-org/ImageStreamIO.git
-	branch = dev
 [submodule "plugins/milk-extra-src/AtmosphereModel"]
 	path = plugins/milk-extra-src/AtmosphereModel
 	url = ""

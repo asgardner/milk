@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
+set(CMAKE_TOOLCHAIN_FILE ~/vcpkg/scripts/buildsystems/vcpkg.cmake)
+set(Boost_NO_WARN_NEW_VERSIONS true)
+set(ENV{LD_LIBRARY_PATH} "$ENV{HOME}/vcpkg/installed/x64-linux/lib:$ENV{HOME}/vcpkg/installed/x64-linux/lib")
 set(SRCNAME "CommandLineInterface")
 
 option(python_module "Compile Python Wrappers" OFF)
