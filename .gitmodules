@@ -61,3 +61,6 @@
 [submodule "coffee"]
 	path = plugins/coffee-src
 	url = ""
+[submodule "src/ImageStreamIO"]
+	path = src/ImageStreamIO
+	url = git@github.com:asgardner/ImageStreamIO.git
