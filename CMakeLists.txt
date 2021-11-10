@@ -81,8 +81,8 @@ message("CMAKE_BUILD_TYPE : ${CMAKE_BUILD_TYPE}")
 # =======================================
 
 # link-time optimizer
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-flto>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-fwhole-program>)
+# add_compile_options($<$<COMPILE_LANGUAGE:C>:-flto>)
+# add_compile_options($<$<COMPILE_LANGUAGE:C>:-fwhole-program>)
 add_compile_options($<$<COMPILE_LANGUAGE:C>:-pipe>)
 
 message("COMPILE_OPTIONS:  ${COMPILE_OPTIONS}")
