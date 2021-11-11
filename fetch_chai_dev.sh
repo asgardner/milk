@@ -9,7 +9,9 @@ else
   git clone -b main git@gitlab.com:mmtao/chai-src.git plugins/chai-src --quiet
  fi
 
-./fetch_milk_dev.sh
+# ./fetch_milk_dev.sh
+
+# Setup shared memory space.
 
 if [ -d "/milk/shm" ]; then
   true;
