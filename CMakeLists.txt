@@ -111,9 +111,6 @@ foreach(lsrcdir IN LISTS libsrcdir libextradir)
   endif()
 endforeach()
 
-# add example module
-add_subdirectory(src/milk_module_example)
-
 # main
 add_executable(milk src/CLImain.cc)
 target_link_libraries(milk PUBLIC ${libname})
