@@ -12,16 +12,16 @@ add_subdirectory (python_module)
 endif()
 
 # Version number
-set(VERSION_MAJOR 1 )
-set(VERSION_MINOR 03 )
-set(VERSION_PATCH 00 )
-set(MILK_VERSION_OPTION "" )
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 03)
+set(VERSION_PATCH 14)
+set(VERSION_OPTION ".chai" )
+
 set(PROJECT_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
 set(PROJECT_DESCRIPTION "Modular Image processing tooLKit" )
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/milk-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
-
-option(INSTALLMAKEDEFAULT "Make this installation the system default" OFF )
+option(INSTALLMAKEDEFAULT "Make this installation the system default" ON )
 
 # Configure a header file to pass some of the CMake settings
 # to the source code
@@ -182,3 +182,17 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/milk_config.h
         )
 
 install(TARGETS CLIcore DESTINATION bin)
+
+install(CODE "execute_process(
+  COMMAND ls -1rt /usr/local/ 
+  COMMAND fgrep milk
+  COMMAND tail -1
+  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/chai /usr/local/bin/chai
+  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
+
+install(CODE "execute_process(
+  COMMAND ls -1rt /usr/local/ 
+  COMMAND fgrep milk
+  COMMAND tail -1
+  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/milk /usr/local/bin/milk
+  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")

@@ -1,10 +1,13 @@
 #include <assert.h>
+#include <linux/limits.h>
 #include <omp.h>
 #include <pthread.h>
 #include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <iostream>
 
@@ -19,6 +22,15 @@ extern "C" {
 #define STYLE_NO_BOLD "\033[22m"
 #define STRINGMAXLEN_VERSIONSTRING 80
 #define STRINGMAXLEN_APPNAME 40
+
+struct timespec exec_install_time() {
+  char path[PATH_MAX] = {};
+  readlink("/proc/self/exe", path, PATH_MAX);
+  struct stat s;
+  memset(&s, 0, sizeof(s));
+  stat(path, &s);
+  return s.st_mtim;
+}
 
 int main(int argc, char *argv[]) {
   std::cout << "\r";  // Force c++ libraries to be linked/loaded in CLI before
@@ -49,7 +61,8 @@ int main(int argc, char *argv[]) {
 #ifndef NDEBUG
   printf("        [ENABLED]  Code test point tracing\n");
   // allocate circular buffer memory
-  data.testpointarray = (CODETESTPOINT *)malloc(sizeof(CODETESTPOINT) * CODETESTPOINTARRAY_NBCNT);
+  data.testpointarray =
+      (CODETESTPOINT *)malloc(sizeof(CODETESTPOINT) * CODETESTPOINTARRAY_NBCNT);
   data.testpointarrayinit = 1;
   // initialize loop counter
   // loop counter increments when reaching end of circular buffer
@@ -62,9 +75,16 @@ int main(int argc, char *argv[]) {
   snprintf(versionstring, STRINGMAXLEN_VERSIONSTRING, "%d.%02d.%02d%s",
            VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_OPTION);
 
+  struct timespec ts = exec_install_time();
+  struct tm t;
+  char time_string[64];
+  localtime_r(&(ts.tv_sec), &t);
+  strftime(time_string, 64, "%F %T", &t);
   if (data.quiet == 0) {
     printf(STYLE_BOLD);
-    printf("\n        milk v %s (GCC %d.%d.%d)\n", versionstring, __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
+    printf("\n        %s v %s (GCC %d.%d.%d) (build time=%s)\n", PROJECT_NAME,
+           versionstring, __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__,
+           time_string);
 #ifndef NDEBUG
     printf(
         "        === DEBUG MODE : assert() & DEBUG_TRACEPOINT  enabled ===\n");
