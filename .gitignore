@@ -4,8 +4,6 @@ build-*
 src/config.h
 src/milk_config.h
 local
-
 _tmplist.txt
 .vscode
-plugins
 *-code-workspace
