@@ -1,7 +1,7 @@
 set(CMAKE_TOOLCHAIN_FILE ~/vcpkg/scripts/buildsystems/vcpkg.cmake)
 set(Boost_NO_WARN_NEW_VERSIONS true)
 set(ENV{LD_LIBRARY_PATH} "$ENV{HOME}/vcpkg/installed/x64-linux/lib:$ENV{HOME}/vcpkg/installed/x64-linux/lib")
-
+enable_testing()
 cmake_minimum_required(VERSION 3.14)
 project(milk LANGUAGES C CXX)
 message("CMake version: ${CMAKE_VERSION}")
