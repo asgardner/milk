@@ -60,8 +60,8 @@ endforeach()
 
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Debug
-set(CMAKE_C_FLAGS_DEBUG "-O0 -g -Wall -Wextra -march=skylake-avx512 -std=c11 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -Wall -Wextra -march=skylake-avx512 -std=c++17 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+set(CMAKE_C_FLAGS_DEBUG "-O0 -g -Wall -Wextra -march=x86-64 -std=c11 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -Wall -Wextra -march=x86-64 -std=c++17 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
 
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Release
