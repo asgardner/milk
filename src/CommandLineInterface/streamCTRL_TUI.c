@@ -10,9 +10,9 @@
 
 
 
-
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
-
+#endif
 
 /* =============================================================================================== */
 /* =============================================================================================== */
@@ -1797,7 +1797,7 @@ errno_t streamCTRL_CTRLscreen()
 
         if(DisplayMode == DISPLAY_MODE_HELP)   // help
         {
-            int attrval = A_BOLD;
+            //int attrval = A_BOLD;
 
             DEBUG_TRACEPOINT(" ");
 

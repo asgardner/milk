@@ -88,7 +88,7 @@ void TUI_printfw(const char *fmt, ...)
 
     if(screenprintmode == SCREENPRINT_NCURSES)
     {
-        int x, y;
+        int x __attribute__((unused)), y;
         int MAXLINELEN = 512;
         char prtstring[MAXLINELEN];
 
@@ -358,7 +358,7 @@ errno_t TUI_print_header(
     }
 
 
-    for(int i = 0; i < strlen(str); i++)
+    for(size_t i = 0; i < strlen(str); i++)
     {
         linestring[spos] = str[i];
         spos++;
