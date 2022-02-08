@@ -27,28 +27,3 @@ Standard compile:
 	cmake ..
 	make
 	sudo make install
-
-Compile with Python module (check script help with -h option for details):
-
-    ./compile.sh $PWD/local
-
-
-## Adding plugins
-
-Compile with cacao plugins:
-
-    ./fetch_cacao_dev.sh
-    ./compile.sh $PWD/local
-
-Compile with coffee plugins:
-
-    ./fetch_coffee_dev.sh
-    ./compile.sh $PWD/local
-
-Compile with chai plugins:
-
-    ./fetch_chai_dev.sh
-	cd build-username
-	cmake ..
-	make -j8
-	sudo make install
