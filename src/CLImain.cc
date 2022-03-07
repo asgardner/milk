@@ -82,9 +82,16 @@ int main(int argc, char *argv[]) {
   strftime(time_string, 64, "%F %T", &t);
   if (data.quiet == 0) {
     printf(STYLE_BOLD);
+#ifdef __INTEL_COMPILER
+    printf("\n        %s v %s (INTEL %s) (build time=%s)\n", 
+           PROJECT_NAME,
+           versionstring, __VERSION__,
+           time_string);
+#else
     printf("\n        %s v %s (GCC %d.%d.%d) (build time=%s)\n", PROJECT_NAME,
            versionstring, __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__,
            time_string);
+#endif
 #ifndef NDEBUG
     printf(
         "        === DEBUG MODE : assert() & DEBUG_TRACEPOINT  enabled ===\n");
