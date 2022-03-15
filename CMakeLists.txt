@@ -1,6 +1,6 @@
 set(CMAKE_TOOLCHAIN_FILE ~/vcpkg/scripts/buildsystems/vcpkg.cmake)
 set(Boost_NO_WARN_NEW_VERSIONS true)
-set(ENV{LD_LIBRARY_PATH} "$ENV{HOME}/vcpkg/installed/x64-linux/lib:$ENV{HOME}/vcpkg/installed/x64-linux/lib")
+set(ENV{LD_LIBRARY_PATH} "$ENV{HOME}/vcpkg/installed/x64-linux/lib")
 enable_testing()
 cmake_minimum_required(VERSION 3.14)
 project(milk LANGUAGES C CXX)
@@ -60,12 +60,12 @@ endforeach()
 
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Debug
-set(CMAKE_C_FLAGS_DEBUG "-O3 -g -Wall -Wextra -march=x86-64 -std=c11 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+set(CMAKE_C_FLAGS_DEBUG "-O3 -g -Wall -Wextra -march=x86-64 -std=c18 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
 set(CMAKE_CXX_FLAGS_DEBUG "-O3 -g -Wall -Wextra -march=x86-64 -std=c++20 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
 
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Release
-set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG -Wall -Wextra -march=skylake-avx512 -std=c11 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG -Wall -Wextra -march=skylake-avx512 -std=c18 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -Wall -Wextra -march=skylake-avx512 -std=c++20 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
 
 # Set a default build type if none was specified
@@ -111,9 +111,20 @@ foreach(lsrcdir IN LISTS libsrcdir libextradir)
   endif()
 endforeach()
 
+#####
 # main
+
+# Packages from vcpkg.
+find_package(Boost REQUIRED COMPONENTS system thread unit_test_framework)
 add_executable(milk src/CLImain.cc)
-target_link_libraries(milk PUBLIC ${libname})
+target_link_directories(milk PUBLIC $ENV{HOME}/vcpkg/installed/x64-linux/lib)
+target_link_libraries(milk PUBLIC 
+  ${libname}
+  ${Boost_SYSTEM_LIBRARY} 
+  ${Boost_THREAD_LIBRARY}
+  boost_atomic
+  boost_date_time
+)
 set(BUILD_FLAGS "-DPACKAGE_NAME=\\\"milk\\\" -DCONFIGDIR=\\\"${PROJECT_SOURCE_DIR}/config\\\" -DINSTALLDIR=\\\"${CMAKE_INSTALL_PREFIX}\\\" -DSOURCEDIR=\\\"${PROJECT_SOURCE_DIR}\\\" -DABSSRCTOPDIR=\\\"${PROJECT_SOURCE_DIR}\\\" -DPACKAGE_BUGREPORT=\\\"https://github.com/milk-org/milk/issues\\\"" )
 set_target_properties(milk PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}" )
 
