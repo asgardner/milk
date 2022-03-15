@@ -60,13 +60,29 @@ endforeach()
 
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Debug
-set(CMAKE_C_FLAGS_DEBUG "-O3 -g -Wall -Wextra -march=x86-64 -std=c18 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
-set(CMAKE_CXX_FLAGS_DEBUG "-O3 -g -Wall -Wextra -march=x86-64 -std=c++20 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+set(CMAKE_C_FLAGS_DEBUG "-O3 -g -Wall -Wextra \
+-march=x86-64 \
+-std=c18 \
+-fsanitize=undefined -fstack-protector-strong -fstack-protector-all \
+-D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+set(CMAKE_CXX_FLAGS_DEBUG "-O3 -g -Wall -Wextra \
+-march=x86-64 \
+-std=c++20 \
+-fsanitize=undefined -fstack-protector-strong -fstack-protector-all \
+-D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
 
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Release
-set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG -Wall -Wextra -march=skylake-avx512 -std=c18 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -Wall -Wextra -march=skylake-avx512 -std=c++20 -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+set(CMAKE_C_FLAGS_RELEASE "-O3 -Wall -Wextra \
+-march=skylake-avx512 \
+-std=c18 \
+-fsanitize=undefined -fstack-protector-strong -fstack-protector-all \
+-D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -Wextra \
+-march=skylake-avx512 \
+-std=c++20 \
+-fsanitize=undefined -fstack-protector-strong -fstack-protector-all \
+-D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE -DNDEBUG")
 
 # Set a default build type if none was specified
 set(default_build_type "Release")
