@@ -58,31 +58,25 @@ endforeach()
 # BUILD TYPE
 # =======================================
 
+set(SANITIZE_FLAGS "-fsanitize=undefined -fsanitize=leak -fsanitize-address-use-after-scope")
+set(SOURCE_FLAGS "-D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+set(STACK_PROTECT_FLAGS "-fstack-protector-strong -fstack-protector-all -fstack-clash-protection")
+set(WARNING_FLAGS "-Wall -Wextra")
+set(C_STD "-std=c18")
+set(CXX_STD "-std=c++20")
+set(ARCH_DEBUG "-march=x86-64")
+set(ARCH_OPT "-march=skylake-avx512")
+set(COMMON_FLAGS "-pipe ${WARNING_FLAGS} ${SANITIZE_FLAGS} ${STACK_PROTECT_FLAGS} ${SOURCE_FLAGS}")
+
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Debug
-set(CMAKE_C_FLAGS_DEBUG "-O3 -g -Wall -Wextra \
--march=x86-64 \
--std=c18 \
--fsanitize=undefined -fstack-protector-strong -fstack-protector-all \
--D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
-set(CMAKE_CXX_FLAGS_DEBUG "-O3 -g -Wall -Wextra \
--march=x86-64 \
--std=c++20 \
--fsanitize=undefined -fstack-protector-strong -fstack-protector-all \
--D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+set(CMAKE_C_FLAGS_DEBUG   "-O3 -g ${COMMON_FLAGS} ${ARCH_DEBUG} ${C_STD}")
+set(CMAKE_CXX_FLAGS_DEBUG "-O3 -g ${COMMON_FLAGS} ${ARCH_DEBUG} ${CXX_STD}")
 
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Release
-set(CMAKE_C_FLAGS_RELEASE "-O3 -Wall -Wextra \
--march=skylake-avx512 \
--std=c18 \
--fsanitize=undefined -fstack-protector-strong -fstack-protector-all \
--D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE -DNDEBUG")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -Wextra \
--march=skylake-avx512 \
--std=c++20 \
--fsanitize=undefined -fstack-protector-strong -fstack-protector-all \
--D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE -DNDEBUG")
+set(CMAKE_C_FLAGS_RELEASE    "-O3 -DNDEBUG ${COMMON_FLAGS} ${ARCH_OPT} ${C_STD}")
+set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -DNDEBUG ${COMMON_FLAGS} ${ARCH_OPT} ${CXX_STD}")
 
 # Set a default build type if none was specified
 set(default_build_type "Release")
@@ -96,11 +90,6 @@ message("CMAKE_BUILD_TYPE : ${CMAKE_BUILD_TYPE}")
 # =======================================
 # COMPILE OPTIONS
 # =======================================
-
-# link-time optimizer
-# add_compile_options($<$<COMPILE_LANGUAGE:C>:-flto>)
-# add_compile_options($<$<COMPILE_LANGUAGE:C>:-fwhole-pgram>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-pipe>)
 
 message("COMPILE_OPTIONS:  ${COMPILE_OPTIONS}")
 message("====================================================")
