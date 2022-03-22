@@ -258,8 +258,11 @@ errno_t function_parameter_getFPSargs_from_CLIfunc(
                                 fpsname1);
                     abort(); // can't handle this error any other way
                 }
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
                 strncpy(data.FPS_name, fpsname1, FUNCTION_PARAMETER_STRMAXLEN - 1);
+#pragma GCC diagnostic pop
+
                 argindex ++;
             }
         }
