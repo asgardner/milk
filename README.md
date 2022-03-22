@@ -10,6 +10,8 @@ CHAI is a derivative of MILK, much like CACAO, COFFEE, and Atmospheres. It's for
 
 ## Compile
 
+In order to build `chai`, you will need to make sure your build environment is ready. If you're using Oracle Linux 8, [these instructions](https://gitlab.com/-/snippets/2151560) are recommended.
+
 	mkdir build-username
 	cd build-username
 	cmake -DCMAKE_BUILD_TYPE=Release ..
