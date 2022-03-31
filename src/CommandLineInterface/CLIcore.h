@@ -143,6 +143,7 @@ extern int C_ERRNO;  // C errno (from errno.h)
 typedef uint_fast8_t BOOL;
 #define FALSE 0
 #define TRUE 1
+#define BOOL_IS_DEFINED
 
 #define DATA_NB_MAX_COMMAND 2000
 #define DATA_NB_MAX_MODULE 200
