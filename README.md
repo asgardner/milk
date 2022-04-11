@@ -30,6 +30,7 @@ Next, build.
 
 In order to build `chai`, you will need to make sure your build environment is ready. If you're using Oracle Linux 8, [these instructions](https://gitlab.com/-/snippets/2151560) are recommended.
 
+	./setup_chai_dev.sh
 	mkdir build-username
 	cd build-username
 	cmake -DCMAKE_BUILD_TYPE=Release ..
