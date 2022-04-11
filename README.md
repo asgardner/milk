@@ -25,6 +25,7 @@ Next, build.
 ## Download
 
 	git clone --recurse-submodules -b dev https://github.com/asgardner/milk.git chai
+	git clone git@gitlab.com:mmtao/chai-config.git /etc/chai
 
 ## Compile
 
