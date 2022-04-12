@@ -20,7 +20,11 @@ First, setup:
 	
 Next, build.
 
-	./vcpkg install grpc cairo[fontconfig,freetype,gobject] opencv boost-accumulators boost-beast boost-interprocess boost-json boost-random boost-system boost-test boost-thread cfitsio cpp-httplib eigen3 flatbuffers gflags lodepng sqlite3 sqlitecpp yaml-cpp gsl
+	./vcpkg install grpc cairo[fontconfig,freetype,gobject] opencv \
+		boost-accumulators boost-beast boost-interprocess boost-json \
+		boost-random boost-system boost-test boost-thread cfitsio \
+		cpp-httplib eigen3 flatbuffers gflags lodepng sqlite3 \
+		sqlitecpp yaml-cpp gsl hdf5[szip,threadsafe,tools,utils,zlib]
 
 ## Download
 
