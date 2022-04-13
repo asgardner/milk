@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
 
-# chai-src is now a git submodule, so we don't need to do this here.
-# MSG="Module 'CHAI'."
-# if [ -d "plugins/chai-src" ]; then
-#   echo "${MSG} Already installed -> pulling."
-#   (cd plugins/chai-src; git pull --ff --quiet)
-# else
-#   echo "${MSG}"
-#   git clone -b main git@gitlab.com:mmtao/chai-src.git plugins/chai-src --quiet
-#  fi
-# ./fetch_milk_dev.sh
+set -o xtrace
 
 # Setup shared memory space.
 echo "Setup shared memory."
@@ -39,5 +30,10 @@ else
   sudo mkdir -p /etc/chai
   sudo chmod -R 0777 /etc/chai
 fi
+
+# Checkout branches.
+cd plugins/chai-src && git checkout main && cd -
+cd plugins/chai-src/proto && git checkout main && cd -
+cd src/ImageStreamIO && git checkout dev && cd -
 
 echo "Done."
