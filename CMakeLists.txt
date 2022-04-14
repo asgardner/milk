@@ -58,14 +58,14 @@ endforeach()
 # BUILD TYPE
 # =======================================
 
-set(SANITIZE_FLAGS "-fsanitize=undefined -fsanitize=leak -fsanitize-address-use-after-scope")
+set(SANITIZE_FLAGS "-fsanitize=undefined -fsanitize-address-use-after-scope")
 set(SOURCE_FLAGS "-D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
 set(STACK_PROTECT_FLAGS "-fstack-protector-strong -fstack-protector-all -fstack-clash-protection")
 set(WARNING_FLAGS "-Wall -Wextra -Werror")
 set(C_STD "-std=c18")
 set(CXX_STD "-std=c++20")
 set(ARCH_DEBUG "-march=x86-64")
-set(ARCH_OPT "-march=skylake-avx512")
+set(ARCH_OPT "-march=native")
 set(COMMON_FLAGS "-pipe ${WARNING_FLAGS} ${SANITIZE_FLAGS} ${STACK_PROTECT_FLAGS} ${SOURCE_FLAGS}")
 
 # Set Release build flags
@@ -207,6 +207,13 @@ install(CODE "execute_process(
   ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
 
 install(CODE "execute_process(
+  COMMAND ls -1rt /usr/local/ 
+  COMMAND fgrep milk
+  COMMAND tail -1
+  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/chai-aorcdev /usr/local/bin/chai-aorcdev
+  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
+  
+    install(CODE "execute_process(
   COMMAND ls -1rt /usr/local/ 
   COMMAND fgrep milk
   COMMAND tail -1

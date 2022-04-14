@@ -135,35 +135,35 @@ errno_t write_process_exit_report(const char *__restrict errortypestring __attri
 
   fpexit = fopen(fname, "w");
   if (fpexit != NULL) {
-    fprintf_stdout(fpexit, "PID : %d\n", thisPID);
+    fprintf(fpexit, "PID : %d\n", thisPID);
 
     struct timespec tnow;
     //        time_t now;
     clock_gettime(CLOCK_REALTIME, &tnow);
     tvsec0 = tnow.tv_sec;
     uttime = gmtime(&tvsec0);
-    fprintf_stdout(fpexit, "Time: %04d%02d%02dT%02d%02d%02d.%09ld\n\n",
+    fprintf(fpexit, "Time: %04d%02d%02dT%02d%02d%02d.%09ld\n\n",
                    1900 + uttime->tm_year, 1 + uttime->tm_mon, uttime->tm_mday,
                    uttime->tm_hour, uttime->tm_min, uttime->tm_sec,
                    tnow.tv_nsec);
 
-    fprintf_stdout(fpexit, "Last encountered test point\n");
+    fprintf(fpexit, "Last encountered test point\n");
     tvsec1 = data.testpoint.time.tv_sec;
     uttime = gmtime(&tvsec1);
-    fprintf_stdout(fpexit, "    Time    : %04d%02d%02dT%02d%02d%02d.%09ld\n",
+    fprintf(fpexit, "    Time    : %04d%02d%02dT%02d%02d%02d.%09ld\n",
                    1900 + uttime->tm_year, 1 + uttime->tm_mon, uttime->tm_mday,
                    uttime->tm_hour, uttime->tm_min, uttime->tm_sec,
                    data.testpoint.time.tv_nsec);
 
     double timediff = 1.0 * (tvsec0 - tvsec1) +
                       1.0e-9 * (tnow.tv_nsec - data.testpoint.time.tv_nsec);
-    fprintf_stdout(fpexit, "              %.9f sec ago\n", timediff);
+    fprintf(fpexit, "              %.9f sec ago\n", timediff);
 
-    fprintf_stdout(fpexit, "    File    : %s\n", data.testpoint.file);
-    fprintf_stdout(fpexit, "    Function: %s\n", data.testpoint.func);
-    fprintf_stdout(fpexit, "    Line    : %d\n", data.testpoint.line);
-    fprintf_stdout(fpexit, "    Message : %s\n", data.testpoint.msg);
-    fprintf_stdout(fpexit, "\n");
+    fprintf(fpexit, "    File    : %s\n", data.testpoint.file);
+    fprintf(fpexit, "    Function: %s\n", data.testpoint.func);
+    fprintf(fpexit, "    Line    : %d\n", data.testpoint.line);
+    fprintf(fpexit, "    Message : %s\n", data.testpoint.msg);
+    fprintf(fpexit, "\n");
 
     // write function trace
     write_tracedebugfile();
@@ -172,12 +172,12 @@ errno_t write_process_exit_report(const char *__restrict errortypestring __attri
     struct rlimit rlimits;
     int max_fd_number;
 
-    fprintf_stdout(fpexit, "File descriptors\n");
+    fprintf(fpexit, "File descriptors\n");
     getrlimit(RLIMIT_NOFILE, &rlimits);
     max_fd_number = getdtablesize();
-    fprintf_stdout(fpexit, "    max_fd_number  : %d\n", max_fd_number);
-    fprintf_stdout(fpexit, "    rlim_cur       : %lu\n", rlimits.rlim_cur);
-    fprintf_stdout(fpexit, "    rlim_max       : %lu\n", rlimits.rlim_max);
+    fprintf(fpexit, "    max_fd_number  : %d\n", max_fd_number);
+    fprintf(fpexit, "    rlim_cur       : %lu\n", rlimits.rlim_cur);
+    fprintf(fpexit, "    rlim_max       : %lu\n", rlimits.rlim_max);
     for (int i = 0; i <= max_fd_number; i++) {
       struct stat stats;
 
@@ -186,7 +186,7 @@ errno_t write_process_exit_report(const char *__restrict errortypestring __attri
         fd_counter++;
       }
     }
-    fprintf_stdout(fpexit, "    Open files     : %ld\n", fd_counter);
+    fprintf(fpexit, "    Open files     : %ld\n", fd_counter);
 
     fclose(fpexit);
   }

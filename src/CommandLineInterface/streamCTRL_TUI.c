@@ -1170,7 +1170,7 @@ errno_t streamCTRL_CTRLscreen() {
 
   int DisplayMode = DISPLAY_MODE_SEMVAL;
 
-  struct tm *uttime_lastScan;
+  struct tm *uttime_lastScan = NULL;
   time_t rawtime;
   int fuserScan = 0;
 
