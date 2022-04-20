@@ -58,8 +58,13 @@ endforeach()
 # BUILD TYPE
 # =======================================
 
+<<<<<<< HEAD
 set(SANITIZE_FLAGS "-fsanitize=undefined -fsanitize-address-use-after-scope")
 set(SOURCE_FLAGS "-D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE")
+=======
+set(SANITIZE_FLAGS "-fsanitize=undefined -fsanitize=leak -fsanitize-address-use-after-scope")
+set(SOURCE_FLAGS "-D_GNU_SOURCE")
+>>>>>>> Start adding hdf5 telemetry
 set(STACK_PROTECT_FLAGS "-fstack-protector-strong -fstack-protector-all -fstack-clash-protection")
 set(WARNING_FLAGS "-Wall -Wextra -Werror")
 set(C_STD "-std=c18")
