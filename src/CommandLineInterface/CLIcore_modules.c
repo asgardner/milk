@@ -65,6 +65,11 @@ errno_t load_module_shared(const char *__restrict modulename) {
   DEBUG_TRACE_FSTART();
   char libname[STRINGMAXLEN_MODULE_SOFILENAME];
 
+  if(modulename[0] < 'A') {
+    DEBUG_TRACE_FEXIT();
+    return 0;
+  }
+
   // make locacl copy of module name
   char modulenameLC[STRINGMAXLEN_MODULE_SOFILENAME];
 
