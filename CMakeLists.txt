@@ -210,10 +210,17 @@ install(CODE "execute_process(
   COMMAND ls -1rt /usr/local/ 
   COMMAND fgrep milk
   COMMAND tail -1
+  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/chai-rc2 /usr/local/bin/chai-rc2
+  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
+  
+install(CODE "execute_process(
+  COMMAND ls -1rt /usr/local/ 
+  COMMAND fgrep milk
+  COMMAND tail -1
   COMMAND xargs -iQ ln -svf /usr/local/Q/bin/chai-aorcdev /usr/local/bin/chai-aorcdev
   ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
   
-    install(CODE "execute_process(
+install(CODE "execute_process(
   COMMAND ls -1rt /usr/local/ 
   COMMAND fgrep milk
   COMMAND tail -1
