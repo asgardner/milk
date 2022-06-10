@@ -233,3 +233,17 @@ install(CODE "execute_process(
   COMMAND tail -1
   COMMAND xargs -iQ ln -svf /usr/local/Q/bin/milk /usr/local/bin/milk
   ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
+
+install(CODE "execute_process(
+  COMMAND ls -1rt /usr/local/ 
+  COMMAND fgrep milk
+  COMMAND tail -1
+  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/chai-cameras-asm.py /usr/local/bin/chai-cameras-asm.py
+  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
+
+install(CODE "execute_process(
+  COMMAND ls -1rt /usr/local/ 
+  COMMAND fgrep milk
+  COMMAND tail -1
+  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/chai-cameras-ps.py /usr/local/bin/chai-cameras-ps.py
+  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
