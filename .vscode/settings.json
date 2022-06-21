@@ -74,6 +74,7 @@
         "unordered_set": "cpp",
         "regex": "cpp",
         "future": "cpp",
-        "imagestreamio.h": "c"
+        "imagestreamio.h": "c",
+        "coroutine": "cpp"
     }
 }
