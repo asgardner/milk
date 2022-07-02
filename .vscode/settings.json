@@ -75,6 +75,8 @@
         "regex": "cpp",
         "future": "cpp",
         "imagestreamio.h": "c",
-        "coroutine": "cpp"
+        "coroutine": "cpp",
+        "*.ipp": "cpp",
+        "cfenv": "cpp"
     }
 }

@@ -75,8 +75,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "-O3 -g ${COMMON_FLAGS} ${ARCH_DEBUG} ${CXX_STD}")
 
 # Set Release build flags
 # cmake -DCMAKE_BUILD_TYPE=Release
-set(CMAKE_C_FLAGS_RELEASE    "-O3 -DNDEBUG ${COMMON_FLAGS} ${ARCH_OPT} ${C_STD}")
-set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -DNDEBUG ${COMMON_FLAGS} ${ARCH_OPT} ${CXX_STD}")
+set(CMAKE_C_FLAGS_RELEASE    "-O3 -g -DNDEBUG ${COMMON_FLAGS} ${ARCH_OPT} ${C_STD}")
+set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -g -DNDEBUG ${COMMON_FLAGS} ${ARCH_OPT} ${CXX_STD}")
 
 # Set a default build type if none was specified
 set(default_build_type "Release")
