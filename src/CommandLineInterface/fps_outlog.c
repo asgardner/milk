@@ -50,7 +50,7 @@ errno_t functionparameter_outlog_file(
     struct tm *uttime;
     uttime = gmtime(&now);
 
-    char timestring[30];
+    char timestring[128];
     sprintf(
         timestring,
         "%04d%02d%02dT%02d%02d%02d.%09ld",
@@ -111,7 +111,7 @@ errno_t functionparameter_outlog(
     struct tm *uttime;
     uttime = gmtime(&now);
 
-    char timestring[30];
+    char timestring[128];
     sprintf(
         timestring,
         "%04d%02d%02dT%02d%02d%02d.%09ld",

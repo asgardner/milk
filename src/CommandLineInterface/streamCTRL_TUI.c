@@ -886,7 +886,7 @@ static int streamCTRL_print_procpid(int DispPID_NBchar, pid_t procpid,
   }
 
   if (is_upstream) {
-    char upstreamstring[DispPID_NBchar + 1];
+    char upstreamstring[32];
     sprintf(upstreamstring, "%2d >>", upstreamindex);
     TUI_printfw("%*s", DispPID_NBchar, upstreamstring);
   } else {

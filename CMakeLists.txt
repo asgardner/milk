@@ -58,7 +58,7 @@ endforeach()
 # BUILD TYPE
 # =======================================
 
-set(SANITIZE_FLAGS "-fsanitize=undefined -fsanitize-address-use-after-scope")
+set(SANITIZE_FLAGS "-fsanitize-address-use-after-scope")
 set(SOURCE_FLAGS "-D_GNU_SOURCE")
 set(STACK_PROTECT_FLAGS "-fstack-protector-strong -fstack-protector-all -fstack-clash-protection")
 set(WARNING_FLAGS "-Wall -Wextra -Werror")

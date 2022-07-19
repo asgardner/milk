@@ -398,7 +398,7 @@ int fpsCTRL_TUI_process_user_key(
                         abort();
                     }
 
-                    strncpy(inputCopy, FPSline, inputLength);
+                    strcpy(inputCopy, FPSline); //, inputLength);
 
                     varname = strtok_r(inputCopy, delimiter, &context);
                     vartype = strtok_r(NULL, delimiter, &context);

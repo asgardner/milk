@@ -3,14 +3,14 @@
 #endif
 
 #include <fcntl.h>
-#include <sys/mman.h>
 #include <pthread.h>
-#include <sys/types.h>
+#include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #include "CommandLineInterface/CLIcore.h"
-#include "shmimlog_types.h"
 #include "CommandLineInterface/timeutils.h"
+#include "shmimlog_types.h"
 
 #define likely(x) __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
@@ -144,7 +144,18 @@ shmimlog2D(const char *IDname, uint32_t zsize, const char *logdir,
 
   time_t t;
   //    struct tm      *uttime;
-  struct tm *uttimeStart;
+  static struct tm tm_init = {.tm_gmtoff = 0,
+                              .tm_hour = 0,
+                              .tm_isdst = 0,
+                              .tm_mday = 0,
+                              .tm_min = 0,
+                              .tm_mon = 0,
+                              .tm_sec = 0,
+                              .tm_wday = 0,
+                              .tm_yday = 0,
+                              .tm_year = 0,
+                              .tm_zone = "UTC"};
+  struct tm *uttimeStart = &tm_init;
   struct timespec ts;
   struct timespec timenow;
   struct timespec timenowStart;
