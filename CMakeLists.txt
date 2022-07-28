@@ -122,13 +122,17 @@ endforeach()
 # Packages from vcpkg.
 find_package(Boost REQUIRED COMPONENTS system thread unit_test_framework)
 add_executable(milk src/CLImain.cc)
-target_link_directories(milk PUBLIC $ENV{HOME}/vcpkg/installed/x64-linux/lib)
+target_link_directories(milk PUBLIC 
+  $ENV{HOME}/vcpkg/installed/x64-linux/lib
+  /opt/intel/oneapi/ipp/2021.6.0/lib/intel64/
+)
 target_link_libraries(milk PUBLIC 
   ${libname}
   ${Boost_SYSTEM_LIBRARY} 
   ${Boost_THREAD_LIBRARY}
   boost_atomic
   boost_date_time
+  ippcore ippvm ipps ippi
 )
 set(BUILD_FLAGS "-DPACKAGE_NAME=\\\"milk\\\" -DCONFIGDIR=\\\"${PROJECT_SOURCE_DIR}/config\\\" -DINSTALLDIR=\\\"${CMAKE_INSTALL_PREFIX}\\\" -DSOURCEDIR=\\\"${PROJECT_SOURCE_DIR}\\\" -DABSSRCTOPDIR=\\\"${PROJECT_SOURCE_DIR}\\\" -DPACKAGE_BUGREPORT=\\\"https://github.com/milk-org/milk/issues\\\"" )
 set_target_properties(milk PROPERTIES COMPILE_FLAGS "${BUILD_FLAGS}" )
