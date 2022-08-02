@@ -109,16 +109,11 @@
 DATA __attribute__((used)) data;
 
 pid_t CLIPID;
-
-
 int C_ERRNO;
-
-
 int Verbose = 0;
 int Listimfile = 0;
-
-
 char CLIstartupfilename[200] = "CLIstartup.txt";
+int milk_cli_loaded = 0;
 
 // fifo input
 static int fifofd;
@@ -1238,6 +1233,8 @@ void runCLI_cmd_init()
         printf("        Loaded %ld modules, %u commands\n", data.NBmodule, data.NBcmd);
         printf("        \n");
     }
+
+    milk_cli_loaded = 1;
 }
 
 
