@@ -644,39 +644,31 @@ errno_t runCLI(
 
 
     // uncomment following two lines to auto-load all modules
-    //DEBUG_TRACEPOINT("LOAD MODULES (shared objects)");
-    //load_module_shared_ALL();
+    // DEBUG_TRACEPOINT("LOAD MODULES (shared objects)");
+    // load_module_shared_ALL();
 
-    // load other libs specified by environment variable MILKCLI_ADD_LIBS
+    // Load other libs specified by environment variable MILKCLI_ADD_LIBS.
     char *CLI_ADD_LIBS = getenv("MILKCLI_ADD_LIBS");
-    if(CLI_ADD_LIBS != NULL)
-    {
-        if(data.quiet == 0)
-        {
-            printf("        MILKCLI_ADD_LIBS '%s'\n", CLI_ADD_LIBS);
-        }
+    if (CLI_ADD_LIBS != NULL) {
+      if (data.quiet == 0) {
+        printf("        MILKCLI_ADD_LIBS '%s'\n", CLI_ADD_LIBS);
+      }
 
-        char *libname;
-        libname = strtok(CLI_ADD_LIBS, " ,;");
-
-        while(libname != NULL)
-        {
-            DEBUG_TRACEPOINT("--- CLI Adding library: %s", libname);
-            // load_sharedobj(libname);
-            load_module_shared(libname);
-            libname = strtok(NULL, " ,;");
-        }
-        printf("\n");
+      char *libname, *saveptr;
+      libname = strtok_r(CLI_ADD_LIBS, " ,;", &saveptr);
+      while (libname != NULL) {
+        DEBUG_TRACEPOINT("--- CLI Adding library: %s", libname);
+        load_module_shared(libname);
+        libname = strtok_r(NULL, " ,;", &saveptr);
+      }
+      printf("\n");
+    } else {
+      if (data.quiet == 0) {
+        printf(
+            "        MILKCLI_ADD_LIBS not set -> no additional module "
+            "loaded\n");
+      }
     }
-    else
-    {
-        if(data.quiet == 0)
-        {
-            printf("        MILKCLI_ADD_LIBS not set -> no additional module loaded\n");
-        }
-    }
-
-
 
 
     DEBUG_TRACEPOINT("Initialize data control block");
