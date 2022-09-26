@@ -20,7 +20,7 @@ set(VERSION_OPTION ".chai" )
 set(PROJECT_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
 set(PROJECT_DESCRIPTION "Modular Image processing tooLKit" )
 set(CMAKE_VERBOSE_MAKEFILE OFF)
-set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/milk-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/chai/")
 option(INSTALLMAKEDEFAULT "Make this installation the system default" ON )
 
 # Configure a header file to pass some of the CMake settings
@@ -204,50 +204,29 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/milk_config.h
 install(TARGETS CLIcore DESTINATION bin)
 
 install(CODE "execute_process(
-  COMMAND ls -1rt /usr/local/ 
-  COMMAND fgrep milk
-  COMMAND tail -1
-  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/chai /usr/local/bin/chai
+  COMMAND ln -svf /usr/local/chai/bin/chai /usr/local/bin/chai
   ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
 
 install(CODE "execute_process(
-  COMMAND ls -1rt /usr/local/ 
-  COMMAND fgrep milk
-  COMMAND tail -1
-  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/chai-rc1 /usr/local/bin/chai-rc1
+  COMMAND ln -svf /usr/local/chai/bin/chai-rc1 /usr/local/bin/chai-rc1
   ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
   
 install(CODE "execute_process(
-  COMMAND ls -1rt /usr/local/ 
-  COMMAND fgrep milk
-  COMMAND tail -1
-  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/chai-rc2 /usr/local/bin/chai-rc2
+  COMMAND ln -svf /usr/local/chai/bin/chai-rc2 /usr/local/bin/chai-rc2
   ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
   
 install(CODE "execute_process(
-  COMMAND ls -1rt /usr/local/ 
-  COMMAND fgrep milk
-  COMMAND tail -1
-  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/chai-rc2-gdb /usr/local/bin/chai-rc2-gdb
+  COMMAND ln -svf /usr/local/chai/bin/chai-rc2-gdb /usr/local/bin/chai-rc2-gdb
   ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
     
   install(CODE "execute_process(
-  COMMAND ls -1rt /usr/local/ 
-  COMMAND fgrep milk
-  COMMAND tail -1
-  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/chai-aorcdev /usr/local/bin/chai-aorcdev
+    COMMAND ln -svf /usr/local/chai/bin/chai-aorcdev /usr/local/bin/chai-aorcdev
   ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
   
 install(CODE "execute_process(
-  COMMAND ls -1rt /usr/local/ 
-  COMMAND fgrep milk
-  COMMAND tail -1
-  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/milk /usr/local/bin/milk
+  COMMAND ln -svf /usr/local/chai/bin/milk /usr/local/bin/milk
   ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
 
 install(CODE "execute_process(
-  COMMAND ls -1rt /usr/local/ 
-  COMMAND fgrep milk
-  COMMAND tail -1
-  COMMAND xargs -iQ ln -svf /usr/local/Q/bin/ccid-viewer /usr/local/bin/ccid-viewer
+  COMMAND ln -svf /usr/local/chai/bin/ccid-viewer /usr/local/bin/ccid-viewer
   ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
