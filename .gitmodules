@@ -4,3 +4,6 @@
 [submodule "plugins/chai-src"]
 	path = plugins/chai-src
 	url = git@gitlab.com:mmtao/chai-src.git
+[submodule "plugins/milkzmq/milkzmq"]
+	path = plugins/milkzmq/milzmq
+	url = git@github.com:asgardner/milkzmq.git
