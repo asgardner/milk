@@ -7,3 +7,9 @@
 [submodule "plugins/milkzmq/milkzmq"]
 	path = plugins/milkzmq/milzmq
 	url = git@github.com:asgardner/milkzmq.git
+[submodule "plugins/libtar/libtar"]
+	path = plugins/libtar/libtar
+	url = git@gitlab.com:asgardner/libtar.git
+[submodule "plugins/xrif/xrif"]
+	path = plugins/xrif/xrif
+	url = https://github.com/jaredmales/xrif.git
