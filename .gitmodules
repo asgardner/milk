@@ -13,3 +13,6 @@
 [submodule "plugins/xrifa/xrifa"]
 	path = plugins/xrifa/xrifa
 	url = git@github.com:asgardner/xrif.git
+[submodule "plugins/mxlib/mxlib"]
+	path = plugins/mxlib/mxlib
+	url = git@github.com:asgardner/mxlib.git

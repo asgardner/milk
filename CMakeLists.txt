@@ -59,7 +59,7 @@ endforeach()
 # =======================================
 
 set(SANITIZE_FLAGS "-fsanitize-address-use-after-scope")
-set(SOURCE_FLAGS "-D_GNU_SOURCE")
+set(SOURCE_FLAGS "-D_GNU_SOURCE -DMXLIB_MKL")
 set(STACK_PROTECT_FLAGS "-fstack-protector-strong -fstack-protector-all -fstack-clash-protection")
 set(WARNING_FLAGS "-Wall -Wextra -Werror")
 set(C_STD "-std=c18")

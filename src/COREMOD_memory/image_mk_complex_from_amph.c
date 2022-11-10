@@ -93,6 +93,7 @@ errno_t mk_complex_from_amph(
 
         data.image[IDout].md[0].write = 1;
 # ifdef _OPENMP
+        #define OMP_NELEMENT_LIMIT 1000000
         #pragma omp parallel if (nelement>OMP_NELEMENT_LIMIT)
         {
             #pragma omp for
