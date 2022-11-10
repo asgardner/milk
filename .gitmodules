@@ -5,14 +5,17 @@
 	path = plugins/chai-src
 	url = git@gitlab.com:mmtao/chai-src.git
 [submodule "plugins/libtar/libtar"]
-	path = plugins/libtar/libtar
+	path = plugins/libs/libtar
 	url = git@gitlab.com:asgardner/libtar.git
 [submodule "plugins/milk-zmq/milk-zmq"]
-	path = plugins/milk-zmq/milk-zmq
+	path = plugins/cacao-addons/milk-zmq
 	url = git@github.com:asgardner/milkzmq.git
 [submodule "plugins/xrifa/xrifa"]
-	path = plugins/xrifa/xrifa
+	path = plugins/cacao-addons/xrif
 	url = git@github.com:asgardner/xrif.git
 [submodule "plugins/mxlib/mxlib"]
-	path = plugins/mxlib/mxlib
+	path = plugins/cacao-addons/mxlib
 	url = git@github.com:asgardner/mxlib.git
+[submodule "plugins/cacao-addons/rtimv"]
+	path = plugins/cacao-addons/rtimv
+	url = git@github.com:asgardner/rtimv.git

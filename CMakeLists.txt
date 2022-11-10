@@ -20,7 +20,7 @@ set(VERSION_OPTION ".chai" )
 set(PROJECT_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}" )
 set(PROJECT_DESCRIPTION "Modular Image processing tooLKit" )
 set(CMAKE_VERBOSE_MAKEFILE OFF)
-set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/chai/")
+set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/chai")
 option(INSTALLMAKEDEFAULT "Make this installation the system default" ON )
 
 # Configure a header file to pass some of the CMake settings
@@ -63,7 +63,7 @@ set(SOURCE_FLAGS "-D_GNU_SOURCE -DMXLIB_MKL")
 set(STACK_PROTECT_FLAGS "-fstack-protector-strong -fstack-protector-all -fstack-clash-protection")
 set(WARNING_FLAGS "-Wall -Wextra -Werror")
 set(C_STD "-std=c18")
-set(CXX_STD "-std=c++20")
+set(CXX_STD "-std=c++17")
 set(ARCH_DEBUG "-march=x86-64")
 set(ARCH_OPT "-march=native")
 set(COMMON_FLAGS "-pipe ${WARNING_FLAGS} ${SANITIZE_FLAGS} ${STACK_PROTECT_FLAGS} ${SOURCE_FLAGS}")
@@ -115,6 +115,7 @@ foreach(lsrcdir IN LISTS libsrcdir libextradir)
     add_subdirectory ( ${lsrcdir} )
   endif()
 endforeach()
+message("libextradir              = ${libextradir}")
 
 #####
 # main
