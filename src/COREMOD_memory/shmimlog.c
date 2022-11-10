@@ -867,8 +867,10 @@ shmimlog2D(const char *IDname, uint32_t zsize, const char *logdir,
       tmsg->arraycnt0 = array_cnt0_cp;
       tmsg->arraycnt1 = array_cnt1_cp;
       tmsg->arraytime = array_time_cp;
+      #pragma GCC diagnostic ignored "-Wstringop-overflow"
       WRITE_FULLFILENAME(tmsg->fname_auxFITSheader, "%s/%s.auxFITSheader.shm",
                          data.shmdir, IDname);
+      #pragma GCC diagnostic pop
       iret_savefits =
           pthread_create(&thread_savefits, NULL, save_fits_function, tmsg);
 

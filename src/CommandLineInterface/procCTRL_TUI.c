@@ -2282,6 +2282,7 @@ void *processinfo_scan(void *thptr) {
                   for (cpumin = 0; cpumin <= pinfop->CPUids[cpu]; cpumin++)
                     for (cpumax = pinfop->CPUids[cpu]; cpumax < pinfop->NBcpus;
                          cpumax++) {
+                      #pragma GCC diagnostic ignored "-Wformat-overflow"
                       sprintf(cpustring, ",%d-%d,", cpumin, cpumax);
                       if (strstr(cpuliststring, cpustring) != NULL) {
                         cpuOK = 1;

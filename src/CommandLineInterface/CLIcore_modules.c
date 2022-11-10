@@ -313,6 +313,7 @@ uint32_t RegisterCLIcommand(const char *__restrict CLIkey,
       // otherwise, construct call key as <shortname>.<CLIkey>
 #define MIN(a, b) (a > b ? b : a)
       data.cmd[data.NBcmd].key[0] = 0;
+      #pragma GCC diagnostic ignored "-Wstringop-overflow"
       strncat(data.cmd[data.NBcmd].key, data.module[data.moduleindex].shortname,
               sizeof(data.cmd[data.NBcmd].key));
       strncat(data.cmd[data.NBcmd].key, ".", 2);

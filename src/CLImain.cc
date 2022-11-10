@@ -25,6 +25,7 @@ extern "C" {
 
 struct timespec exec_install_time() {
   char path[PATH_MAX] = {};
+  #pragma GCC diagnostic ignored "-Wunused-result"
   readlink("/proc/self/exe", path, PATH_MAX);
   struct stat s;
   memset(&s, 0, sizeof(s));

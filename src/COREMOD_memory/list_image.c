@@ -136,7 +136,7 @@ errno_t list_image_ID_ncurses() {
         attron(A_BOLD | COLOR_PAIR(6));
       }
       sprintf(str, "%10s ", data.image[i].name);
-      printw(str);
+      printw("%s", str);
 
       if (data.image[i].md[0].shared == 1) {
         attroff(A_BOLD | COLOR_PAIR(9));
