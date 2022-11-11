@@ -78,6 +78,10 @@
         "coroutine": "cpp",
         "*.ipp": "cpp",
         "cfenv": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "qwidget": "cpp",
+        "qapplication": "cpp",
+        "qgridlayout": "cpp",
+        "qvboxlayout": "cpp"
     }
 }
