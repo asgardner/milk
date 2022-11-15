@@ -4,12 +4,13 @@
 # See template milk-scriptexample in module milk_module_example for template and instructions
 
 
+
 # script 1-line description
 MSdescr="poke existing stream"
 
 # Extended description
 MSdescr="poke existing stream
-Can poke in a periodic loop
+Can poke in a periodic loop for finite number of iterations
 "
 
 # standard configuration
@@ -33,13 +34,13 @@ MSarg+=( "streamname:string:stream name" )
 # syntax: "short:long:functioncall:args[types]:description"
 
 NBpoke="0"
-MSopt+=( "n:nbpoke:set_NBpoke:nbpoke[long]:set number of pokes" )
+MSopt+=( "n:nbpoke:set_NBpoke:nbpoke[long]:loopcntmax (0 = single poke) [${NBpoke}]" )
 function set_NBpoke() {
 	NBpoke="$1"
 }
 
 pokedelay="0.001"
-MSopt+=( "d:pokedelay:set_pokeDelay:pokedelay[float]:set delay between pokes in sec" )
+MSopt+=( "d:pokedelay:set_pokeDelay:pokedelay[float]:set delay between pokes in sec [${pokedelay}]" )
 function set_pokeDelay() {
 	pokedelay="$1"
 }
@@ -71,4 +72,3 @@ shmimpoke ${streamname}
 listim
 exitCLI
 EOF
-

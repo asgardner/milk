@@ -2,12 +2,7 @@
  * @file    data_type_code.c
  */
 
-
-
-
-int data_type_code(
-    int bitpix
-)
+int data_type_code(int bitpix)
 {
     int code;
     /*
@@ -53,6 +48,5 @@ int data_type_code(
     {
         code = 82;
     }
-    return(code);
+    return (code);
 }
-

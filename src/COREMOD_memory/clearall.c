@@ -1,12 +1,10 @@
 /** @file clearall.c
  */
 
-
 #include "CommandLineInterface/CLIcore.h"
-#include "image_ID.h"
 #include "delete_image.h"
 #include "delete_variable.h"
-
+#include "image_ID.h"
 
 // ==========================================
 // Forward declaration(s)
@@ -14,14 +12,9 @@
 
 errno_t clearall();
 
-
 // ==========================================
 // Command line interface wrapper function(s)
 // ==========================================
-
-
-
-
 
 // ==========================================
 // Register CLI command(s)
@@ -30,23 +23,16 @@ errno_t clearall();
 errno_t clearall_addCLIcmd()
 {
 
-    RegisterCLIcommand(
-        "rmall",
-        __FILE__,
-        clearall,
-        "remove all images",
-        "no argument",
-        "rmall",
-        "int clearall()");
-
+    RegisterCLIcommand("rmall",
+                       __FILE__,
+                       clearall,
+                       "remove all images",
+                       "no argument",
+                       "rmall",
+                       "int clearall()");
 
     return RETURN_SUCCESS;
 }
-
-
-
-
-
 
 errno_t clearall()
 {
@@ -86,9 +72,5 @@ errno_t clearall()
         }
     }
 
-
     return RETURN_SUCCESS;
 }
-
-
-

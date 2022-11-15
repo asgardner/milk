@@ -2,44 +2,31 @@
  * @file quicksort.c
  */
 
-
-
-
-int bubble_sort(
-    double *array,
-    unsigned long count
-)
+int bubble_sort(double *array, unsigned long count)
 {
     unsigned long a, b;
-    double t;
+    double        t;
 
     for(a = 1; a < count; a++)
         for(b = count - 1; b >= a; b--)
             if(array[b - 1] > array[b])
             {
-                t = array[b - 1];
+                t            = array[b - 1];
                 array[b - 1] = array[b];
-                array[b] = t;
+                array[b]     = t;
             }
 
-    return(0);
+    return (0);
 }
 
-
-
-void qs_float(
-    float *array,
-    unsigned long left, 
-    unsigned long right
-)
+void qs_float(float *array, unsigned long left, unsigned long right)
 {
     unsigned long i, j;
-    float x, y;
+    float         x, y;
 
     i = left;
     j = right;
     x = array[(left + right) / 2];
-
 
     do
     {
@@ -54,7 +41,7 @@ void qs_float(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
             i++;
@@ -76,17 +63,10 @@ void qs_float(
     }
 }
 
-
-
-
-void qs_long(
-    long *array,
-    unsigned long left,
-    unsigned long right
-)
+void qs_long(long *array, unsigned long left, unsigned long right)
 {
     register unsigned long i, j;
-    long x, y;
+    long                   x, y;
 
     i = left;
     j = right;
@@ -105,7 +85,7 @@ void qs_long(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
             i++;
@@ -127,15 +107,10 @@ void qs_long(
     }
 }
 
-
-void qs_double(
-    double *array,
-    unsigned long left,
-    unsigned long right
-)
+void qs_double(double *array, unsigned long left, unsigned long right)
 {
     register unsigned long i, j;
-    double x, y;
+    double                 x, y;
 
     i = left;
     j = right;
@@ -154,7 +129,7 @@ void qs_double(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
             i++;
@@ -177,16 +152,10 @@ void qs_double(
     }
 }
 
-
-
-void qs_ushort(
-    unsigned short *array,
-    unsigned long left,
-    unsigned long right
-)
+void qs_ushort(unsigned short *array, unsigned long left, unsigned long right)
 {
     register unsigned long i, j;
-    unsigned short x, y;
+    unsigned short         x, y;
 
     i = left;
     j = right;
@@ -205,7 +174,7 @@ void qs_ushort(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
             i++;
@@ -228,19 +197,15 @@ void qs_ushort(
     }
 }
 
-
-
-void qs3(
-    double *array,
-    double *array1,
-    double *array2,
-    unsigned long left,
-    unsigned long right
-)
+void qs3(double       *array,
+         double       *array1,
+         double       *array2,
+         unsigned long left,
+         unsigned long right)
 {
     register unsigned long i, j;
-    double x, y;
-    double y1, y2;
+    double                 x, y;
+    double                 y1, y2;
 
     i = left;
     j = right;
@@ -259,15 +224,15 @@ void qs3(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
 
-            y1 = array1[i];
+            y1        = array1[i];
             array1[i] = array1[j];
             array1[j] = y1;
 
-            y2 = array2[i];
+            y2        = array2[i];
             array2[i] = array2[j];
             array2[j] = y2;
 
@@ -291,19 +256,15 @@ void qs3(
     }
 }
 
-
-
-void qs3_float(
-    float *array,
-    float *array1,
-    float *array2,
-    unsigned long left,
-    unsigned long right
-)
+void qs3_float(float        *array,
+               float        *array1,
+               float        *array2,
+               unsigned long left,
+               unsigned long right)
 {
     register unsigned long i, j;
-    float x, y;
-    float y1, y2;
+    float                  x, y;
+    float                  y1, y2;
 
     i = left;
     j = right;
@@ -322,15 +283,15 @@ void qs3_float(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
 
-            y1 = array1[i];
+            y1        = array1[i];
             array1[i] = array1[j];
             array1[j] = y1;
 
-            y2 = array2[i];
+            y2        = array2[i];
             array2[i] = array2[j];
             array2[j] = y2;
 
@@ -354,19 +315,15 @@ void qs3_float(
     }
 }
 
-
-
-void qs3_double(
-    double *array,
-    double *array1,
-    double *array2,
-    unsigned long left,
-    unsigned long right
-)
+void qs3_double(double       *array,
+                double       *array1,
+                double       *array2,
+                unsigned long left,
+                unsigned long right)
 {
     register unsigned long i, j;
-    double x, y;
-    double y1, y2;
+    double                 x, y;
+    double                 y1, y2;
 
     i = left;
     j = right;
@@ -385,15 +342,15 @@ void qs3_double(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
 
-            y1 = array1[i];
+            y1        = array1[i];
             array1[i] = array1[j];
             array1[j] = y1;
 
-            y2 = array2[i];
+            y2        = array2[i];
             array2[i] = array2[j];
             array2[j] = y2;
 
@@ -417,18 +374,11 @@ void qs3_double(
     }
 }
 
-
-
-void qs2l(
-    double *array,
-    long *array1,
-    unsigned long left,
-    unsigned long right
-)
+void qs2l(double *array, long *array1, unsigned long left, unsigned long right)
 {
     register unsigned long i, j;
-    double x, y;
-    long l1;
+    double                 x, y;
+    long                   l1;
 
     i = left;
     j = right;
@@ -447,11 +397,11 @@ void qs2l(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
 
-            l1 = array1[i];
+            l1        = array1[i];
             array1[i] = array1[j];
             array1[j] = l1;
 
@@ -475,18 +425,14 @@ void qs2l(
     }
 }
 
-
-
-void qs2ul(
-    double *array,
-    unsigned long *array1,
-    unsigned long left,
-    unsigned long right
-)
+void qs2ul(double        *array,
+           unsigned long *array1,
+           unsigned long  left,
+           unsigned long  right)
 {
     register unsigned long i, j;
-    double x, y;
-    unsigned long l1;
+    double                 x, y;
+    unsigned long          l1;
 
     i = left;
     j = right;
@@ -505,11 +451,11 @@ void qs2ul(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
 
-            l1 = array1[i];
+            l1        = array1[i];
             array1[i] = array1[j];
             array1[j] = l1;
 
@@ -532,17 +478,14 @@ void qs2ul(
     }
 }
 
-
-void qs2l_double(
-    double *array,
-    long *array1,
-    unsigned long left,
-    unsigned long right
-)
+void qs2l_double(double       *array,
+                 long         *array1,
+                 unsigned long left,
+                 unsigned long right)
 {
     register unsigned long i, j;
-    double x, y;
-    long l1;
+    double                 x, y;
+    long                   l1;
 
     i = left;
     j = right;
@@ -561,11 +504,11 @@ void qs2l_double(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
 
-            l1 = array1[i];
+            l1        = array1[i];
             array1[i] = array1[j];
             array1[j] = l1;
 
@@ -589,17 +532,14 @@ void qs2l_double(
     }
 }
 
-
-void qs2ul_double(
-    double *array,
-    unsigned long *array1,
-    unsigned long left,
-    unsigned long right
-)
+void qs2ul_double(double        *array,
+                  unsigned long *array1,
+                  unsigned long  left,
+                  unsigned long  right)
 {
     register unsigned long i, j;
-    double x, y;
-    unsigned long l1;
+    double                 x, y;
+    unsigned long          l1;
 
     i = left;
     j = right;
@@ -618,11 +558,11 @@ void qs2ul_double(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
 
-            l1 = array1[i];
+            l1        = array1[i];
             array1[i] = array1[j];
             array1[j] = l1;
 
@@ -646,19 +586,15 @@ void qs2ul_double(
     }
 }
 
-
-
-void qs3ll_double(
-    double *array,
-    long *array1,
-    long *array2,
-    unsigned long left,
-    unsigned long right
-)
+void qs3ll_double(double       *array,
+                  long         *array1,
+                  long         *array2,
+                  unsigned long left,
+                  unsigned long right)
 {
     register unsigned long i, j;
-    double x, y;
-    long l1, l2;
+    double                 x, y;
+    long                   l1, l2;
 
     i = left;
     j = right;
@@ -677,15 +613,15 @@ void qs3ll_double(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
 
-            l1 = array1[i];
+            l1        = array1[i];
             array1[i] = array1[j];
             array1[j] = l1;
 
-            l2 = array2[i];
+            l2        = array2[i];
             array2[i] = array2[j];
             array2[j] = l2;
 
@@ -708,19 +644,15 @@ void qs3ll_double(
     }
 }
 
-
-
-void qs3ulul_double(
-    double *array,
-    unsigned long *array1,
-    unsigned long *array2,
-    unsigned long left,
-    unsigned long right
-)
+void qs3ulul_double(double        *array,
+                    unsigned long *array1,
+                    unsigned long *array2,
+                    unsigned long  left,
+                    unsigned long  right)
 {
     register unsigned long i, j;
-    double x, y;
-    unsigned long l1, l2;
+    double                 x, y;
+    unsigned long          l1, l2;
 
     i = left;
     j = right;
@@ -739,15 +671,15 @@ void qs3ulul_double(
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
 
-            l1 = array1[i];
+            l1        = array1[i];
             array1[i] = array1[j];
             array1[j] = l1;
 
-            l2 = array2[i];
+            l2        = array2[i];
             array2[i] = array2[j];
             array2[j] = l2;
 
@@ -771,124 +703,84 @@ void qs3ulul_double(
     }
 }
 
-
-
-
-void quick_sort_float(
-    float *array,
-    unsigned long count
-)
+void quick_sort_float(float *array, unsigned long count)
 {
     qs_float(array, 0, count - 1);
 }
 
-void quick_sort_long(
-    long *array,
-    unsigned long count
-)
+void quick_sort_long(long *array, unsigned long count)
 {
     qs_long(array, 0, count - 1);
 }
 
-void quick_sort_double(
-    double *array,
-    unsigned long count
-)
+void quick_sort_double(double *array, unsigned long count)
 {
     qs_double(array, 0, count - 1);
 }
 
-void quick_sort_ushort(
-    unsigned short *array,
-    unsigned long count
-)
+void quick_sort_ushort(unsigned short *array, unsigned long count)
 {
     qs_ushort(array, 0, count - 1);
 }
 
-void quick_sort3(
-    double *array,
-    double *array1,
-    double *array2,
-    unsigned long count
-)
+void quick_sort3(double       *array,
+                 double       *array1,
+                 double       *array2,
+                 unsigned long count)
 {
     qs3(array, array1, array2, 0, count - 1);
 }
 
-void quick_sort3_float(
-    float *array,
-    float *array1,
-    float *array2,
-    unsigned long count
-)
+void quick_sort3_float(float        *array,
+                       float        *array1,
+                       float        *array2,
+                       unsigned long count)
 {
     qs3_float(array, array1, array2, 0, count - 1);
 }
 
-void quick_sort3_double(
-    double *array,
-    double *array1,
-    double *array2,
-    unsigned long count
-)
+void quick_sort3_double(double       *array,
+                        double       *array1,
+                        double       *array2,
+                        unsigned long count)
 {
     qs3_double(array, array1, array2, 0, count - 1);
 }
 
-void quick_sort2l(
-    double *array,
-    long *array1,
-    unsigned long count
-)
+void quick_sort2l(double *array, long *array1, unsigned long count)
 {
     qs2l(array, array1, 0, count - 1);
 }
 
-void quick_sort2ul(
-    double *array,
-    unsigned long *array1,
-    unsigned long count
-)
+void quick_sort2ul(double *array, unsigned long *array1, unsigned long count)
 {
     qs2ul(array, array1, 0, count - 1);
 }
 
-void quick_sort2l_double(
-    double *array,
-    long *array1,
-    unsigned long count
-)
+void quick_sort2l_double(double *array, long *array1, unsigned long count)
 {
     qs2l_double(array, array1, 0, count - 1);
 }
 
-void quick_sort2ul_double(
-    double *array,
-    unsigned long *array1,
-    unsigned long count
-)
+void quick_sort2ul_double(double        *array,
+                          unsigned long *array1,
+                          unsigned long  count)
 {
     qs2ul_double(array, array1, 0, count - 1);
 }
 
-void quick_sort3ll_double(
-    double *array,
-    long *array1,
-    long *array2,
-    unsigned long count
-)
+void quick_sort3ll_double(double       *array,
+                          long         *array1,
+                          long         *array2,
+                          unsigned long count)
 {
     qs3ll_double(array, array1, array2, 0, count - 1);
 }
 
-void quick_sort3ulul_double(
-    double *array,
-    unsigned long *array1,
-    unsigned long *array2,
-    unsigned long count
-)
+void quick_sort3ulul_double(double        *array,
+                            unsigned long *array1,
+                            unsigned long *array2,
+                            unsigned long  count)
 {
     qs3ulul_double(array, array1, array2, 0, count - 1);
 }
-

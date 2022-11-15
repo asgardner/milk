@@ -3,20 +3,23 @@
  * @brief   Text User Interface tools
  */
 
-
-#include <termios.h>
 #include <sys/ioctl.h> // for terminal size
+#include <termios.h>
 
 #include <ncurses.h>
+#include <curses.h>
+// #include <ncursesw/ncurses.h>
+
+#include <locale.h>
+#include <wchar.h>
 
 #include <CommandLineInterface/CLIcore.h>
+
 #include "TUItools.h"
 
-
-
-static struct winsize w;
+static struct winsize     w;
 static short unsigned int wrow, wcol;
-static int wresizecnt = 0;
+static int                wresizecnt = 0;
 
 /*
  * Defines printfw output
@@ -31,12 +34,6 @@ static int screenprintmode = SCREENPRINT_STDIO;
 struct termios orig_termios;
 struct termios new_termios;
 
-
-
-
-
-
-
 static int printAEC = 0;
 
 // Foreground color
@@ -45,25 +42,15 @@ static int printAECfgcolor = AEC_FGCOLOR_WHITE;
 // Background color
 static int printAECbgcolor = AEC_BGCOLOR_BLACK;
 
-
-
-
-
-void TUI_set_screenprintmode(
-    int mode
-)
+void TUI_set_screenprintmode(int mode)
 {
     screenprintmode = mode;
 }
-
-
 
 int TUI_get_screenprintmode()
 {
     return screenprintmode;
 }
-
-
 
 /**
  * @brief print to stdout or through ncurses
@@ -88,15 +75,20 @@ void TUI_printfw(const char *fmt, ...)
 
     if(screenprintmode == SCREENPRINT_NCURSES)
     {
-        int x __attribute__((unused)), y;
-        int MAXLINELEN = 512;
-        char prtstring[MAXLINELEN];
+        int  x, y;
+        int  MAXSTRLEN = 512;
 
         getyx(stdscr, y, x);
+        (void) x;
         (void) y;
 
-        vsnprintf(prtstring, MAXLINELEN, fmt, args);
-        printw("%s", prtstring);
+        int remaining_cols = MAXSTRLEN < wcol - x ? MAXSTRLEN : wcol - x;
+        if(remaining_cols > 0)
+        {
+            char prtstring[remaining_cols];
+            vsnprintf(prtstring, remaining_cols, fmt, args);
+            printw("%s", prtstring);
+        }
     }
 
     va_end(args);
@@ -114,6 +106,8 @@ void TUI_newline()
         printw("\n");
     }
 }
+
+
 
 
 void screenprint_setcolor(int colorcode)
@@ -177,10 +171,9 @@ void screenprint_setcolor(int colorcode)
                 break;
         }
 
-        printf("\033[%d;%dm",  printAECfgcolor, printAECbgcolor);
+        printf("\033[%d;%dm", printAECfgcolor, printAECbgcolor);
     }
 }
-
 
 void screenprint_unsetcolor(int colorcode)
 {
@@ -190,13 +183,12 @@ void screenprint_unsetcolor(int colorcode)
     }
     else
     {
-        printAEC = AEC_NORMAL;
+        printAEC        = AEC_NORMAL;
         printAECfgcolor = AEC_FGCOLOR_WHITE;
         printAECbgcolor = AEC_BGCOLOR_BLACK;
         printf("\033[%dm", printAEC); //, printAECbgcolor);
     }
 }
-
 
 void screenprint_setbold()
 {
@@ -207,10 +199,9 @@ void screenprint_setbold()
     else
     {
         printAEC = AEC_BOLD;
-        printf("\033[%dm",  printAEC);
+        printf("\033[%dm", printAEC);
     }
 }
-
 
 void screenprint_unsetbold()
 {
@@ -221,10 +212,9 @@ void screenprint_unsetbold()
     else
     {
         printAEC = AEC_NORMAL; //AEC_BOLDOFF;
-        printf("\033[%dm",  printAEC);
+        printf("\033[%dm", printAEC);
     }
 }
-
 
 void screenprint_setblink()
 {
@@ -235,10 +225,9 @@ void screenprint_setblink()
     else
     {
         printAEC = AEC_FASTBLINK;
-        printf("\033[%dm",  printAEC);
+        printf("\033[%dm", printAEC);
     }
 }
-
 
 void screenprint_unsetblink()
 {
@@ -253,7 +242,6 @@ void screenprint_unsetblink()
     }
 }
 
-
 void screenprint_setdim()
 {
     if(screenprintmode == SCREENPRINT_NCURSES)
@@ -263,10 +251,9 @@ void screenprint_setdim()
     else
     {
         printAEC = AEC_FAINT;
-        printf("\033[%dm",  printAEC);
+        printf("\033[%dm", printAEC);
     }
 }
-
 
 void screenprint_unsetdim()
 {
@@ -277,10 +264,9 @@ void screenprint_unsetdim()
     else
     {
         printAEC = AEC_NORMAL; //AEC_FAINTOFF;
-        printf("\033[%dm",  printAEC);
+        printf("\033[%dm", printAEC);
     }
 }
-
 
 void screenprint_setreverse()
 {
@@ -291,10 +277,9 @@ void screenprint_setreverse()
     else
     {
         printAEC = AEC_REVERSE;
-        printf("\033[%dm",  printAEC);
+        printf("\033[%dm", printAEC);
     }
 }
-
 
 void screenprint_unsetreverse()
 {
@@ -305,10 +290,9 @@ void screenprint_unsetreverse()
     else
     {
         printAEC = AEC_NORMAL; //AEC_REVERSEOFF;
-        printf("\033[%dm",  printAEC);
+        printf("\033[%dm", printAEC);
     }
 }
-
 
 void screenprint_setnormal()
 {
@@ -318,12 +302,14 @@ void screenprint_setnormal()
     }
     else
     {
-        printAEC = AEC_NORMAL;
+        printAEC        = AEC_NORMAL;
         printAECfgcolor = AEC_FGCOLOR_WHITE;
         printAECbgcolor = AEC_BGCOLOR_BLACK;
         printf("\033[%d;%d;%dm", printAEC, printAECfgcolor, printAECbgcolor);
     }
 }
+
+
 
 
 /**
@@ -333,10 +319,7 @@ void screenprint_setnormal()
  * @param c       filler character to be printed on either side of content
  * @return errno_t
  */
-errno_t TUI_print_header(
-    const char *str,
-    char c
-)
+errno_t TUI_print_header(const char *str, char c)
 {
     long n = strlen(str);
 
@@ -348,15 +331,13 @@ errno_t TUI_print_header(
         strl = n + 1;
     }
     char linestring[strl];
-    int spos = 0;
-
+    int  spos = 0;
 
     for(long i = 0; i < (wcol - n) / 2; i++)
     {
         linestring[spos] = c;
         spos++;
     }
-
 
     for(size_t i = 0; i < strlen(str); i++)
     {
@@ -379,13 +360,6 @@ errno_t TUI_print_header(
     return RETURN_SUCCESS;
 }
 
-
-
-
-
-
-
-
 /** @brief restore terminal settings
  */
 void TUI_reset_terminal_mode()
@@ -394,11 +368,8 @@ void TUI_reset_terminal_mode()
     tcsetattr(0, TCSANOW, &new_termios);
 }
 
-
-errno_t TUI_inittermios(
-    short unsigned int *wrowptr,
-    short unsigned int *wcolptr
-)
+errno_t TUI_inittermios(short unsigned int *wrowptr,
+                        short unsigned int *wcolptr)
 {
     tcgetattr(0, &orig_termios);
 
@@ -408,7 +379,7 @@ errno_t TUI_inittermios(
     new_termios.c_lflag &= ~ICANON;
     new_termios.c_lflag &= ~ECHO;
     new_termios.c_lflag &= ~ISIG;
-    new_termios.c_cc[VMIN] = 0;
+    new_termios.c_cc[VMIN]  = 0;
     new_termios.c_cc[VTIME] = 0;
 
     tcsetattr(0, TCSANOW, &new_termios);
@@ -425,16 +396,9 @@ errno_t TUI_inittermios(
     return RETURN_SUCCESS;
 }
 
-
-
-
-
-void TUI_clearscreen(
-    short unsigned int *wrowptr,
-    short unsigned int *wcolptr
-)
+void TUI_clearscreen(short unsigned int *wrowptr, short unsigned int *wcolptr)
 {
-    if(screenprintmode == SCREENPRINT_STDIO) // stdio mode
+    if(screenprintmode == SCREENPRINT_STDIO)  // stdio mode
     {
         printf("\e[1;1H\e[2J");
         //printf("[%12lld  %d %d %d ]  ", loopcnt, buffd[0], buffd[1], buffd[2]);
@@ -450,11 +414,7 @@ void TUI_clearscreen(
         (void) *wrowptr;
         (void) *wcolptr;
     }
-
 }
-
-
-
 
 void TUI_handle_winch(int sig)
 {
@@ -479,20 +439,20 @@ void TUI_handle_winch(int sig)
 
 
 
+
 /** @brief INITIALIZE ncurses
  *
  */
-errno_t TUI_initncurses(
-    short unsigned int *wrowptr,
-    short unsigned int *wcolptr
-)
+errno_t TUI_initncurses(short unsigned int *wrowptr,
+                        short unsigned int *wcolptr)
 {
-    DEBUG_TRACEPOINT(" ");
+    DEBUG_TRACE_FSTART();
+
     if(screenprintmode == SCREENPRINT_NCURSES)
     {
         DEBUG_TRACEPOINT("Initializing TUI ncurses ");
 
-
+        setlocale(LC_ALL, "");
         if(initscr() == NULL)
         {
             fprintf(stderr, "Error initialising ncurses.\n");
@@ -500,7 +460,10 @@ errno_t TUI_initncurses(
         }
         DEBUG_TRACEPOINT("Initializing TUI ncurses ");
 
-        getmaxyx(stdscr, wrow, wcol);		/* get the number of rows and columns */
+        getmaxyx(stdscr, wrow, wcol); /* get the number of rows and columns */
+
+        DEBUG_TRACEPOINT("wrow wcol = %d %d", wrow, wcol);
+
         *wrowptr = wrow;
         *wcolptr = wcol;
         DEBUG_TRACEPOINT("wrow wcol = %d %d", wrow, wcol);
@@ -533,17 +496,18 @@ errno_t TUI_initncurses(
         DEBUG_TRACEPOINT(" ");
 
         //  colored background
-        init_pair(1, COLOR_BLACK,  COLOR_WHITE);
-        init_pair(2, COLOR_BLACK,  COLOR_GREEN);      // all good
-        init_pair(3, COLOR_BLACK,  COLOR_YELLOW);    // parameter out of sync
-        init_pair(4, COLOR_WHITE,  COLOR_RED);
-        init_pair(5, COLOR_WHITE,  COLOR_BLUE);      // DIRECTORY
-        init_pair(6, COLOR_GREEN,  COLOR_BLACK);
+        init_pair(1, COLOR_BLACK, COLOR_WHITE);
+        init_pair(2, COLOR_BLACK, COLOR_GREEN);  // all good
+        init_pair(3, COLOR_BLACK, COLOR_YELLOW); // parameter out of sync
+        init_pair(4, COLOR_WHITE, COLOR_RED);
+        init_pair(5, COLOR_WHITE, COLOR_BLUE); // DIRECTORY
+        init_pair(6, COLOR_GREEN, COLOR_BLACK);
         init_pair(7, COLOR_YELLOW, COLOR_BLACK);
-        init_pair(8, COLOR_RED,    COLOR_BLACK);
-        init_pair(9, COLOR_BLACK,  COLOR_RED);
-        init_pair(10, COLOR_BLACK,  COLOR_CYAN);
-        init_pair(12, COLOR_GREEN,  COLOR_WHITE);    // highlighted version of #2
+        init_pair(8, COLOR_RED, COLOR_BLACK);
+        init_pair(9, COLOR_BLACK, COLOR_RED);
+        init_pair(10, COLOR_BLACK, COLOR_CYAN);
+        init_pair(12, COLOR_GREEN,
+                  COLOR_WHITE); // highlighted version of #2
 
         // handle window resize
         struct sigaction sa;
@@ -552,7 +516,7 @@ errno_t TUI_initncurses(
         sigaction(SIGWINCH, &sa, NULL);
     }
 
-    DEBUG_TRACEPOINT(" ");
+    DEBUG_TRACE_FEXIT();
 
     return RETURN_SUCCESS;
 }
@@ -560,15 +524,16 @@ errno_t TUI_initncurses(
 
 
 
-errno_t TUI_init_terminal(
-    short unsigned int *wrowptr,
-    short unsigned int *wcolptr
-)
+errno_t TUI_init_terminal(short unsigned int *wrowptr,
+                          short unsigned int *wcolptr)
 {
+    DEBUG_TRACE_FSTART();
     if(screenprintmode == SCREENPRINT_NCURSES)  // ncurses mode
     {
         TUI_initncurses(wrowptr, wcolptr);
-        DEBUG_TRACEPOINT("init terminal ncurses mode %d %d", *wrowptr, *wcolptr);
+        DEBUG_TRACEPOINT("init terminal ncurses mode %d %d",
+                         *wrowptr,
+                         *wcolptr);
         atexit(TUI_atexit);
         clear();
     }
@@ -577,23 +542,19 @@ errno_t TUI_init_terminal(
         TUI_inittermios(wrowptr, wcolptr);
         DEBUG_TRACEPOINT("init terminal stdio mode %d %d", *wrowptr, *wcolptr);
     }
-
+    DEBUG_TRACE_FEXIT();
     return RETURN_SUCCESS;
 }
 
 
-errno_t TUI_get_terminal_size(
-    short unsigned int *wrowptr,
-    short unsigned int *wcolptr
-)
+errno_t TUI_get_terminal_size(short unsigned int *wrowptr,
+                              short unsigned int *wcolptr)
 {
     *wrowptr = wrow;
     *wcolptr = wcol;
 
     return RETURN_SUCCESS;
 }
-
-
 
 errno_t TUI_exit()
 {
@@ -605,18 +566,12 @@ errno_t TUI_exit()
     return RETURN_SUCCESS;
 }
 
-
-
 void TUI_atexit()
 {
     //printf("exiting CTRLscreen\n");
 
     // endwin();
 }
-
-
-
-
 
 errno_t TUI_ncurses_refresh()
 {
@@ -628,7 +583,6 @@ errno_t TUI_ncurses_refresh()
     return RETURN_SUCCESS;
 }
 
-
 errno_t TUI_ncurses_erase()
 {
     if(screenprintmode == SCREENPRINT_NCURSES)
@@ -638,7 +592,6 @@ errno_t TUI_ncurses_erase()
 
     return RETURN_SUCCESS;
 }
-
 
 errno_t TUI_stdio_clear()
 {
@@ -650,25 +603,13 @@ errno_t TUI_stdio_clear()
     return RETURN_SUCCESS;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 int get_singlechar_nonblock()
 {
     int ch = -1;
 
     if(screenprintmode == SCREENPRINT_NCURSES)
     {
-        ch = getch();  // ncurses function, non-blocking
+        ch = getch(); // ncurses function, non-blocking
     }
     else
     {
@@ -685,10 +626,8 @@ int get_singlechar_nonblock()
                 ch = 10; // new line
             }
 
-
-            if(buff[0] == 27)    // if the first value is esc
+            if(buff[0] == 27)  // if the first value is esc
             {
-
 
                 if(buff[1] == 91)
                 {
@@ -710,7 +649,6 @@ int get_singlechar_nonblock()
                     }
                 }
 
-
                 if(buff[1] == 79)
                 {
                     switch(buff[2])
@@ -727,12 +665,12 @@ int get_singlechar_nonblock()
                     }
                 }
             }
-
         }
     }
 
     return ch;
 }
+
 
 
 
@@ -757,7 +695,3 @@ int get_singlechar_block()
     }
     return ch;
 }
-
-
-
-

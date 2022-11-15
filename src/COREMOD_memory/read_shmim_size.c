@@ -3,59 +3,51 @@
  * @brief   read shared memory stream
  */
 
-#include <sys/stat.h>
-#include <fcntl.h> // open
-#include <unistd.h> // close
+#include <fcntl.h>    // open
 #include <sys/mman.h> // mmap
+#include <sys/stat.h>
+#include <unistd.h> // close
 
 #include "CommandLineInterface/CLIcore.h"
 #include "image_ID.h"
 #include "list_image.h"
 
-
-
-
 // Local variables pointers
 static char *insname;
 static char *outfname;
 
-
 // List of arguments to function
-static CLICMDARGDEF farg[] =
-{
-    {
-        CLIARG_STR, ".in_sname", "input stream", "ims1",
+static CLICMDARGDEF farg[] = {{
+        CLIARG_STR,
+        ".in_sname",
+        "input stream",
+        "ims1",
         CLIARG_VISIBLE_DEFAULT,
-        (void **) &insname
+        (void **) &insname,
+        NULL
     },
     {
-        CLIARG_STR_NOT_IMG, ".outfname", "output file name", "outsize.dat",
+        CLIARG_STR_NOT_IMG,
+        ".outfname",
+        "output file name",
+        "outsize.dat",
         CLIARG_VISIBLE_DEFAULT,
-        (void **) &outfname
+        (void **) &outfname,
+        NULL
     }
 };
-
-
-
 
 // flag CLICMDFLAG_FPS enabled FPS capability
 static CLICMDDATA CLIcmddata =
 {
-    "readshmimsize",
-    "read shared memory image size",
-    CLICMD_FIELDS_DEFAULTS
+    "readshmimsize", "read shared memory image size", CLICMD_FIELDS_DEFAULTS
 };
-
-
 
 // detailed help
 static errno_t help_function()
 {
     return RETURN_SUCCESS;
 }
-
-
-
 
 /**
  *  ## Purpose
@@ -74,19 +66,15 @@ static errno_t help_function()
  * 			file name to write image name
  *
  */
-imageID read_sharedmem_image_size(
-    const char *name,
-    const char *fname
-)
+imageID read_sharedmem_image_size(const char *name, const char *fname)
 {
     int             SM_fd;
-    struct          stat file_stat;
+    struct stat     file_stat;
     char            SM_fname[STRINGMAXLEN_FULLFILENAME];
     IMAGE_METADATA *map;
     int             i;
     FILE           *fp;
     imageID         ID = -1;
-
 
     if((ID = image_ID(name)) == -1)
     {
@@ -102,8 +90,12 @@ imageID read_sharedmem_image_size(
             fstat(SM_fd, &file_stat);
             //        printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
 
-            map = (IMAGE_METADATA *) mmap(0, sizeof(IMAGE_METADATA), PROT_READ | PROT_WRITE,
-                                          MAP_SHARED, SM_fd, 0);
+            map = (IMAGE_METADATA *) mmap(0,
+                                          sizeof(IMAGE_METADATA),
+                                          PROT_READ | PROT_WRITE,
+                                          MAP_SHARED,
+                                          SM_fd,
+                                          0);
             if(map == MAP_FAILED)
             {
                 close(SM_fd);
@@ -118,7 +110,6 @@ imageID read_sharedmem_image_size(
             }
             fprintf(fp, "\n");
             fclose(fp);
-
 
             if(munmap(map, sizeof(IMAGE_METADATA)) == -1)
             {
@@ -142,24 +133,13 @@ imageID read_sharedmem_image_size(
     return ID;
 }
 
-
-
-
-
-
-
-
-
 // adding INSERT_STD_PROCINFO statements enables processinfo support
 static errno_t compute_function()
 {
     DEBUG_TRACE_FSTART();
     INSERT_STD_PROCINFO_COMPUTEFUNC_START
 
-    read_sharedmem_image_size(
-        insname,
-        outfname
-    );
+    read_sharedmem_image_size(insname, outfname);
 
     INSERT_STD_PROCINFO_COMPUTEFUNC_END
 
@@ -167,12 +147,11 @@ static errno_t compute_function()
     return RETURN_SUCCESS;
 }
 
-
-
 INSERT_STD_FPSCLIfunctions
 
 // Register function in CLI
-errno_t CLIADDCMD_COREMOD_memory__read_sharedmem_image_size()
+errno_t
+CLIADDCMD_COREMOD_memory__read_sharedmem_image_size()
 {
     INSERT_STD_CLIREGISTERFUNC
 

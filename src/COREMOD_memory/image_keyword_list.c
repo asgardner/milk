@@ -2,31 +2,27 @@
 
 static char *inimname;
 
-static CLICMDARGDEF farg[] =
-{
-    {
-        CLIARG_IMG, ".in_name", "input image", "im1",
+static CLICMDARGDEF farg[] = {{
+        CLIARG_IMG,
+        ".in_name",
+        "input image",
+        "im1",
         CLIARG_VISIBLE_DEFAULT,
-        (void **) &inimname
+        (void **) &inimname,
+        NULL
     }
 };
 
-
 static CLICMDDATA CLIcmddata =
 {
-    "imkwlist",
-    "list image keywords",
-    CLICMD_FIELDS_NOFPS
+    "imkwlist", "list image keywords", CLICMD_FIELDS_NOFPS
 };
 
-
-errno_t image_keywords_list(
-    IMGID img
-)
+errno_t image_keywords_list(IMGID img)
 {
     resolveIMGID(&img, ERRMODE_ABORT);
 
-    int NBkw = img.md->NBkw;
+    int NBkw  = img.md->NBkw;
     int kwcnt = 0;
     for(int kw = 0; kw < NBkw; kw++)
     {
@@ -34,21 +30,27 @@ errno_t image_keywords_list(
         switch(img.im->kw[kw].type)
         {
             case 'L':
-                printf("[L] %-8s= %20ld / %s\n", img.im->kw[kw].name,
-                       img.im->kw[kw].value.numl, img.im->kw[kw].comment);
+                printf("[L] %-8s= %20ld / %s\n",
+                       img.im->kw[kw].name,
+                       img.im->kw[kw].value.numl,
+                       img.im->kw[kw].comment);
                 kwcnt++;
                 break;
 
             case 'D':
-                printf("[D] %-8s= %20g / %s\n", img.im->kw[kw].name,
-                       img.im->kw[kw].value.numf, img.im->kw[kw].comment);
+                printf("[D] %-8s= %20g / %s\n",
+                       img.im->kw[kw].name,
+                       img.im->kw[kw].value.numf,
+                       img.im->kw[kw].comment);
                 kwcnt++;
                 break;
 
             case 'S':
                 sprintf(tmpkwvalstr, "'%s'", img.im->kw[kw].value.valstr);
-                printf("[S] %-8s= %-20s / %s\n", img.im->kw[kw].name,
-                       tmpkwvalstr, img.im->kw[kw].comment);
+                printf("[S] %-8s= %-20s / %s\n",
+                       img.im->kw[kw].name,
+                       tmpkwvalstr,
+                       img.im->kw[kw].comment);
                 kwcnt++;
                 break;
 
@@ -62,22 +64,16 @@ errno_t image_keywords_list(
     return RETURN_SUCCESS;
 }
 
-
 static errno_t compute_function()
 {
-    image_keywords_list(
-        makeIMGID(inimname)
-    );
+    image_keywords_list(mkIMGID_from_name(inimname));
     return RETURN_SUCCESS;
 }
 
-
-
 INSERT_STD_CLIfunction
 
-
-
-errno_t CLIADDCMD_COREMOD_memory__image_keyword_list()
+errno_t
+CLIADDCMD_COREMOD_memory__image_keyword_list()
 {
     INSERT_STD_CLIREGISTERFUNC
 

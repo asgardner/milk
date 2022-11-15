@@ -3,34 +3,30 @@
  * @brief   find image ID(s) from name
  */
 
-
 #include "CommandLineInterface/CLIcore.h"
 
-
-
 /* ID number corresponding to a name */
-imageID image_ID(
-    const char *name
-)
+imageID image_ID(const char *name)
 {
     DEBUG_TRACE_FSTART();
 
-    imageID    i;
-    int        loopOK;
-    imageID    tmpID = 0;
+    imageID i;
+    int     loopOK;
+    imageID tmpID = 0;
 
-    i = 0;
+    i      = 0;
     loopOK = 1;
     while(loopOK == 1)
     {
         if(data.image[i].used == 1)
         {
-            if((strncmp(name, data.image[i].name, strlen(name)) == 0)
-                    && (data.image[i].name[strlen(name)] == '\0'))
+            if((strncmp(name, data.image[i].name, strlen(name)) == 0) &&
+                    (data.image[i].name[strlen(name)] == '\0'))
             {
                 loopOK = 0;
-                tmpID = i;
-                clock_gettime(CLOCK_REALTIME, &data.image[i].md[0].lastaccesstime);
+                tmpID  = i;
+                clock_gettime(CLOCK_REALTIME,
+                              &data.image[i].md[0].lastaccesstime);
             }
         }
         i++;
@@ -38,7 +34,7 @@ imageID image_ID(
         if(i == data.NB_MAX_IMAGE)
         {
             loopOK = 0;
-            tmpID = -1;
+            tmpID  = -1;
         }
     }
 
@@ -47,29 +43,26 @@ imageID image_ID(
     return tmpID;
 }
 
-
 /* ID number corresponding to a name */
-imageID image_ID_noaccessupdate(
-    const char *name
-)
+imageID image_ID_noaccessupdate(const char *name)
 {
     DEBUG_TRACE_FSTART();
 
-    imageID   i;
-    imageID   tmpID = 0;
-    int       loopOK;
+    imageID i;
+    imageID tmpID = 0;
+    int     loopOK;
 
-    i = 0;
+    i      = 0;
     loopOK = 1;
     while(loopOK == 1)
     {
         if(data.image[i].used == 1)
         {
-            if((strncmp(name, data.image[i].name, strlen(name)) == 0)
-                    && (data.image[i].name[strlen(name)] == '\0'))
+            if((strncmp(name, data.image[i].name, strlen(name)) == 0) &&
+                    (data.image[i].name[strlen(name)] == '\0'))
             {
                 loopOK = 0;
-                tmpID = i;
+                tmpID  = i;
             }
         }
         i++;
@@ -77,16 +70,13 @@ imageID image_ID_noaccessupdate(
         if(i == data.NB_MAX_IMAGE)
         {
             loopOK = 0;
-            tmpID = -1;
+            tmpID  = -1;
         }
     }
 
     DEBUG_TRACE_FEXIT();
     return tmpID;
 }
-
-
-
 
 /* next available ID number */
 imageID next_avail_image_ID()
@@ -96,7 +86,7 @@ imageID next_avail_image_ID()
     imageID i;
     imageID ID = -1;
 
-# ifdef _OPENMP
+#ifdef _OPENMP
     #pragma omp critical
     {
 #endif
@@ -104,14 +94,14 @@ imageID next_avail_image_ID()
         {
             if(data.image[i].used == 0)
             {
-                ID = i;
+                ID                  = i;
                 data.image[ID].used = 1;
                 break;
             }
         }
-# ifdef _OPENMP
+#ifdef _OPENMP
     }
-# endif
+#endif
 
     if(ID == -1)
     {

@@ -5,78 +5,39 @@
  *
  */
 
-
 #include "CommandLineInterface/CLIcore.h"
+
 #include "COREMOD_memory/COREMOD_memory.h"
-
-
-
 
 // ==========================================
 // Forward declaration(s)
 // ==========================================
 
-imageID arith_set_pixel(
-    const char *ID_name,
-    double      value,
-    long        x,
-    long        y
-);
+imageID arith_set_pixel(const char *ID_name, double value, long x, long y);
 
+imageID
+arith_set_pixel_1Drange(const char *ID_name, double value, long x, long y);
 
+imageID arith_set_row(const char *ID_name, double value, long y);
 
-imageID arith_set_pixel_1Drange(
-    const char *ID_name,
-    double      value,
-    long        x,
-    long        y
-);
+imageID arith_set_col(const char *ID_name, double value, long x);
 
-
-
-imageID arith_set_row(
-    const char *ID_name,
-    double      value,
-    long        y
-);
-
-
-
-imageID arith_set_col(
-    const char *ID_name,
-    double      value,
-    long        x
-);
-
-
-imageID arith_image_zero(
-    const char *ID_name
-);
-
-
-
+imageID arith_image_zero(const char *ID_name);
 
 // ==========================================
 // Command line interface wrapper function(s)
 // ==========================================
 
-
-
-
 static errno_t arith_set_pixel_cli()
 {
-    if(0
-            + CLI_checkarg(1, CLIARG_IMG)
-            + CLI_checkarg(2, CLIARG_FLOAT)
-            + CLI_checkarg(3, CLIARG_LONG)
-            + CLI_checkarg(4, CLIARG_LONG)
-            == 0)
+    if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_FLOAT) +
+            CLI_checkarg(3, CLIARG_LONG) + CLI_checkarg(4, CLIARG_LONG) ==
+            0)
     {
-        arith_set_pixel(
-            data.cmdargtoken[1].val.string,
-            data.cmdargtoken[2].val.numf,
-            data.cmdargtoken[3].val.numl,
-            data.cmdargtoken[4].val.numl);
+        arith_set_pixel(data.cmdargtoken[1].val.string,
+                        data.cmdargtoken[2].val.numf,
+                        data.cmdargtoken[3].val.numl,
+                        data.cmdargtoken[4].val.numl);
 
         return CLICMD_SUCCESS;
     }
@@ -85,22 +46,17 @@ static errno_t arith_set_pixel_cli()
         return 1;
     }
 }
-
 
 static errno_t arith_set_pixel_1Drange_cli()
 {
-    if(0
-            + CLI_checkarg(1, CLIARG_IMG)
-            + CLI_checkarg(2, CLIARG_FLOAT)
-            + CLI_checkarg(3, CLIARG_LONG)
-            + CLI_checkarg(4, CLIARG_LONG)
-            == 0)
+    if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_FLOAT) +
+            CLI_checkarg(3, CLIARG_LONG) + CLI_checkarg(4, CLIARG_LONG) ==
+            0)
     {
-        arith_set_pixel_1Drange(
-            data.cmdargtoken[1].val.string,
-            data.cmdargtoken[2].val.numf,
-            data.cmdargtoken[3].val.numl,
-            data.cmdargtoken[4].val.numl);
+        arith_set_pixel_1Drange(data.cmdargtoken[1].val.string,
+                                data.cmdargtoken[2].val.numf,
+                                data.cmdargtoken[3].val.numl,
+                                data.cmdargtoken[4].val.numl);
 
         return CLICMD_SUCCESS;
     }
@@ -109,20 +65,16 @@ static errno_t arith_set_pixel_1Drange_cli()
         return 1;
     }
 }
-
 
 static errno_t arith_set_row_cli()
 {
-    if(0
-            + CLI_checkarg(1, CLIARG_IMG)
-            + CLI_checkarg(2, CLIARG_FLOAT)
-            + CLI_checkarg(3, CLIARG_LONG)
-            == 0)
+    if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_FLOAT) +
+            CLI_checkarg(3, CLIARG_LONG) ==
+            0)
     {
-        arith_set_row(
-            data.cmdargtoken[1].val.string,
-            data.cmdargtoken[2].val.numf,
-            data.cmdargtoken[3].val.numl);
+        arith_set_row(data.cmdargtoken[1].val.string,
+                      data.cmdargtoken[2].val.numf,
+                      data.cmdargtoken[3].val.numl);
 
         return CLICMD_SUCCESS;
     }
@@ -131,20 +83,16 @@ static errno_t arith_set_row_cli()
         return 1;
     }
 }
-
 
 static errno_t arith_set_col_cli()
 {
-    if(0
-            + CLI_checkarg(1, CLIARG_IMG)
-            + CLI_checkarg(2, CLIARG_FLOAT)
-            + CLI_checkarg(3, CLIARG_LONG)
-            == 0)
+    if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_FLOAT) +
+            CLI_checkarg(3, CLIARG_LONG) ==
+            0)
     {
-        arith_set_col(
-            data.cmdargtoken[1].val.string,
-            data.cmdargtoken[2].val.numf,
-            data.cmdargtoken[3].val.numl);
+        arith_set_col(data.cmdargtoken[1].val.string,
+                      data.cmdargtoken[2].val.numf,
+                      data.cmdargtoken[3].val.numl);
 
         return CLICMD_SUCCESS;
     }
@@ -154,12 +102,9 @@ static errno_t arith_set_col_cli()
     }
 }
 
-
 static errno_t arith_image_zero_cli()
 {
-    if(0
-            + CLI_checkarg(1, CLIARG_IMG)
-            == 0)
+    if(0 + CLI_checkarg(1, CLIARG_IMG) == 0)
     {
         arith_image_zero(data.cmdargtoken[1].val.string);
 
@@ -171,9 +116,6 @@ static errno_t arith_image_zero_cli()
     }
 }
 
-
-
-
 // ==========================================
 // Register CLI command(s)
 // ==========================================
@@ -181,25 +123,23 @@ static errno_t arith_image_zero_cli()
 errno_t set_pixel_addCLIcmd()
 {
 
-    RegisterCLIcommand(
-        "setpix",
-        __FILE__,
-        arith_set_pixel_cli,
-        "set pixel value",
-        "<input image> <value> <x> <y>",
-        "setpix im 1.24 100 100",
-        "int arith_set_pixel(const char *ID_name, double value, long x, long y)");
+    RegisterCLIcommand("setpix",
+                       __FILE__,
+                       arith_set_pixel_cli,
+                       "set pixel value",
+                       "<input image> <value> <x> <y>",
+                       "setpix im 1.24 100 100",
+                       "int arith_set_pixel(const char *ID_name, double value, "
+                       "long x, long y)");
 
-
-    RegisterCLIcommand(
-        "setpix1Drange",
-        __FILE__,
-        arith_set_pixel_1Drange_cli,
-        "set pixel value for 1D area",
-        "<input image> <value> <first pix> <last pix>",
-        "setpix im 1.24 10 200",
-        "int arith_set_pixel_1Drange(const char *ID_name, double value, long x, long y)");
-
+    RegisterCLIcommand("setpix1Drange",
+                       __FILE__,
+                       arith_set_pixel_1Drange_cli,
+                       "set pixel value for 1D area",
+                       "<input image> <value> <first pix> <last pix>",
+                       "setpix im 1.24 10 200",
+                       "int arith_set_pixel_1Drange(const char *ID_name, "
+                       "double value, long x, long y)");
 
     RegisterCLIcommand(
         "setrow",
@@ -210,7 +150,6 @@ errno_t set_pixel_addCLIcmd()
         "setrow im 1.24 100",
         "int arith_set_row(const char *ID_name, double value, long y)");
 
-
     RegisterCLIcommand(
         "setcol",
         __FILE__,
@@ -220,61 +159,24 @@ errno_t set_pixel_addCLIcmd()
         "setcol im 1.24 100",
         "int arith_set_col(const char *ID_name, double value, long x)");
 
-
-    RegisterCLIcommand(
-        "imzero",
-        __FILE__,
-        arith_image_zero_cli,
-        "set pixels to zero",
-        "<input image>",
-        "imzero im",
-        "int arith_image_zero(const char *ID_name)");
-
+    RegisterCLIcommand("imzero",
+                       __FILE__,
+                       arith_image_zero_cli,
+                       "set pixels to zero",
+                       "<input image>",
+                       "imzero im",
+                       "int arith_image_zero(const char *ID_name)");
 
     return RETURN_SUCCESS;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-imageID arith_set_pixel(
-    const char *ID_name,
-    double      value,
-    long        x,
-    long        y
-)
+imageID arith_set_pixel(const char *ID_name, double value, long x, long y)
 {
     imageID  ID;
     uint32_t naxes[2];
     uint8_t  datatype;
 
-    ID = image_ID(ID_name);
+    ID       = image_ID(ID_name);
     datatype = data.image[ID].md[0].datatype;
     naxes[0] = data.image[ID].md[0].size[0];
     naxes[1] = data.image[ID].md[0].size[1];
@@ -337,31 +239,26 @@ imageID arith_set_pixel(
 
 
 
-imageID arith_set_pixel_1Drange(
-    const char *ID_name,
-    double      value,
-    long        x,
-    long        y
-)
+imageID
+arith_set_pixel_1Drange(const char *ID_name, double value, long x, long y)
 {
-    imageID ID;
+    imageID  ID;
     uint32_t naxes[2];
-    uint8_t datatype;
-    long ii, iistart, iiend;
+    uint8_t  datatype;
+    long     ii, iistart, iiend;
 
-
-    ID = image_ID(ID_name);
+    ID       = image_ID(ID_name);
     datatype = data.image[ID].md[0].datatype;
     naxes[0] = data.image[ID].md[0].size[0];
     naxes[1] = data.image[ID].md[0].size[1];
-    iistart = x;
-    iiend = y + 1;
+    iistart  = x;
+    iiend    = y + 1;
 
     if(iistart < 0)
     {
         iistart = 0;
     }
-    if(iistart >= naxes[0]*naxes[1])
+    if(iistart >= naxes[0] * naxes[1])
     {
         iistart = naxes[0] * naxes[1];
     }
@@ -370,7 +267,7 @@ imageID arith_set_pixel_1Drange(
     {
         iiend = 0;
     }
-    if(iiend >= naxes[0]*naxes[1])
+    if(iiend >= naxes[0] * naxes[1])
     {
         iiend = naxes[0] * naxes[1];
     }
@@ -394,6 +291,62 @@ imageID arith_set_pixel_1Drange(
             data.image[ID].array.D[ii] = value;
         }
     }
+    else if(datatype == _DATATYPE_UINT8)
+    {
+        for(ii = iistart; ii < iiend; ii++)
+        {
+            data.image[ID].array.UI8[ii] = (uint8_t) value;
+        }
+    }
+    else if(datatype == _DATATYPE_UINT16)
+    {
+        for(ii = iistart; ii < iiend; ii++)
+        {
+            data.image[ID].array.UI16[ii] = (uint16_t) value;
+        }
+    }
+    else if(datatype == _DATATYPE_UINT32)
+    {
+        for(ii = iistart; ii < iiend; ii++)
+        {
+            data.image[ID].array.UI32[ii] = (uint32_t) value;
+        }
+    }
+    else if(datatype == _DATATYPE_UINT64)
+    {
+        for(ii = iistart; ii < iiend; ii++)
+        {
+            data.image[ID].array.UI64[ii] = (uint64_t) value;
+        }
+    }
+    else if(datatype == _DATATYPE_INT8)
+    {
+        for(ii = iistart; ii < iiend; ii++)
+        {
+            data.image[ID].array.SI8[ii] = (int8_t) value;
+        }
+    }
+    else if(datatype == _DATATYPE_INT16)
+    {
+        for(ii = iistart; ii < iiend; ii++)
+        {
+            data.image[ID].array.SI16[ii] = (int16_t) value;
+        }
+    }
+    else if(datatype == _DATATYPE_INT32)
+    {
+        for(ii = iistart; ii < iiend; ii++)
+        {
+            data.image[ID].array.SI32[ii] = (int32_t) value;
+        }
+    }
+    else if(datatype == _DATATYPE_INT64)
+    {
+        for(ii = iistart; ii < iiend; ii++)
+        {
+            data.image[ID].array.SI64[ii] = (int64_t) value;
+        }
+    }
     else
     {
         PRINT_ERROR("Wrong image type(s)\n");
@@ -409,18 +362,14 @@ imageID arith_set_pixel_1Drange(
 
 
 
-imageID arith_set_row(
-    const char *ID_name,
-    double      value,
-    long        y
-)
+imageID arith_set_row(const char *ID_name, double value, long y)
 {
-    imageID   ID;
-    uint32_t  naxes[2];
-    long      ii;
-    uint8_t   datatype;
+    imageID  ID;
+    uint32_t naxes[2];
+    long     ii;
+    uint8_t  datatype;
 
-    ID = image_ID(ID_name);
+    ID       = image_ID(ID_name);
     datatype = data.image[ID].md[0].datatype;
     naxes[0] = data.image[ID].md[0].size[0];
     naxes[1] = data.image[ID].md[0].size[1];
@@ -453,25 +402,17 @@ imageID arith_set_row(
     return ID;
 }
 
-
-
-
-imageID arith_set_col(
-    const char *ID_name,
-    double      value,
-    long        x
-)
+imageID arith_set_col(const char *ID_name, double value, long x)
 {
     imageID  ID;
     uint32_t naxes[2];
     long     y;
     uint8_t  datatype;
 
-    ID = image_ID(ID_name);
+    ID       = image_ID(ID_name);
     naxes[0] = data.image[ID].md[0].size[0];
     naxes[1] = data.image[ID].md[0].size[1];
     datatype = data.image[ID].md[0].datatype;
-
 
     data.image[ID].md[0].write = 1;
     if(datatype == _DATATYPE_FLOAT)
@@ -498,19 +439,13 @@ imageID arith_set_col(
     data.image[ID].md[0].cnt0++;
     COREMOD_MEMORY_image_set_sempost(ID_name, -1);
 
-
     return ID;
 }
 
-
-
-
-imageID arith_image_zero(
-    const char *ID_name
-)
+imageID arith_image_zero(const char *ID_name)
 {
     imageID ID;
-    long nelem;
+    long    nelem;
 
     ID = image_ID(ID_name);
 
@@ -550,28 +485,37 @@ imageID arith_image_zero(
         }
         else if(data.image[ID].md[0].datatype == _DATATYPE_UINT16)
         {
-            memset(data.image[ID].array.UI16, 0, SIZEOF_DATATYPE_UINT16 * nelem);
+            memset(data.image[ID].array.UI16,
+                   0,
+                   SIZEOF_DATATYPE_UINT16 * nelem);
         }
         else if(data.image[ID].md[0].datatype == _DATATYPE_UINT32)
         {
-            memset(data.image[ID].array.UI32, 0, SIZEOF_DATATYPE_UINT32 * nelem);
+            memset(data.image[ID].array.UI32,
+                   0,
+                   SIZEOF_DATATYPE_UINT32 * nelem);
         }
         else if(data.image[ID].md[0].datatype == _DATATYPE_UINT64)
         {
-            memset(data.image[ID].array.UI64, 0, SIZEOF_DATATYPE_UINT64 * nelem);
+            memset(data.image[ID].array.UI64,
+                   0,
+                   SIZEOF_DATATYPE_UINT64 * nelem);
         }
         else if(data.image[ID].md[0].datatype == _DATATYPE_COMPLEX_FLOAT)
         {
-            memset(data.image[ID].array.CF, 0, SIZEOF_DATATYPE_COMPLEX_FLOAT * nelem);
+            memset(data.image[ID].array.CF,
+                   0,
+                   SIZEOF_DATATYPE_COMPLEX_FLOAT * nelem);
         }
         else if(data.image[ID].md[0].datatype == _DATATYPE_COMPLEX_DOUBLE)
         {
-            memset(data.image[ID].array.CD, 0, SIZEOF_DATATYPE_COMPLEX_DOUBLE * nelem);
+            memset(data.image[ID].array.CD,
+                   0,
+                   SIZEOF_DATATYPE_COMPLEX_DOUBLE * nelem);
         }
         else
         {
-            PRINT_ERROR("cannot detect image type for image %s",
-                         ID_name);
+            PRINT_ERROR("cannot detect image type for image %s", ID_name);
             exit(0);
         }
         data.image[ID].md[0].write = 0;
@@ -579,6 +523,5 @@ imageID arith_image_zero(
         COREMOD_MEMORY_image_set_sempost(ID_name, -1);
     }
 
-    return(ID);
+    return (ID);
 }
-

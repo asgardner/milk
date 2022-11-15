@@ -1,11 +1,9 @@
-set(CMAKE_TOOLCHAIN_FILE ~/vcpkg/scripts/buildsystems/vcpkg.cmake)
-find_package(unofficial-cfitsio REQUIRED SHARED)
-
 # library name
 set(LIBNAME "milkCOREMODmemory")
 set(SRCNAME "COREMOD_memory")
 
-message("SRCNAME = ${SRCNAME} -> LIBNAME = ${LIBNAME}")
+message("")
+message(" SRCNAME = ${SRCNAME} -> LIBNAME = ${LIBNAME}")
 
 set(SOURCEFILES
     ${SRCNAME}.c
@@ -50,6 +48,8 @@ set(SOURCEFILES
     shmim_purge.c
     shmim_setowner.c
     stream_ave.c
+    stream_copy.c
+    stream_merge.c
     stream_delay.c
     stream_diff.c
     stream_halfimdiff.c
@@ -59,6 +59,7 @@ set(SOURCEFILES
     stream_poke.c
     stream_sem.c
     stream_TCP.c
+    stream_UDP.c
     stream_updateloop.c
     variable_ID.c
    )
@@ -107,7 +108,9 @@ set(INCLUDEFILES
     shmim_purge.h
     shmim_setowner.h
     stream_ave.h
+    stream_copy.h
     stream_delay.h
+    stream_merge.h
     stream_diff.h
     stream_halfimdiff.h
     stream_monitorlimits.h
@@ -116,6 +119,7 @@ set(INCLUDEFILES
     stream_poke.h
     stream_sem.h
     stream_TCP.h
+    stream_UDP.h
     stream_updateloop.h
     variable_ID.h
    )
@@ -124,7 +128,9 @@ set(INCLUDEFILES
 set(SCRIPTFILES
   scripts/milk-rmshmim
 	scripts/milk-shmimpurge
+  scripts/milk-shmimcopy-semtrig
 	scripts/milk-shmimpoke
+  scripts/milk-shmimpoke-semtrig
 )
 
 
@@ -140,8 +146,17 @@ project(lib_${LIBNAME}_project)
 #
 add_library(${LIBNAME} SHARED ${SOURCEFILES})
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(CFITSIO cfitsio)
+if(${CFITSIO_FOUND})
+  link_directories(${CFITSIO_LIBRARY_DIRS})
+  target_compile_definitions(${LIBNAME} PUBLIC USE_CFITSIO=1)
+  target_include_directories(${LIBNAME} PUBLIC ${CFITSIO_INCLUDE_DIRS})
+  target_link_directories(${LIBNAME} PUBLIC ${CFITSIO_LIBRARY_DIRS})
+endif()
+
 target_include_directories(${LIBNAME} PUBLIC ${PROJECT_SOURCE_DIR}/..)
-target_link_libraries(${LIBNAME} PUBLIC m cfitsio)
+target_link_libraries(${LIBNAME} PUBLIC m ${CFITSIO_LIBRARIES})
 
 install(TARGETS ${LIBNAME} DESTINATION lib)
 install(FILES ${INCLUDEFILES} DESTINATION include/${SRCNAME})

@@ -2,34 +2,23 @@
  * @file fileutils.c
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
-
 #include "CommandLineInterface/CLIcore.h"
+
 #include "COREMOD_memory/COREMOD_memory.h"
 
-
-
 #define SBUFFERSIZE 1000
-
-
-
-
 
 // ==========================================
 // Forward declaration(s)
 // ==========================================
 
-errno_t write_float_file(
-    const char *fname,
-    float       value
-);
-
+errno_t write_float_file(const char *fname, float value);
 
 // ==========================================
 // Command line interface wrapper function(s)
@@ -37,14 +26,12 @@ errno_t write_float_file(
 
 static errno_t write_flot_file_cli()
 {
-    if(0
-            + CLI_checkarg(1, CLIARG_STR_NOT_IMG)
-            + CLI_checkarg(2, CLIARG_FLOAT)
-            == 0)
+    if(0 + CLI_checkarg(1, CLIARG_STR_NOT_IMG) +
+            CLI_checkarg(2, CLIARG_FLOAT) ==
+            0)
     {
-        write_float_file(
-            data.cmdargtoken[1].val.string,
-            data.cmdargtoken[2].val.numf);
+        write_float_file(data.cmdargtoken[1].val.string,
+                         data.cmdargtoken[2].val.numf);
 
         return CLICMD_SUCCESS;
     }
@@ -54,55 +41,33 @@ static errno_t write_flot_file_cli()
     }
 }
 
-
-
 // ==========================================
 // Register CLI command(s)
 // ==========================================
 
 errno_t fileutils_addCLIcmd()
 {
-    RegisterCLIcommand(
-        "writef2file",
-        __FILE__,
-        write_flot_file_cli,
-        "write float to file",
-        "<filename> <float variable>",
-        "writef2file val.txt a",
-        "int write_float_file(const char *fname, float value)");
+    RegisterCLIcommand("writef2file",
+                       __FILE__,
+                       write_flot_file_cli,
+                       "write float to file",
+                       "<filename> <float variable>",
+                       "writef2file val.txt a",
+                       "int write_float_file(const char *fname, float value)");
 
     return RETURN_SUCCESS;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 int file_exist(char *filename)
 {
-    struct stat   buffer;
+    struct stat buffer;
     return (stat(filename, &buffer) == 0);
 }
 
-
-int create_counter_file(
-    const char *fname,
-    unsigned long NBpts
-)
+int create_counter_file(const char *fname, unsigned long NBpts)
 {
     unsigned long i;
-    FILE *fp;
+    FILE         *fp;
 
     if((fp = fopen(fname, "w")) == NULL)
     {
@@ -117,20 +82,15 @@ int create_counter_file(
 
     fclose(fp);
 
-    return(0);
+    return (0);
 }
 
-
-
-int read_config_parameter_exists(
-    const char *config_file,
-    const char *keyword
-)
+int read_config_parameter_exists(const char *config_file, const char *keyword)
 {
     FILE *fp;
-    char line[1000];
-    char keyw[200];
-    int read;
+    char  line[1000];
+    char  keyw[200];
+    int   read;
 
     read = 0;
     if((fp = fopen(config_file, "r")) == NULL)
@@ -149,29 +109,25 @@ int read_config_parameter_exists(
     }
     if(read == 0)
     {
-        PRINT_WARNING("parameter \"%s\" does not exist in file \"%s\"", keyword,
+        PRINT_WARNING("parameter \"%s\" does not exist in file \"%s\"",
+                      keyword,
                       config_file);
     }
 
     fclose(fp);
 
-    return(read);
+    return (read);
 }
 
-
-
-
-int read_config_parameter(
-    const char *config_file,
-    const char *keyword,
-    char *content
-)
+int read_config_parameter(const char *config_file,
+                          const char *keyword,
+                          char       *content)
 {
     FILE *fp;
-    char line[1000];
-    char keyw[200];
-    char cont[200];
-    int read;
+    char  line[1000];
+    char  keyw[200];
+    char  cont[200];
+    int   read;
 
     read = 0;
     if((fp = fopen(config_file, "r")) == NULL)
@@ -193,31 +149,29 @@ int read_config_parameter(
     }
     if(read == 0)
     {
-        PRINT_ERROR("parameter \"%s\" does not exist in file \"%s\"", keyword,
-                config_file);
+        PRINT_ERROR("parameter \"%s\" does not exist in file \"%s\"",
+                    keyword,
+                    config_file);
         sprintf(content, "-");
         //  exit(0);
     }
 
     fclose(fp);
 
-    return(read);
+    return (read);
 }
-
-
-
 
 float read_config_parameter_float(const char *config_file, const char *keyword)
 {
     float value;
-    char content[SBUFFERSIZE];
+    char  content[SBUFFERSIZE];
 
     read_config_parameter(config_file, keyword, content);
     //printf("content = \"%s\"\n",content);
     value = atof(content);
     //printf("Value = %g\n",value);
 
-    return(value);
+    return (value);
 }
 
 long read_config_parameter_long(const char *config_file, const char *keyword)
@@ -228,30 +182,24 @@ long read_config_parameter_long(const char *config_file, const char *keyword)
     read_config_parameter(config_file, keyword, content);
     value = atol(content);
 
-    return(value);
+    return (value);
 }
-
-
 
 int read_config_parameter_int(const char *config_file, const char *keyword)
 {
-    int value;
+    int  value;
     char content[SBUFFERSIZE];
 
     read_config_parameter(config_file, keyword, content);
     value = atoi(content);
 
-    return(value);
+    return (value);
 }
-
-
-
-
 
 long file_number_lines(const char *file_name)
 {
-    long cnt;
-    int c;
+    long  cnt;
+    int   c;
     FILE *fp;
 
     if((fp = fopen(file_name, "r")) == NULL)
@@ -268,9 +216,8 @@ long file_number_lines(const char *file_name)
         }
     fclose(fp);
 
-    return(cnt);
+    return (cnt);
 }
-
 
 FILE *open_file_w(const char *filename)
 {
@@ -282,9 +229,8 @@ FILE *open_file_w(const char *filename)
         abort();
     }
 
-    return(fp);
+    return (fp);
 }
-
 
 FILE *open_file_r(const char *filename)
 {
@@ -296,18 +242,13 @@ FILE *open_file_r(const char *filename)
         abort();
     }
 
-    return(fp);
+    return (fp);
 }
 
-
-errno_t write_1D_array(
-    double *array,
-    long nbpoints,
-    const char *filename
-)
+errno_t write_1D_array(double *array, long nbpoints, const char *filename)
 {
     FILE *fp;
-    long ii;
+    long  ii;
 
     fp = open_file_w(filename);
     for(ii = 0; ii < nbpoints; ii++)
@@ -319,17 +260,11 @@ errno_t write_1D_array(
     return RETURN_SUCCESS;
 }
 
-
-
-errno_t read_1D_array(
-    double *array,
-    long nbpoints,
-    const char *filename
-)
+errno_t read_1D_array(double *array, long nbpoints, const char *filename)
 {
     FILE *fp;
-    long ii;
-    long tmpl;
+    long  ii;
+    long  tmpl;
 
     fp = open_file_r(filename);
     for(ii = 0; ii < nbpoints; ii++)
@@ -345,13 +280,9 @@ errno_t read_1D_array(
     return RETURN_SUCCESS;
 }
 
-
-
-int read_int_file(
-    const char *fname
-)
+int read_int_file(const char *fname)
 {
-    int value;
+    int   value;
     FILE *fp;
 
     if((fp = fopen(fname, "r")) == NULL)
@@ -368,16 +299,10 @@ int read_int_file(
         fclose(fp);
     }
 
-    return(value);
+    return (value);
 }
 
-
-
-
-errno_t write_int_file(
-    const char *fname,
-    int         value
-)
+errno_t write_int_file(const char *fname, int value)
 {
     FILE *fp;
 
@@ -393,15 +318,10 @@ errno_t write_int_file(
     return RETURN_SUCCESS;
 }
 
-
-
-errno_t write_float_file(
-    const char *fname,
-    float       value
-)
+errno_t write_float_file(const char *fname, float value)
 {
     FILE *fp;
-    int mode = 0; // default, create single file
+    int   mode = 0; // default, create single file
 
     if(variable_ID("WRITE2FILE_APPEND") != -1)
     {

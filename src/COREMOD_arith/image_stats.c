@@ -5,47 +5,38 @@
  *
  */
 
-
 #include "CommandLineInterface/CLIcore.h"
+
 #include "COREMOD_memory/COREMOD_memory.h"
 
 #include "COREMOD_tools/COREMOD_tools.h"
 
 #include "image_total.h"
 
-
-
-double arith_image_mean(
-    const char *ID_name
-)
+double arith_image_mean(const char *ID_name)
 {
-    double value;
+    double  value;
     imageID ID;
 
     ID = image_ID(ID_name);
 
-    value = (double)(arith_image_total(ID_name) / data.image[ID].md[0].nelement);
+    value =
+        (double)(arith_image_total(ID_name) / data.image[ID].md[0].nelement);
 
-    return(value);
+    return (value);
 }
 
-
-
-
-double arith_image_min(
-    const char *ID_name
-)
+double arith_image_min(const char *ID_name)
 {
-    imageID ID;
+    imageID  ID;
     uint64_t nelement;
-    uint8_t datatype;
-    int OK = 0;
+    uint8_t  datatype;
+    int      OK = 0;
 
-    ID = image_ID(ID_name);
+    ID       = image_ID(ID_name);
     datatype = data.image[ID].md[0].datatype;
 
     nelement = data.image[ID].md[0].nelement;
-
 
     if(datatype == _DATATYPE_FLOAT)
     {
@@ -222,16 +213,10 @@ double arith_image_min(
         printf("Error : Invalid data format for arith_image_min\n");
     }
 
-    return(0);
+    return (0);
 }
 
-
-
-
-
-double arith_image_max(
-    const char *ID_name
-)
+double arith_image_max(const char *ID_name)
 {
     imageID ID;
     long    ii;
@@ -239,7 +224,7 @@ double arith_image_max(
     uint8_t datatype;
     int     OK = 0;
 
-    ID = image_ID(ID_name);
+    ID       = image_ID(ID_name);
     datatype = data.image[ID].md[0].datatype;
 
     nelement = data.image[ID].md[0].nelement;
@@ -418,67 +403,57 @@ double arith_image_max(
         printf("Error : Invalid data format for arith_image_max\n");
     }
 
-    return(0);
+    return (0);
 }
 
-
-
-
-
-double arith_image_percentile(
-    const char *ID_name,
-    double      fraction
-)
+double arith_image_percentile(const char *ID_name, double fraction)
 {
-    imageID  ID;
-    long     ii;
-    double   value = 0;
-    long    *arrayL = NULL;
-    float   *arrayF = NULL;
-    double  *arrayD = NULL;
+    imageID         ID;
+    long            ii;
+    double          value  = 0;
+    long           *arrayL = NULL;
+    float          *arrayF = NULL;
+    double         *arrayD = NULL;
     unsigned short *arrayU = NULL;
-    long     nelement;
-    uint8_t  datatype;
-    int      atypeOK = 1;
+    long            nelement;
+    uint8_t         datatype;
+    int             atypeOK = 1;
 
-    ID = image_ID(ID_name);
+    ID       = image_ID(ID_name);
     datatype = data.image[ID].md[0].datatype;
 
     nelement = data.image[ID].md[0].nelement;
 
-
     switch(datatype)
     {
 
-        case _DATATYPE_FLOAT :
+        case _DATATYPE_FLOAT:
             arrayF = (float *) malloc(sizeof(float) * nelement);
             if(arrayF == NULL)
             {
                 PRINT_ERROR("malloc() error");
                 exit(EXIT_FAILURE);
             }
-            memcpy(arrayF, data.image[ID].array.F, sizeof(float)*nelement);
+            memcpy(arrayF, data.image[ID].array.F, sizeof(float) * nelement);
             quick_sort_float(arrayF, nelement);
             value = (double) arrayF[(long)(fraction * nelement)];
             free(arrayF);
             break;
 
-        case _DATATYPE_DOUBLE :
+        case _DATATYPE_DOUBLE:
             arrayD = (double *) malloc(sizeof(double) * nelement);
             if(arrayD == NULL)
             {
                 PRINT_ERROR("malloc() error");
                 exit(EXIT_FAILURE);
             }
-            memcpy(arrayD, data.image[ID].array.D, sizeof(double)*nelement);
+            memcpy(arrayD, data.image[ID].array.D, sizeof(double) * nelement);
             quick_sort_double(arrayD, nelement);
             value = arrayD[(long)(fraction * nelement)];
             free(arrayD);
             break;
 
-
-
-        case _DATATYPE_UINT8 :
+        case _DATATYPE_UINT8:
             arrayU = (unsigned short *) malloc(sizeof(unsigned short) * nelement);
             if(arrayU == NULL)
             {
@@ -494,7 +469,7 @@ double arith_image_percentile(
             free(arrayU);
             break;
 
-        case _DATATYPE_UINT16 :
+        case _DATATYPE_UINT16:
             arrayU = (unsigned short *) malloc(sizeof(unsigned short) * nelement);
             if(arrayU == NULL)
             {
@@ -510,7 +485,7 @@ double arith_image_percentile(
             free(arrayU);
             break;
 
-        case _DATATYPE_UINT32 :
+        case _DATATYPE_UINT32:
             arrayL = (long *) malloc(sizeof(long) * nelement);
             if(arrayU == NULL)
             {
@@ -526,7 +501,7 @@ double arith_image_percentile(
             free(arrayL);
             break;
 
-        case _DATATYPE_UINT64 :
+        case _DATATYPE_UINT64:
             arrayL = (long *) malloc(sizeof(long) * nelement);
             if(arrayU == NULL)
             {
@@ -542,8 +517,7 @@ double arith_image_percentile(
             free(arrayL);
             break;
 
-
-        case _DATATYPE_INT8 :
+        case _DATATYPE_INT8:
             arrayL = (long *) malloc(sizeof(long) * nelement);
             if(arrayL == NULL)
             {
@@ -559,7 +533,7 @@ double arith_image_percentile(
             free(arrayL);
             break;
 
-        case _DATATYPE_INT16 :
+        case _DATATYPE_INT16:
             arrayL = (long *) malloc(sizeof(long) * nelement);
             if(arrayL == NULL)
             {
@@ -575,7 +549,7 @@ double arith_image_percentile(
             free(arrayL);
             break;
 
-        case _DATATYPE_INT32 :
+        case _DATATYPE_INT32:
             arrayL = (long *) malloc(sizeof(long) * nelement);
             if(arrayL == NULL)
             {
@@ -591,7 +565,7 @@ double arith_image_percentile(
             free(arrayL);
             break;
 
-        case _DATATYPE_INT64 :
+        case _DATATYPE_INT64:
             arrayL = (long *) malloc(sizeof(long) * nelement);
             if(arrayL == NULL)
             {
@@ -618,17 +592,14 @@ double arith_image_percentile(
         exit(EXIT_FAILURE);
     }
 
-    return(value);
+    return (value);
 }
 
-
-double arith_image_median(
-    const char *ID_name
-)
+double arith_image_median(const char *ID_name)
 {
     double value = 0.0;
 
     value = arith_image_percentile(ID_name, 0.5);
 
-    return(value);
+    return (value);
 }

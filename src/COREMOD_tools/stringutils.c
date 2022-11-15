@@ -4,11 +4,7 @@
 
 #include <string.h>
 
-int replace_char(
-    char *content,
-    char cin,
-    char cout
-)
+int replace_char(char *content, char cin, char cout)
 {
     unsigned long i;
 
@@ -18,6 +14,5 @@ int replace_char(
             content[i] = cout;
         }
 
-    return(0);
+    return (0);
 }
-

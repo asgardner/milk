@@ -6,7 +6,6 @@
  *
  */
 
-
 /* ================================================================== */
 /* ================================================================== */
 /*            MODULE INFO                                             */
@@ -19,10 +18,7 @@
 #define MODULE_SHORTNAME_DEFAULT ""
 
 // Module short description
-#define MODULE_DESCRIPTION       "Memory management for images and variables"
-
-
-
+#define MODULE_DESCRIPTION "Memory management for images and variables"
 
 /* =============================================================================================== */
 /* =============================================================================================== */
@@ -33,7 +29,6 @@
 #include "CommandLineInterface/CLIcore.h"
 
 #include "CommandLineInterface/timeutils.h"
-
 
 #include "clearall.h"
 #include "create_image.h"
@@ -51,18 +46,17 @@
 #include "image_copy.h"
 #include "image_copy_shm.h"
 #include "image_keyword.h"
-#include "image_keyword_list.h"
 #include "image_keyword_addD.h"
 #include "image_keyword_addL.h"
 #include "image_keyword_addS.h"
+#include "image_keyword_list.h"
 #include "image_make2D.h"
 #include "image_make3D.h"
+#include "image_mk_amph_from_complex.h"
 #include "image_mk_complex_from_amph.h"
 #include "image_mk_complex_from_reim.h"
-#include "image_mk_amph_from_complex.h"
 #include "image_mk_reim_from_complex.h"
 #include "image_set_counters.h"
-
 
 #include "list_image.h"
 #include "list_variable.h"
@@ -78,8 +72,12 @@
 #include "saveall.h"
 #include "shmim_purge.h"
 #include "shmim_setowner.h"
+#include "stream_TCP.h"
+#include "stream_UDP.h"
 #include "stream_ave.h"
+#include "stream_copy.h"
 #include "stream_delay.h"
+#include "stream_merge.h"
 #include "stream_diff.h"
 #include "stream_halfimdiff.h"
 #include "stream_monitorlimits.h"
@@ -87,18 +85,9 @@
 #include "stream_pixmapdecode.h"
 #include "stream_poke.h"
 #include "stream_sem.h"
-#include "stream_TCP.h"
 #include "stream_updateloop.h"
 
-
 #include "variable_ID.h"
-
-
-
-
-
-
-
 
 /* ================================================================== */
 /* ================================================================== */
@@ -111,16 +100,10 @@
 //
 INIT_MODULE_LIB(COREMOD_memory)
 
-
-
-
-
-
 static errno_t init_module_CLI()
 {
 
     data.MEM_MONITOR = 0; // 1 if memory monitor is on
-
 
     clearall_addCLIcmd();
     list_image_addCLIcmd();
@@ -150,14 +133,11 @@ static errno_t init_module_CLI()
     CLIADDCMD_COREMOD_memory__delete_image();
     CLIADDCMD_COREMOD_memory__delete_sharedmem_image();
 
-
     list_variable_addCLIcmd();
 
     // FPS
     fps_list_addCLIcmd();
     fps_create_addCLIcmd();
-
-
 
     // TYPE CONVERSIONS TO AND FROM COMPLEX
     CLIADDCMD_COREMOD__mk_complex_from_reim();
@@ -176,17 +156,21 @@ static errno_t init_module_CLI()
     shmim_setowner_addCLIcmd();
 
     stream_updateloop_addCLIcmd();
-    stream_delay_addCLIcmd();
+    CLIADDCMD_COREMOD_memory__streamdelay();
     saveall_addCLIcmd();
     stream__TCP_addCLIcmd();
+    stream__UDP_addCLIcmd();
     stream_pixmapdecode_addCLIcmd();
 
+    CLIADDCMD_COREMOD_memory__stream_copy();
+    CLIADDCMD_COREMOD_memory__stream_merge();
     CLIADDCMD_COREMOD_memory__stream_poke();
 
     stream_diff_addCLIcmd();
     stream_paste_addCLIcmd();
     stream_halfimdiff_addCLIcmd();
-    stream_ave_addCLIcmd();
+
+    CLIADDCMD_streamaverage();
     stream_monitorlimits_addCLIcmd();
 
     // DATA LOGGING
@@ -195,9 +179,7 @@ static errno_t init_module_CLI()
     CLIADDCMD_COREMOD_memory__shmimlog();
     CLIADDCMD_COREMOD_memory__shmimlogcmd();
 
-
     // add atexit functions here
 
     return RETURN_SUCCESS;
 }
-

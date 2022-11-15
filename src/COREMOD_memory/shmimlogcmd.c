@@ -5,61 +5,49 @@
 #include "CommandLineInterface/CLIcore.h"
 #include "shmimlog_types.h"
 
-
-
 // Local variables pointers
 static char *logstreamname;
 static char *logcmd;
 
-
-
 // List of arguments to function
-static CLICMDARGDEF farg[] =
-{
-    {
-        CLIARG_STR, ".in_sname", "input stream name", "im1",
+static CLICMDARGDEF farg[] = {{
+        CLIARG_STR,
+        ".in_sname",
+        "input stream name",
+        "im1",
         CLIARG_VISIBLE_DEFAULT,
-        (void **) &logstreamname
+        (void **) &logstreamname,
+        NULL
     },
     {
-        CLIARG_STR, ".logcmd", "log command", "logon",
+        CLIARG_STR,
+        ".logcmd",
+        "log command",
+        "logon",
         CLIARG_VISIBLE_DEFAULT,
-        (void **) &logcmd
+        (void **) &logcmd,
+        NULL
     }
 };
 
-
 // flag CLICMDFLAG_FPS enabled FPS capability
-static CLICMDDATA CLIcmddata =
-{
-    "shmimlogcmd",
-    "log shared memory stream command\n"
-    "logon, logoff",
-    CLICMD_FIELDS_NOFPS
-};
-
-
-
-
-
-
-
+static CLICMDDATA CLIcmddata = {"shmimlogcmd",
+                                "log shared memory stream command\n"
+                                "logon, logoff",
+                                CLICMD_FIELDS_NOFPS
+                               };
 
 // set the on field in logshim
 // IDname is name of image logged
-static errno_t logshim_cmd(
-    const char *logshimname,
-    const char *cmd
-)
+static errno_t logshim_cmd(const char *logshimname, const char *cmd)
 {
-    LOGSHIM_CONF  *map;
-    char           SM_fname[STRINGMAXLEN_FILENAME];
-    int            SM_fd;
-    struct stat    file_stat;
+    LOGSHIM_CONF *map;
+    char          SM_fname[STRINGMAXLEN_FILENAME];
+    int           SM_fd;
+    struct stat   file_stat;
 
     // read shared mem
     WRITE_FILENAME(SM_fname, "%s/%s.logshimconf.shm", data.shmdir, logshimname);
-
 
     printf("Importing mmap file \"%s\"\n", SM_fname);
 
@@ -74,8 +62,12 @@ static errno_t logshim_cmd(
         fstat(SM_fd, &file_stat);
         printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
 
-        map = (LOGSHIM_CONF *) mmap(0, file_stat.st_size, PROT_READ | PROT_WRITE,
-                                    MAP_SHARED, SM_fd, 0);
+        map = (LOGSHIM_CONF *) mmap(0,
+                                    file_stat.st_size,
+                                    PROT_READ | PROT_WRITE,
+                                    MAP_SHARED,
+                                    SM_fd,
+                                    0);
         if(map == MAP_FAILED)
         {
             close(SM_fd);
@@ -107,8 +99,6 @@ static errno_t logshim_cmd(
             printf("logexit  = %d\n", map[0].logexit);
         }
 
-
-
         if(munmap(map, sizeof(LOGSHIM_CONF)) == -1)
         {
             printf("unmapping %s\n", SM_fname);
@@ -119,8 +109,6 @@ static errno_t logshim_cmd(
     return RETURN_SUCCESS;
 }
 
-
-
 // adding INSERT_STD_PROCINFO statements enable processinfo support
 static errno_t compute_function()
 {
@@ -130,19 +118,13 @@ static errno_t compute_function()
     return RETURN_SUCCESS;
 }
 
-
-
 INSERT_STD_CLIfunction
 
 // Register function in CLI
-errno_t CLIADDCMD_COREMOD_memory__shmimlogcmd()
+errno_t
+CLIADDCMD_COREMOD_memory__shmimlogcmd()
 {
     INSERT_STD_CLIREGISTERFUNC
 
     return RETURN_SUCCESS;
 }
-
-
-
-
-

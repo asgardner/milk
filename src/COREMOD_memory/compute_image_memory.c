@@ -2,11 +2,7 @@
  * @file    compute_image_memory.c
  */
 
-
-
 #include "CommandLineInterface/CLIcore.h"
-
-
 
 uint64_t compute_image_memory()
 {

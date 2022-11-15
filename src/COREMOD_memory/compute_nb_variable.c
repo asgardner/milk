@@ -2,10 +2,7 @@
  * @file    compute_nb_variable.c
  */
 
-
 #include "CommandLineInterface/CLIcore.h"
-
-
 
 long compute_nb_variable()
 {

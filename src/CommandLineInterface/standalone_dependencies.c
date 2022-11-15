@@ -12,13 +12,13 @@
  */
 
 #include "standalone_dependencies.h"
+#include "streamCTRL.h"
 #include <ncurses.h>
 #include <string.h>
 #include <time.h>
-#include "streamCTRL.h"
 
 static int wrow, wcol;
-int C_ERRNO = 0;
+int        C_ERRNO = 0;
 
 /* ===============================================================================================
  */
@@ -30,12 +30,12 @@ struct timespec timespec_diff(struct timespec start, struct timespec end)
     struct timespec temp;
     if((end.tv_nsec - start.tv_nsec) < 0)
     {
-        temp.tv_sec = end.tv_sec - start.tv_sec - 1;
+        temp.tv_sec  = end.tv_sec - start.tv_sec - 1;
         temp.tv_nsec = 1000000000 + end.tv_nsec - start.tv_nsec;
     }
     else
     {
-        temp.tv_sec = end.tv_sec - start.tv_sec;
+        temp.tv_sec  = end.tv_sec - start.tv_sec;
         temp.tv_nsec = end.tv_nsec - start.tv_nsec;
     }
     return temp;
@@ -66,8 +66,8 @@ int print_header(const char *str, char c)
 void qs2l(double *array, long *array1, long left, long right)
 {
     register long i, j;
-    double x, y;
-    long l1;
+    double        x, y;
+    long          l1;
 
     i = left;
     j = right;
@@ -86,11 +86,11 @@ void qs2l(double *array, long *array1, long left, long right)
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
 
-            l1 = array1[i];
+            l1        = array1[i];
             array1[i] = array1[j];
             array1[j] = l1;
 
@@ -118,8 +118,8 @@ void quick_sort2l(double *array, long *array1, long count)
 void qs2l_double(double *array, long *array1, long left, long right)
 {
     register long i, j;
-    double x, y;
-    long l1;
+    double        x, y;
+    long          l1;
 
     i = left;
     j = right;
@@ -138,11 +138,11 @@ void qs2l_double(double *array, long *array1, long left, long right)
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
 
-            l1 = array1[i];
+            l1        = array1[i];
             array1[i] = array1[j];
             array1[j] = l1;
 
@@ -170,7 +170,7 @@ void quick_sort2l_double(double *array, long *array1, long count)
 void qs_long(long *array, long left, long right)
 {
     register long i, j;
-    long x, y;
+    long          x, y;
 
     i = left;
     j = right;
@@ -189,7 +189,7 @@ void qs_long(long *array, long left, long right)
 
         if(i <= j)
         {
-            y = array[i];
+            y        = array[i];
             array[i] = array[j];
             array[j] = y;
             i++;
@@ -239,8 +239,16 @@ void quick_sort_long(long *array, long count)
  */
 int printERROR(const char *file, const char *func, int line, char *errmessage)
 {
-    fprintf(stderr, "%c[%d;%dm ERROR [ %s:%d: %s ]  %c[%d;m\n", (char) 27, 1, 31,
-            file, line, func, (char) 27, 0);
+    fprintf(stderr,
+            "%c[%d;%dm ERROR [ %s:%d: %s ]  %c[%d;m\n",
+            (char) 27,
+            1,
+            31,
+            file,
+            line,
+            func,
+            (char) 27,
+            0);
     if(C_ERRNO != 0)
     {
         char buff[256];
@@ -258,18 +266,24 @@ int printERROR(const char *file, const char *func, int line, char *errmessage)
         fprintf(stderr, "No C error (errno = 0)\n");
     }
 
-    fprintf(stderr, "%c[%d;%dm %s  %c[%d;m\n", (char) 27, 1, 31, errmessage,
-            (char) 27, 0);
+    fprintf(stderr,
+            "%c[%d;%dm %s  %c[%d;m\n",
+            (char) 27,
+            1,
+            31,
+            errmessage,
+            (char) 27,
+            0);
 
     C_ERRNO = 0;
 
-    return(0);
+    return (0);
 }
 
 int file_exists(const char *restrict file_name)
 {
     FILE *fp;
-    int exists = 1;
+    int   exists = 1;
 
     if((fp = fopen(file_name, "r")) == NULL)
     {
@@ -281,13 +295,13 @@ int file_exists(const char *restrict file_name)
         fclose(fp);
     }
 
-    return(exists);
+    return (exists);
 }
 
 int is_fits_file(const char *restrict file_name)
 {
     FILE *fp;
-    int exists = 1;
+    int   exists = 1;
 
     if((fp = fopen(file_name, "r")) == NULL)
     {
@@ -299,7 +313,7 @@ int is_fits_file(const char *restrict file_name)
         fclose(fp);
     }
 
-    return(exists);
+    return (exists);
 }
 
 /* ===============================================================================================

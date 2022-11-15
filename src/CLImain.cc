@@ -12,10 +12,9 @@
 #include <iostream>
 
 extern "C" {
-#include <CommandLineInterface/CLIcore.h>
-
-#include "CLIcore_UI.h"
-#include "milk_config.h"
+  #include <CommandLineInterface/CLIcore.h>
+  #include <CommandLineInterface/CLIcore/CLIcore_UI.h>
+  #include "milk_config.h"
 }
 
 #define STYLE_BOLD "\033[1m"

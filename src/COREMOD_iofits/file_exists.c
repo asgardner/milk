@@ -4,13 +4,10 @@
 
 #include <stdio.h>
 
-
-int file_exists(
-    const char *restrict file_name
-)
+int file_exists(const char *restrict file_name)
 {
     FILE *fp;
-    int exists = 1;
+    int   exists = 1;
 
     if((fp = fopen(file_name, "r")) == NULL)
     {
@@ -22,5 +19,5 @@ int file_exists(
         fclose(fp);
     }
 
-    return(exists);
+    return (exists);
 }

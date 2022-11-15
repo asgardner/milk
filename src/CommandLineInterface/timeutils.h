@@ -2,6 +2,8 @@
  * @file timeutils.h
  */
 
+errno_t milk_clock_gettime(struct timespec *tnow_p);
+
 errno_t mkUTtimestring_nanosec(char *timestring, struct timespec tnow);
 errno_t mkUTtimestring_nanosec_now(char *timestring);
 
@@ -14,17 +16,8 @@ errno_t mkUTtimestring_millisec_now(char *timestring);
 errno_t mkUTtimestring_sec(char *timestring, struct timespec tnow);
 errno_t mkUTtimestring_sec_now(char *timestring);
 
+struct timespec timespec_diff(struct timespec start, struct timespec end);
 
-struct timespec timespec_diff(
-    struct timespec start,
-    struct timespec end
-);
+double timespec_diff_double(struct timespec start, struct timespec end);
 
-double timespec_diff_double(
-    struct timespec start,
-    struct timespec end
-);
-
-char *timedouble_to_UTC_timeofdaystring(
-    double timedouble
-);
+char *timedouble_to_UTC_timeofdaystring(double timedouble);

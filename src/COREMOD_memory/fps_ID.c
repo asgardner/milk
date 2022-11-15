@@ -3,21 +3,16 @@
  * @brief   find fps ID(s) from name
  */
 
-
 #include "CommandLineInterface/CLIcore.h"
 
-
-
 /* ID number corresponding to a name */
-long fps_ID(
-    const char *name
-)
+long fps_ID(const char *name)
 {
-    long    i;
-    int     loopOK;
-    long    tmpID = 0;
+    long i;
+    int  loopOK;
+    long tmpID = 0;
 
-    i = 0;
+    i      = 0;
     loopOK = 1;
     while(loopOK == 1)
     {
@@ -26,11 +21,11 @@ long fps_ID(
         {
             // fps in use
 
-            if((strncmp(name, data.fpsarray[i].md->name, strlen(name)) == 0)
-                    && (data.fpsarray[i].md->name[strlen(name)] == '\0'))
+            if((strncmp(name, data.fpsarray[i].md->name, strlen(name)) == 0) &&
+                    (data.fpsarray[i].md->name[strlen(name)] == '\0'))
             {
                 loopOK = 0;
-                tmpID = i;
+                tmpID  = i;
             }
         }
 
@@ -39,15 +34,12 @@ long fps_ID(
         if(i == data.NB_MAX_FPS)
         {
             loopOK = 0;
-            tmpID = -1;
+            tmpID  = -1;
         }
     }
 
     return tmpID;
 }
-
-
-
 
 /* next available ID number */
 long next_avail_fps_ID()
@@ -55,7 +47,7 @@ long next_avail_fps_ID()
     long i;
     long ID = -1;
 
-# ifdef _OPENMP
+#ifdef _OPENMP
     #pragma omp critical
     {
 #endif
@@ -68,9 +60,9 @@ long next_avail_fps_ID()
                 break;
             }
         }
-# ifdef _OPENMP
+#ifdef _OPENMP
     }
-# endif
+#endif
 
     if(ID == -1)
     {

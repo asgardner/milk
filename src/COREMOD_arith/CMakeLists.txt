@@ -1,11 +1,9 @@
-set(CMAKE_TOOLCHAIN_FILE ~/vcpkg/scripts/buildsystems/vcpkg.cmake)
-find_package(unofficial-cfitsio REQUIRED SHARED)
-
 # library name
 set(LIBNAME "milkCOREMODarith")
 set(SRCNAME "COREMOD_arith")
 
-message("SRCNAME = ${SRCNAME} -> LIBNAME = ${LIBNAME}")
+message("")
+message(" SRCNAME = ${SRCNAME} -> LIBNAME = ${LIBNAME}")
 
 set(SOURCEFILES
 	${SRCNAME}.c
@@ -55,8 +53,17 @@ project(lib_${LIBNAME}_project)
 #
 add_library(${LIBNAME} SHARED ${SOURCEFILES})
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(CFITSIO cfitsio)
+if(${CFITSIO_FOUND})
+  link_directories(${CFITSIO_LIBRARY_DIRS})
+  target_compile_definitions(${LIBNAME} PUBLIC USE_CFITSIO=1)
+  target_include_directories(${LIBNAME} PUBLIC ${CFITSIO_INCLUDE_DIRS})
+  target_link_directories(${LIBNAME} PUBLIC ${CFITSIO_LIBRARY_DIRS})
+endif()
+
 target_include_directories(${LIBNAME} PUBLIC ${PROJECT_SOURCE_DIR}/..)
-target_link_libraries(${LIBNAME} PUBLIC m cfitsio)
+target_link_libraries(${LIBNAME} PUBLIC m ${CFITSIO_LIBRARIES})
 
 install(TARGETS ${LIBNAME} DESTINATION lib)
 install(FILES ${INCLUDEFILES} DESTINATION include/${SRCNAME})

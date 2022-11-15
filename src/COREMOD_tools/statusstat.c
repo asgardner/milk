@@ -2,10 +2,8 @@
  * @file statusstat.c
  */
 
-
-#include <time.h>
 #include <sched.h>
-
+#include <time.h>
 
 #include "CommandLineInterface/CLIcore.h"
 
@@ -13,34 +11,22 @@
 
 #include "COREMOD_memory/COREMOD_memory.h"
 
-
-
 // ==========================================
 // Forward declaration(s)
 // ==========================================
 
-imageID COREMOD_TOOLS_statusStat(
-    const char *IDstat_name,
-    long        indexmax
-);
-
-
+imageID COREMOD_TOOLS_statusStat(const char *IDstat_name, long indexmax);
 
 // ==========================================
 // Command line interface wrapper function(s)
 // ==========================================
 
-
 errno_t COREMOD_TOOLS_statusStat_cli()
 {
-    if(0
-            + CLI_checkarg(1, CLIARG_IMG)
-            + CLI_checkarg(2, CLIARG_LONG)
-            == 0)
+    if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_LONG) == 0)
     {
-        COREMOD_TOOLS_statusStat(
-            data.cmdargtoken[1].val.string,
-            data.cmdargtoken[2].val.numl);
+        COREMOD_TOOLS_statusStat(data.cmdargtoken[1].val.string,
+                                 data.cmdargtoken[2].val.numl);
 
         return CLICMD_SUCCESS;
     }
@@ -50,8 +36,6 @@ errno_t COREMOD_TOOLS_statusStat_cli()
     }
 }
 
-
-
 // ==========================================
 // Register CLI command(s)
 // ==========================================
@@ -59,59 +43,48 @@ errno_t COREMOD_TOOLS_statusStat_cli()
 errno_t statusstat_addCLIcmd()
 {
 
-    RegisterCLIcommand(
-        "ctsmstats",
-        __FILE__,
-        COREMOD_TOOLS_statusStat_cli,
-        "monitors shared variable status",
-        "<imname> <NBstep>",
-        "ctsmstats imst 100000",
-        "long COREMOD_TOOLS_statusStat(const char *IDstat_name, long indexmax)");
+    RegisterCLIcommand("ctsmstats",
+                       __FILE__,
+                       COREMOD_TOOLS_statusStat_cli,
+                       "monitors shared variable status",
+                       "<imname> <NBstep>",
+                       "ctsmstats imst 100000",
+                       "long COREMOD_TOOLS_statusStat(const char *IDstat_name, "
+                       "long indexmax)");
 
     return RETURN_SUCCESS;
 }
 
-
-
-
-
-
-
-
 //
 // watch shared memory status image and perform timing statistics
 //
-imageID COREMOD_TOOLS_statusStat(
-    const char *IDstat_name,
-    long        indexmax
-)
+imageID COREMOD_TOOLS_statusStat(const char *IDstat_name, long indexmax)
 {
-    imageID  IDout;
-    int      RT_priority = 91; //any number from 0-99
-    struct   sched_param schedpar;
-    float    usec0 = 50.0;
-    float    usec1 = 150.0;
-    long long k;
-    long long NBkiter = 2000000000;
-    imageID  IDstat;
+    imageID            IDout;
+    int                RT_priority = 91; //any number from 0-99
+    struct sched_param schedpar;
+    float              usec0 = 50.0;
+    float              usec1 = 150.0;
+    long long          k;
+    long long          NBkiter = 2000000000;
+    imageID            IDstat;
 
     unsigned short st;
 
     struct timespec t1;
     struct timespec t2;
     struct timespec tdiff;
-    double tdisplay = 1.0; // interval
-    double tdiffv1 = 0.0;
-    uint32_t *sizearray;
+    double          tdisplay = 1.0; // interval
+    double          tdiffv1  = 0.0;
+    uint32_t       *sizearray;
 
     long cnttot;
-
-
 
     IDstat = image_ID(IDstat_name);
 
     sizearray = (uint32_t *) malloc(sizeof(uint32_t) * 2);
-    if(sizearray == NULL) {
+    if(sizearray == NULL)
+    {
         PRINT_ERROR("malloc returns NULL pointer");
         abort();
     }
@@ -127,10 +100,7 @@ imageID COREMOD_TOOLS_statusStat(
     }
 
     schedpar.sched_priority = RT_priority;
-#ifndef __MACH__
     sched_setscheduler(0, SCHED_FIFO, &schedpar);
-#endif
-
 
     printf("Measuring status distribution \n");
     fflush(stdout);
@@ -147,9 +117,8 @@ imageID COREMOD_TOOLS_statusStat(
             data.image[IDout].array.SI64[st]++;
         }
 
-
         clock_gettime(CLOCK_REALTIME, &t2);
-        tdiff = timespec_diff(t1, t2);
+        tdiff  = timespec_diff(t1, t2);
         tdiffv = 1.0 * tdiff.tv_sec + 1.0e-9 * tdiff.tv_nsec;
 
         if(tdiffv > tdiffv1)
@@ -166,12 +135,13 @@ imageID COREMOD_TOOLS_statusStat(
 
             for(st = 0; st < indexmax; st++)
             {
-                printf("STATUS  %5d    %20ld   %6.3f  \n", st, data.image[IDout].array.SI64[st],
+                printf("STATUS  %5d    %20ld   %6.3f  \n",
+                       st,
+                       data.image[IDout].array.SI64[st],
                        100.0 * data.image[IDout].array.SI64[st] / cnttot);
             }
         }
     }
-
 
     printf("\n");
     for(st = 0; st < indexmax; st++)
@@ -181,7 +151,5 @@ imageID COREMOD_TOOLS_statusStat(
 
     printf("\n");
 
-
-    return(IDout);
+    return (IDout);
 }
-

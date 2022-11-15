@@ -1,26 +1,23 @@
 /** @file linregress.c
  */
 
-
 #include "CommandLineInterface/CLIcore.h"
 
-errno_t lin_regress(
-    double *a,
-    double *b,
-    double *Xi2,
-    double *x,
-    double *y,
-    double *sig,
-    unsigned int nb_points
-)
+errno_t lin_regress(double      *a,
+                    double      *b,
+                    double      *Xi2,
+                    double      *x,
+                    double      *y,
+                    double      *sig,
+                    unsigned int nb_points)
 {
-    double S, Sx, Sy, Sxx, Sxy, Syy;
+    double       S, Sx, Sy, Sxx, Sxy, Syy;
     unsigned int i;
-    double delta;
+    double       delta;
 
-    S = 0;
-    Sx = 0;
-    Sy = 0;
+    S   = 0;
+    Sx  = 0;
+    Sy  = 0;
     Sxx = 0;
     Syy = 0;
     Sxy = 0;
@@ -36,12 +33,10 @@ errno_t lin_regress(
     }
 
     delta = S * Sxx - Sx * Sx;
-    *a = (Sxx * Sy - Sx * Sxy) / delta;
-    *b = (S * Sxy - Sx * Sy) / delta;
-    *Xi2 = Syy - 2 * (*a) * Sy - 2 * (*a) * (*b) * Sx + (*a) * (*a) * S + 2 *
-           (*a) * (*b) * Sx - (*b) * (*b) * Sxx;
+    *a    = (Sxx * Sy - Sx * Sxy) / delta;
+    *b    = (S * Sxy - Sx * Sy) / delta;
+    *Xi2  = Syy - 2 * (*a) * Sy - 2 * (*a) * (*b) * Sx + (*a) * (*a) * S +
+            2 * (*a) * (*b) * Sx - (*b) * (*b) * Sxx;
 
     return RETURN_SUCCESS;
 }
-
-
