@@ -64,3 +64,6 @@
 [submodule "plugins/milk-extra-src/statistic"]
 	path = plugins/milk-extra-src/statistic
 	url = https://github.com/milk-org/statistic
+[submodule "plugins/mmtao-main/mmtao-main"]
+	path = plugins/mmtao-main/mmtao-main
+	url = git@gitlab.com:mmtao/mmtao-main.git
