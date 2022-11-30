@@ -30,7 +30,7 @@
 	url = git@github.com:asgardner/fft
 [submodule "plugins/milk-extra-src/ZernikePolyn"]
 	path = plugins/milk-extra-src/ZernikePolyn
-	url = git@github.com:asgardner/ZernikePolyn
+	url = https://github.com/milk-org/ZernikePolyn
 [submodule "plugins/milk-extra-src/image_basic"]
 	path = plugins/milk-extra-src/image_basic
 	url = git@github.com:asgardner/image_basic
@@ -51,7 +51,7 @@
 	url = git@github.com:asgardner/info
 [submodule "plugins/milk-extra-src/kdtree"]
 	path = plugins/milk-extra-src/kdtree
-	url = git@github.com:asgardner/kdtree
+	url = https://github.com/milk-org/kdtree
 [submodule "plugins/milk-extra-src/linARfilterPred"]
 	path = plugins/milk-extra-src/linARfilterPred
 	url = git@github.com:asgardner/linARfilterPred
@@ -60,10 +60,10 @@
 	url = git@github.com:asgardner/linopt_imtools
 [submodule "plugins/milk-extra-src/psf"]
 	path = plugins/milk-extra-src/psf
-	url = git@github.com:asgardner/psf
+	url = https://github.com/milk-org/psf
 [submodule "plugins/milk-extra-src/statistic"]
 	path = plugins/milk-extra-src/statistic
-	url = git@github.com:asgardner/statistic
+	url = https://github.com/milk-org/statistic
 [submodule "plugins/mmtao-main/mmtao-main"]
 	path = plugins/mmtao-main/mmtao-main
 	url = git@gitlab.com:mmtao/mmtao-main.git
