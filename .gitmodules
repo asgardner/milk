@@ -42,7 +42,7 @@
 	url = git@github.com:asgardner/image_format
 [submodule "plugins/milk-extra-src/image_gen"]
 	path = plugins/milk-extra-src/image_gen
-	url = git@github.com:asgardner/image_gen
+	url = https://github.com/milk-org/image_gen
 [submodule "plugins/milk-extra-src/img_reduce"]
 	path = plugins/milk-extra-src/img_reduce
 	url = git@github.com:asgardner/img_reduce
