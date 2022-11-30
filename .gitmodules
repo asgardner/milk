@@ -21,49 +21,49 @@
 	url = git@github.com:asgardner/rtimv.git
 [submodule "plugins/cacao-src"]
 	path = plugins/cacao-src
-	url = https://github.com/cacao-org/cacao
+	url = git@github.com:asgardner/cacao
 [submodule "plugins/milk-extra-src/clustering"]
 	path = plugins/milk-extra-src/clustering
-	url = https://github.com/milk-org/clustering
+	url = git@github.com:asgardner/clustering
 [submodule "plugins/milk-extra-src/fft"]
 	path = plugins/milk-extra-src/fft
-	url = https://github.com/milk-org/fft
+	url = git@github.com:asgardner/fft
 [submodule "plugins/milk-extra-src/ZernikePolyn"]
 	path = plugins/milk-extra-src/ZernikePolyn
-	url = https://github.com/milk-org/ZernikePolyn
+	url = git@github.com:asgardner/ZernikePolyn
 [submodule "plugins/milk-extra-src/image_basic"]
 	path = plugins/milk-extra-src/image_basic
-	url = https://github.com/milk-org/image_basic
+	url = git@github.com:asgardner/image_basic
 [submodule "plugins/milk-extra-src/image_filter"]
 	path = plugins/milk-extra-src/image_filter
-	url = https://github.com/milk-org/image_filter
+	url = git@github.com:asgardner/image_filter
 [submodule "plugins/milk-extra-src/image_format"]
 	path = plugins/milk-extra-src/image_format
-	url = https://github.com/milk-org/image_format
+	url = git@github.com:asgardner/image_format
 [submodule "plugins/milk-extra-src/image_gen"]
 	path = plugins/milk-extra-src/image_gen
-	url = https://github.com/milk-org/image_gen
+	url = git@github.com:asgardner/image_gen
 [submodule "plugins/milk-extra-src/img_reduce"]
 	path = plugins/milk-extra-src/img_reduce
-	url = https://github.com/milk-org/img_reduce
+	url = git@github.com:asgardner/img_reduce
 [submodule "plugins/milk-extra-src/info"]
 	path = plugins/milk-extra-src/info
-	url = https://github.com/milk-org/info
+	url = git@github.com:asgardner/info
 [submodule "plugins/milk-extra-src/kdtree"]
 	path = plugins/milk-extra-src/kdtree
-	url = https://github.com/milk-org/kdtree
+	url = git@github.com:asgardner/kdtree
 [submodule "plugins/milk-extra-src/linARfilterPred"]
 	path = plugins/milk-extra-src/linARfilterPred
-	url = https://github.com/milk-org/linARfilterPred
+	url = git@github.com:asgardner/linARfilterPred
 [submodule "plugins/milk-extra-src/linopt_imtools"]
 	path = plugins/milk-extra-src/linopt_imtools
-	url = https://github.com/milk-org/linopt_imtools
+	url = git@github.com:asgardner/linopt_imtools
 [submodule "plugins/milk-extra-src/psf"]
 	path = plugins/milk-extra-src/psf
-	url = https://github.com/milk-org/psf
+	url = git@github.com:asgardner/psf
 [submodule "plugins/milk-extra-src/statistic"]
 	path = plugins/milk-extra-src/statistic
-	url = https://github.com/milk-org/statistic
+	url = git@github.com:asgardner/statistic
 [submodule "plugins/mmtao-main/mmtao-main"]
 	path = plugins/mmtao-main/mmtao-main
 	url = git@gitlab.com:mmtao/mmtao-main.git
