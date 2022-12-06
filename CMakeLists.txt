@@ -231,3 +231,6 @@ install(CODE "execute_process(
 install(CODE "execute_process(
   COMMAND ln -svf /usr/local/chai/bin/ccid-viewer /usr/local/bin/ccid-viewer
   ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
+
+install(CODE "execute_process(COMMAND cp -v ../plugins/mmtao-main/mmtao-main/aorc-config/lib/systemd/system/indi.service /etc/systemd/system/)")
+install(CODE "execute_process(COMMAND cp -v ../plugins/mmtao-main/mmtao-main/bin/runindionaorc /usr/local/chai/bin)")

@@ -83,5 +83,6 @@
         "qapplication": "cpp",
         "qgridlayout": "cpp",
         "qvboxlayout": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }
