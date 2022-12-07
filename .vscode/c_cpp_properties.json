@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/asg/vcpkg/installed/x64-linux/include/**"
+                "/home/asg/vcpkg/installed/x64-linux/include/**",
+                "/usr/local/include/CArc"
             ],
             "defines": [],
             "compilerPath": "/opt/rh/gcc-toolset-11/root/usr/bin/gcc",

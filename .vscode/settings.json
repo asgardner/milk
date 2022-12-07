@@ -82,7 +82,8 @@
         "qwidget": "cpp",
         "qapplication": "cpp",
         "qgridlayout": "cpp",
-        "qvboxlayout": "cpp"
+        "qvboxlayout": "cpp",
+        "charconv": "cpp"
     },
     "cmake.configureOnOpen": false
 }
