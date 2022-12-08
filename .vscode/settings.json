@@ -83,7 +83,8 @@
         "qapplication": "cpp",
         "qgridlayout": "cpp",
         "qvboxlayout": "cpp",
-        "charconv": "cpp"
+        "charconv": "cpp",
+        "shared_mutex": "cpp"
     },
     "cmake.configureOnOpen": false
 }
