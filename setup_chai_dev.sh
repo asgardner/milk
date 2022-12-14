@@ -36,7 +36,7 @@ cd src/ImageStreamIO && git checkout dev && cd -
 
 # Checkout branches for plugins.
 RET_DIR=`pwd`
-cd plugins/cacao-addons/milk-zmq/           ; git checkout master ; cd $RET_DIR
+cd plugins/cacao-addons/milk-zmq/           ; git checkout main   ; cd $RET_DIR
 cd plugins/cacao-addons/mxlib/              ; git checkout main   ; cd $RET_DIR
 cd plugins/cacao-addons/rtimv/              ; git checkout main   ; cd $RET_DIR
 cd plugins/cacao-addons/xrif/               ; git checkout main   ; cd $RET_DIR
