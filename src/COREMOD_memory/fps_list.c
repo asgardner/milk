@@ -95,6 +95,7 @@ errno_t fps_list()
             int  slen1 = slen - strlen(".fps.shm");
             
             #pragma GCC diagnostic ignored "-Wstringop-truncation"
+            #pragma GCC diagnostic ignored "-Wstringop-overflow"
             strncpy(fpsname, de->d_name, slen1);
             fpsname[slen1] = '\0';
             printf("%*ld  %*s\n",

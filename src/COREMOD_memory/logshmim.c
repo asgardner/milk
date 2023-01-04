@@ -633,7 +633,7 @@ COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname,
     char               iname[STRINGMAXLEN_IMGNAME];
 
     time_t          t;
-    struct tm      *uttimeStart;
+    struct tm      *uttimeStart = NULL;
     struct timespec ts;
     struct timespec timenow;
     struct timespec timenowStart;
