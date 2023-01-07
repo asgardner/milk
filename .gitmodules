@@ -67,3 +67,6 @@
 [submodule "plugins/mmtao-main/mmtao-main"]
 	path = plugins/mmtao-main/mmtao-main
 	url = git@gitlab.com:mmtao/mmtao-main.git
+[submodule "plugins/indiproxy2/indiproxy2"]
+	path = plugins/indiproxy2/indiproxy2
+	url = git@gitlab.com:mmtao/indiproxy2.git
