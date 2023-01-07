@@ -70,3 +70,9 @@
 [submodule "plugins/indiproxy2/indiproxy2"]
 	path = plugins/indiproxy2/indiproxy2
 	url = git@gitlab.com:mmtao/indiproxy2.git
+[submodule "plugins/drivers/edt"]
+	path = plugins/drivers/edt
+	url = git@gitlab.com:mmtao/edt-driver
+[submodule "plugins/drivers/arc"]
+	path = plugins/drivers/arc
+	url = git@gitlab.com:mmtao/arc66pcie-driver
