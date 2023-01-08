@@ -76,3 +76,6 @@
 [submodule "plugins/drivers/arc"]
 	path = plugins/drivers/arc
 	url = git@gitlab.com:mmtao/arc66pcie-driver
+[submodule "plugins/python/pupils-v3"]
+	path = plugins/python/pupils-v3
+	url = git@gitlab.com:mmtao/pupils-v3.git

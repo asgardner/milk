@@ -8,3 +8,4 @@ _tmplist.txt
 .vscode
 *-code-workspace
 venv
+plugins/python/pupils-v3/venv
