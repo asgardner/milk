@@ -85,7 +85,9 @@
         "qvboxlayout": "cpp",
         "charconv": "cpp",
         "shared_mutex": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "forward_list": "cpp",
+        "*.inc": "cpp"
     },
     "cmake.configureOnOpen": false
 }
