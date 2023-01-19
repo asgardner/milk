@@ -4,9 +4,6 @@
 [submodule "plugins/chai-src"]
 	path = plugins/chai-src
 	url = git@gitlab.com:mmtao/chai-src.git
-[submodule "plugins/libtar/libtar"]
-	path = plugins/libs/libtar
-	url = git@gitlab.com:asgardner/libtar.git
 [submodule "plugins/milk-zmq/milk-zmq"]
 	path = plugins/cacao-addons/milk-zmq
 	url = git@github.com:asgardner/milkzmq.git
@@ -19,9 +16,6 @@
 [submodule "plugins/cacao-addons/rtimv"]
 	path = plugins/cacao-addons/rtimv
 	url = git@github.com:asgardner/rtimv.git
-[submodule "plugins/cacao-src"]
-	path = plugins/cacao-src
-	url = git@github.com:asgardner/cacao
 [submodule "plugins/milk-extra-src/clustering"]
 	path = plugins/milk-extra-src/clustering
 	url = git@github.com:asgardner/clustering
@@ -70,12 +64,3 @@
 [submodule "plugins/indiproxy2/indiproxy2"]
 	path = plugins/indiproxy2/indiproxy2
 	url = git@gitlab.com:mmtao/indiproxy2.git
-[submodule "plugins/drivers/edt"]
-	path = plugins/drivers/edt
-	url = git@gitlab.com:mmtao/edt-driver
-[submodule "plugins/drivers/arc"]
-	path = plugins/drivers/arc
-	url = git@gitlab.com:mmtao/arc66pcie-driver
-[submodule "plugins/python/pupils-v3"]
-	path = plugins/python/pupils-v3
-	url = git@gitlab.com:mmtao/pupils-v3.git

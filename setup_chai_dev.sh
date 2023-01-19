@@ -40,10 +40,8 @@ cd plugins/cacao-addons/milk-zmq/           ; git checkout main   ; cd $RET_DIR
 cd plugins/cacao-addons/mxlib/              ; git checkout main   ; cd $RET_DIR
 cd plugins/cacao-addons/rtimv/              ; git checkout main   ; cd $RET_DIR
 cd plugins/cacao-addons/xrif/               ; git checkout main   ; cd $RET_DIR
-cd plugins/cacao-src/                       ; git checkout dev    ; cd $RET_DIR
 cd plugins/chai-src/                        ; git checkout main   ; cd $RET_DIR
 cd plugins/chai-src/proto/                  ; git checkout main   ; cd $RET_DIR
-cd plugins/libs/libtar/                     ; git checkout master ; cd $RET_DIR
 cd plugins/milk-extra-src/clustering/       ; git checkout dev    ; cd $RET_DIR
 cd plugins/milk-extra-src/fft/              ; git checkout dev    ; cd $RET_DIR
 cd plugins/milk-extra-src/image_basic/      ; git checkout dev    ; cd $RET_DIR
