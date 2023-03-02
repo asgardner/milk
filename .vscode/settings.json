@@ -87,7 +87,8 @@
         "shared_mutex": "cpp",
         "filesystem": "cpp",
         "forward_list": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "ranges": "cpp"
     },
     "cmake.configureOnOpen": false
 }

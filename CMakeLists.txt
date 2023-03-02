@@ -147,34 +147,6 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/milk_config.h
 
 install(TARGETS CLIcore DESTINATION bin)
 
-install(CODE "execute_process(
-  COMMAND ln -svf /usr/local/chai/bin/chai /usr/local/bin/chai
-  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
-
-install(CODE "execute_process(
-  COMMAND ln -svf /usr/local/chai/bin/chai-rc1 /usr/local/bin/chai-rc1
-  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
-  
-install(CODE "execute_process(
-  COMMAND ln -svf /usr/local/chai/bin/chai-rc2 /usr/local/bin/chai-rc2
-  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
-  
-install(CODE "execute_process(
-  COMMAND ln -svf /usr/local/chai/bin/chai-rc2-gdb /usr/local/bin/chai-rc2-gdb
-  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
-    
-  install(CODE "execute_process(
-    COMMAND ln -svf /usr/local/chai/bin/chai-aorcdev /usr/local/bin/chai-aorcdev
-  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
-  
-install(CODE "execute_process(
-  COMMAND ln -svf /usr/local/chai/bin/milk /usr/local/bin/milk
-  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
-
-install(CODE "execute_process(
-  COMMAND ln -svf /usr/local/chai/bin/ccid-viewer /usr/local/bin/ccid-viewer
-  ECHO_OUTPUT_VARIABLE OUTPUT_VARIABLE OUTPUT)")
-
 install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/mmtao-main/mmtao-main/aorc-config/lib/systemd/system/indi.service /etc/systemd/system/)")
 install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/mmtao-main/mmtao-main/aorc-config/lib/systemd/system/indiproxy2.service /etc/systemd/system/)")
 install(CODE "execute_process(COMMAND systemctl daemon-reload)")
