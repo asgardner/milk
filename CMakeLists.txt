@@ -148,7 +148,7 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/milk_config.h
 install(TARGETS CLIcore DESTINATION bin)
 
 install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/mmtao-main/mmtao-main/aorc-config/lib/systemd/system/indi.service /etc/systemd/system/)")
-install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/mmtao-main/mmtao-main/aorc-config/lib/systemd/system/indiproxy2.service /etc/systemd/system/)")
+install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/indiproxy2/indiproxy2/indiproxy2.service /etc/systemd/system/)")
 install(CODE "execute_process(COMMAND systemctl daemon-reload)")
 
 install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/mmtao-main/mmtao-main/bin/runindionaorc /usr/local/chai/bin)")
