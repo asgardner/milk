@@ -24,7 +24,7 @@
 	url = git@github.com:asgardner/fft
 [submodule "plugins/milk-extra-src/ZernikePolyn"]
 	path = plugins/milk-extra-src/ZernikePolyn
-	url = https://github.com/milk-org/ZernikePolyn
+	url = git@github.com:asgardner/ZernikePolyn.git
 [submodule "plugins/milk-extra-src/image_basic"]
 	path = plugins/milk-extra-src/image_basic
 	url = git@github.com:asgardner/image_basic
