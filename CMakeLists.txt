@@ -147,12 +147,24 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/milk_config.h
 
 install(TARGETS CLIcore DESTINATION bin)
 
-install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/mmtao-main/mmtao-main/aorc-config/lib/systemd/system/indi.service /etc/systemd/system/)")
-install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/indiproxy2/indiproxy2/indiproxy2.service /etc/systemd/system/)")
-install(CODE "execute_process(COMMAND systemctl daemon-reload)")
-
 install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/mmtao-main/mmtao-main/bin/runindionaorc /usr/local/chai/bin)")
 
+# indi 
+install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/mmtao-main/mmtao-main/aorc-config/lib/systemd/system/indi.service /etc/systemd/system/)")
+install(CODE "execute_process(COMMAND systemctl daemon-reload)")
+install(CODE "execute_process(COMMAND systemctl enable --now indi)")
+
+# indiproxy2
+install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/indiproxy2/indiproxy2/indiproxy2.service /etc/systemd/system/)")
+install(CODE "execute_process(COMMAND systemctl daemon-reload)")
+install(CODE "execute_process(COMMAND systemctl enable --now indiproxy2)")
+
+# milk zmq 
 install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/cacao-addons/milk-zmq/milk-zmq.service /etc/systemd/system)")
 install(CODE "execute_process(COMMAND systemctl daemon-reload)")
 install(CODE "execute_process(COMMAND systemctl enable --now milk-zmq)")
+
+# gains server
+install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/chai-src/cacao/src/gains-server.service /etc/systemd/system)")
+install(CODE "execute_process(COMMAND systemctl daemon-reload)")
+install(CODE "execute_process(COMMAND systemctl enable --now gains-server)")
