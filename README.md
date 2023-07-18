@@ -41,3 +41,25 @@ In order to build `chai`, you will need to make sure your build environment is r
 	cmake -DCMAKE_BUILD_TYPE=Release ..
 	make
 	sudo make install
+
+## A note on ethernet device names.
+The `indi` service in `mmtao-main` expects to find the FPGA and housekeeper ethernet devices at `enp216s0f0` and `enp216s0f1`. 
+Fortunately, you can rename ethernet devices in Linux. Assuming those interfaces are `eno3` and `eno4` on your server, here is how to do that.
+
+```bash
+ifconfig eno3 down
+ip link set eno3 name enp216s0f0
+mv /etc/sysconfig/network-scripts/ifcfg-eno3 /etc/sysconfig/network-scripts/ifcfg-enp216s0f0
+sed -i -e 's/eno3/enp216s0f0/' /etc/sysconfig/network-scripts/ifcfg-enp216s0f0
+ifconfig enp216s0f0 up
+```
+
+and then the second interface:
+
+```bash
+ifconfig eno4 down
+ip link set eno4 name enp216s0f1
+mv /etc/sysconfig/network-scripts/ifcfg-eno4 /etc/sysconfig/network-scripts/ifcfg-enp216s0f1
+sed -i -e 's/eno3/enp216s0f1/' /etc/sysconfig/network-scripts/ifcfg-enp216s0f1
+ifconfig enp216s0f1 up
+```
