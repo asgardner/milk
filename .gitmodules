@@ -16,48 +16,6 @@
 [submodule "plugins/cacao-addons/rtimv"]
 	path = plugins/cacao-addons/rtimv
 	url = git@github.com:asgardner/rtimv.git
-[submodule "plugins/milk-extra-src/clustering"]
-	path = plugins/milk-extra-src/clustering
-	url = git@github.com:asgardner/clustering
-[submodule "plugins/milk-extra-src/fft"]
-	path = plugins/milk-extra-src/fft
-	url = git@github.com:asgardner/fft
-[submodule "plugins/milk-extra-src/ZernikePolyn"]
-	path = plugins/milk-extra-src/ZernikePolyn
-	url = git@github.com:asgardner/ZernikePolyn.git
-[submodule "plugins/milk-extra-src/image_basic"]
-	path = plugins/milk-extra-src/image_basic
-	url = git@github.com:asgardner/image_basic
-[submodule "plugins/milk-extra-src/image_filter"]
-	path = plugins/milk-extra-src/image_filter
-	url = git@github.com:asgardner/image_filter
-[submodule "plugins/milk-extra-src/image_format"]
-	path = plugins/milk-extra-src/image_format
-	url = git@github.com:asgardner/image_format
-[submodule "plugins/milk-extra-src/image_gen"]
-	path = plugins/milk-extra-src/image_gen
-	url = https://github.com/milk-org/image_gen
-[submodule "plugins/milk-extra-src/img_reduce"]
-	path = plugins/milk-extra-src/img_reduce
-	url = git@github.com:asgardner/img_reduce
-[submodule "plugins/milk-extra-src/info"]
-	path = plugins/milk-extra-src/info
-	url = git@github.com:asgardner/info
-[submodule "plugins/milk-extra-src/kdtree"]
-	path = plugins/milk-extra-src/kdtree
-	url = https://github.com/milk-org/kdtree
-[submodule "plugins/milk-extra-src/linARfilterPred"]
-	path = plugins/milk-extra-src/linARfilterPred
-	url = git@github.com:asgardner/linARfilterPred
-[submodule "plugins/milk-extra-src/linopt_imtools"]
-	path = plugins/milk-extra-src/linopt_imtools
-	url = git@github.com:asgardner/linopt_imtools
-[submodule "plugins/milk-extra-src/psf"]
-	path = plugins/milk-extra-src/psf
-	url = https://github.com/milk-org/psf
-[submodule "plugins/milk-extra-src/statistic"]
-	path = plugins/milk-extra-src/statistic
-	url = https://github.com/milk-org/statistic
 [submodule "plugins/mmtao-main/mmtao-main"]
 	path = plugins/mmtao-main/mmtao-main
 	url = git@gitlab.com:mmtao/mmtao-main.git
