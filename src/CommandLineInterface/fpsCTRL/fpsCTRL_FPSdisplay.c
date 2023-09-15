@@ -373,6 +373,9 @@ errno_t fpsCTRL_FPSdisplay(
 
             for(int level = 0; level < fpsCTRLvar->currentlevel; level++)
             {
+                // we go from left to right as level increases
+
+
                 if(GUIline < keywnode[nodechain[level]].NBchild)
                 {
                     int snode = 0; // selected node
@@ -386,6 +389,9 @@ errno_t fpsCTRL_FPSdisplay(
                     if(level == 0)
                     {
                         DEBUG_TRACEPOINT("provide a fps status summary if at root");
+                        //
+                        // Print a 3-char long status summary
+                        //
                         int fpsindex = keywnode[knodeindex].fpsindex;
                         fpsCTRLscreen_level0node_summary(data.fpsarray, fpsindex);
                     }
@@ -437,7 +443,7 @@ errno_t fpsCTRL_FPSdisplay(
                     screenprint_unsetreverse();
                     screenprint_setnormal();
                 }
-                else // blank space
+                else // nothing more to print: add blank space
                 {
                     if(level == 0)
                     {
@@ -447,9 +453,12 @@ errno_t fpsCTRL_FPSdisplay(
                 }
             }
 
+
+
             int knodeindex;
             knodeindex =
                 keywnode[fpsCTRLvar->directorynodeSelected].child[child_index[fpsCTRLvar->currentlevel]];
+
             if(knodeindex < fpsCTRLvar->NBkwn)
             {
                 int fpsindex = keywnode[knodeindex].fpsindex;
@@ -481,9 +490,11 @@ errno_t fpsCTRL_FPSdisplay(
                     if(keywnode[knodeindex].leaf == 0)
                     {
                         // If this is a directory
+
                         DEBUG_TRACEPOINT(" ");
                         if(fpsCTRLvar->currentlevel == 0)
                         {
+                            // This is root
                             // provide a status summary if at root
 
                             DEBUG_TRACEPOINT(" ");
@@ -563,6 +574,7 @@ errno_t fpsCTRL_FPSdisplay(
                             }
                         }
 
+
                         if(GUIline == fpsCTRLvar->GUIlineSelected[fpsCTRLvar->currentlevel])
                         {
                             screenprint_setreverse();
@@ -570,9 +582,12 @@ errno_t fpsCTRL_FPSdisplay(
                             fpsCTRLvar->fpsindexSelected = keywnode[knodeindex].fpsindex;
                         }
 
+
+
                         if(child_index[fpsCTRLvar->currentlevel + 1] <
                                 keywnode[fpsCTRLvar->directorynodeSelected].NBchild)
                         {
+                            screenprint_setbold();
                             screenprint_setcolor(COLOR_DIRECTORY);
 
                             TUI_printfw(
@@ -584,6 +599,7 @@ errno_t fpsCTRL_FPSdisplay(
                             {
                                 screenprint_unsetreverse();
                             }
+                            screenprint_unsetbold();
                         }
                         else
                         {
@@ -648,6 +664,7 @@ errno_t fpsCTRL_FPSdisplay(
                             TUI_printfw("  ");
                         }
 
+
                         DEBUG_TRACEPOINT(" ");
                         //level = keywnode[knodeindex].keywordlevel;
 
@@ -700,26 +717,26 @@ errno_t fpsCTRL_FPSdisplay(
                             int  intflag = 0; // toggles to 1 if int type
                             switch(data.fpsarray[fpsindex].parray[pindex].type)
                             {
-                                case FPTYPE_INT32:
-                                    val0 = data.fpsarray[fpsindex].parray[pindex].val.i32[0];
-                                    val3 = data.fpsarray[fpsindex].parray[pindex].val.i32[3];
-                                    intflag = 1;
-                                    break;
-                                case FPTYPE_UINT32:
-                                    val0 = data.fpsarray[fpsindex].parray[pindex].val.ui32[0];
-                                    val3 = data.fpsarray[fpsindex].parray[pindex].val.ui32[3];
-                                    intflag = 1;
-                                    break;
-                                case FPTYPE_INT64:
-                                    val0 = data.fpsarray[fpsindex].parray[pindex].val.i64[0];
-                                    val3 = data.fpsarray[fpsindex].parray[pindex].val.i64[3];
-                                    intflag = 1;
-                                    break;
-                                case FPTYPE_UINT64:
-                                    val0 = data.fpsarray[fpsindex].parray[pindex].val.ui64[0];
-                                    val3 = data.fpsarray[fpsindex].parray[pindex].val.ui64[3];
-                                    intflag = 1;
-                                    break;
+                            case FPTYPE_INT32:
+                                val0 = data.fpsarray[fpsindex].parray[pindex].val.i32[0];
+                                val3 = data.fpsarray[fpsindex].parray[pindex].val.i32[3];
+                                intflag = 1;
+                                break;
+                            case FPTYPE_UINT32:
+                                val0 = data.fpsarray[fpsindex].parray[pindex].val.ui32[0];
+                                val3 = data.fpsarray[fpsindex].parray[pindex].val.ui32[3];
+                                intflag = 1;
+                                break;
+                            case FPTYPE_INT64:
+                                val0 = data.fpsarray[fpsindex].parray[pindex].val.i64[0];
+                                val3 = data.fpsarray[fpsindex].parray[pindex].val.i64[3];
+                                intflag = 1;
+                                break;
+                            case FPTYPE_UINT64:
+                                val0 = data.fpsarray[fpsindex].parray[pindex].val.ui64[0];
+                                val3 = data.fpsarray[fpsindex].parray[pindex].val.ui64[3];
+                                intflag = 1;
+                                break;
                             }
 
                             if(intflag == 1)
@@ -766,16 +783,16 @@ errno_t fpsCTRL_FPSdisplay(
                             int    floatflag = 0; // toggles to 1 if int type
                             switch(data.fpsarray[fpsindex].parray[pindex].type)
                             {
-                                case FPTYPE_FLOAT32:
-                                    val0 = data.fpsarray[fpsindex].parray[pindex].val.f32[0];
-                                    val3 = data.fpsarray[fpsindex].parray[pindex].val.f32[3];
-                                    floatflag = 1;
-                                    break;
-                                case FPTYPE_FLOAT64:
-                                    val0 = data.fpsarray[fpsindex].parray[pindex].val.f64[0];
-                                    val3 = data.fpsarray[fpsindex].parray[pindex].val.f64[3];
-                                    floatflag = 1;
-                                    break;
+                            case FPTYPE_FLOAT32:
+                                val0 = data.fpsarray[fpsindex].parray[pindex].val.f32[0];
+                                val3 = data.fpsarray[fpsindex].parray[pindex].val.f32[3];
+                                floatflag = 1;
+                                break;
+                            case FPTYPE_FLOAT64:
+                                val0 = data.fpsarray[fpsindex].parray[pindex].val.f64[0];
+                                val3 = data.fpsarray[fpsindex].parray[pindex].val.f64[3];
+                                floatflag = 1;
+                                break;
                             }
 
                             if(floatflag == 1)
@@ -991,17 +1008,17 @@ errno_t fpsCTRL_FPSdisplay(
                     {
                         child_index[level]++;
                     }
+
+
+
+                    if(fpsCTRLvar->currentlevel == 0)
+                    {
+                        TUI_printfw(" %s", data.fpsarray[fpsindex].md->description);
+                    }
+
+                    TUI_newline();
                 }
             }
-
-
-            if(fpsCTRLvar->currentlevel == 0)
-            {
-                TUI_printfw(" %s", data.fpsarray[GUIline].md->description);
-            }
-
-
-            TUI_newline();
         }
 
         DEBUG_TRACEPOINT(" ");

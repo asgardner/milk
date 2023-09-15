@@ -40,12 +40,16 @@ errno_t function_parameter_add_entry(FUNCTION_PARAMETER_STRUCT *fps,
     if(keywordstring[0] == '.')
     {
         //printf("--------------- keywstring \"%s\" starts with dot -> adding \"%s\"\n", keywordstring, fps->md->name);
-        sprintf(keywordstringC, "%s%s", fps->md->name, keywordstring);
+        snprintf(keywordstringC,
+                 FUNCTION_PARAMETER_KEYWORD_STRMAXLEN * FUNCTION_PARAMETER_KEYWORD_MAXLEVEL,
+                 "%s%s", fps->md->name, keywordstring);
+
     }
     else
     {
         //printf("--------------- keywstring \"%s\" unchanged\n", keywordstring);
-        strcpy(keywordstringC, keywordstring);
+        strncpy(keywordstringC, keywordstring,
+                FUNCTION_PARAMETER_KEYWORD_STRMAXLEN * FUNCTION_PARAMETER_KEYWORD_MAXLEVEL - 1);
     }
 
     // scan for existing keyword
@@ -83,7 +87,6 @@ errno_t function_parameter_add_entry(FUNCTION_PARAMETER_STRUCT *fps,
         funcparamarray[pindex].fpflag = fpflag;
 
         // break full keyword into keywords
-        #pragma GCC diagnostic ignored "-Wstringop-truncation"
         strncpy(funcparamarray[pindex].keywordfull,
                 keywordstringC,
                 FUNCTION_PARAMETER_KEYWORD_STRMAXLEN *

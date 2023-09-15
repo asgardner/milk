@@ -49,6 +49,8 @@ void rl_cb_linehandler(char *linein)
     free(linein);
 }
 
+
+
 errno_t runCLI_prompt(char *promptstring, char *prompt)
 {
     //int color_cyan = 36;
@@ -57,23 +59,29 @@ errno_t runCLI_prompt(char *promptstring, char *prompt)
     {
         if(data.processnameflag == 0)
         {
-            sprintf(prompt, COLORHBOLDCYAN "%s > " COLORRESET, promptstring);
+            snprintf(prompt, FPS_DIR_STRLENMAX, COLORHBOLDCYAN "%s > " COLORRESET,
+                     promptstring);
         }
         else
         {
-            sprintf(prompt,
-                    COLORHBOLDCYAN "%s-%s > " COLORRESET,
-                    promptstring,
-                    data.processname);
+            snprintf(prompt,
+                     FPS_DIR_STRLENMAX,
+                     COLORHBOLDCYAN "%s-%s > " COLORRESET,
+                     promptstring,
+                     data.processname);
         }
     }
     else
     {
-        sprintf(prompt, COLORHBOLDCYAN "%s > " COLORRESET, data.processname);
+        snprintf(prompt, FPS_DIR_STRLENMAX, COLORHBOLDCYAN "%s > " COLORRESET,
+                 data.processname);
     }
 
     return RETURN_SUCCESS;
 }
+
+
+
 
 static void *xmalloc(int size)
 {
@@ -251,7 +259,7 @@ errno_t write_tracedebugfile()
 
             if(data.testpointarray[j].line != 0)
             {
-                char timestring[20];
+                char timestring[TIMESTRINGLEN];
                 mkUTtimestring_nanosec(timestring, data.testpointarray[j].time);
 
                 // extract last word
@@ -290,17 +298,28 @@ errno_t write_tracedebugfile()
     return RETURN_SUCCESS;
 }
 
+
+
+
 errno_t CLI_execute_line()
 {
     DEBUG_TRACE_FSTART();
 
     char            *cmdargstring;
-    char             str[200];
+    int strmaxlen   = 200;
+    char             str[strmaxlen];
     FILE            *fp;
     time_t           t;
     struct tm       *uttime;
     struct timespec *thetime =
         (struct timespec *) malloc(sizeof(struct timespec));
+
+
+    if(data.Debug > 0)
+    {
+        printf("DEBUG: %s %d: Processing CLI input \"%s\"\n", __func__, __LINE__,
+               data.CLIcmdline);
+    }
 
     add_history(data.CLIcmdline);
 
@@ -338,18 +357,19 @@ errno_t CLI_execute_line()
         {
             t      = time(NULL);
             uttime = gmtime(&t);
-            clock_gettime(CLOCK_REALTIME, thetime);
+            clock_gettime(CLOCK_MILK, thetime);
 
-            sprintf(data.CLIlogname,
-                    "%s/logdir/%04d%02d%02d/%04d%02d%02d_CLI-%s.log",
-                    getenv("HOME"),
-                    1900 + uttime->tm_year,
-                    1 + uttime->tm_mon,
-                    uttime->tm_mday,
-                    1900 + uttime->tm_year,
-                    1 + uttime->tm_mon,
-                    uttime->tm_mday,
-                    data.processname);
+            snprintf(data.CLIlogname,
+                     STRINGMAXLEN_FULLFILENAME,
+                     "%s/logdir/%04d%02d%02d/%04d%02d%02d_CLI-%s.log",
+                     getenv("HOME"),
+                     1900 + uttime->tm_year,
+                     1 + uttime->tm_mon,
+                     uttime->tm_mday,
+                     1900 + uttime->tm_year,
+                     1 + uttime->tm_mon,
+                     uttime->tm_mday,
+                     data.processname);
 
             fp = fopen(data.CLIlogname, "a");
             if(fp == NULL)
@@ -383,6 +403,12 @@ errno_t CLI_execute_line()
         //
         data.cmdNBarg = 0;
 
+
+        if(data.Debug > 0)
+        {
+            printf("DEBUG: %s %d: extract words\n", __func__, __LINE__);
+        }
+
         // extract first word
 
         // First, split double-quote strings out
@@ -411,7 +437,13 @@ errno_t CLI_execute_line()
                 while(cmdargstring != NULL)  // iterate on words
                 {
                     // printf("\t processing -- %s\n", cmdargstring);
-                    sprintf(str, "%s\n", cmdargstring);
+
+                    snprintf(str, strmaxlen, "%s\n", cmdargstring);
+                    if(data.Debug > 1)
+                    {
+                        printf("DEBUG: %s %d: calling yy_scan_string on \"%s\"\n", __func__, __LINE__,
+                               str);
+                    }
                     yy_scan_string(str);
                     data.calctmp_imindex = 0;
                     yyparse();
@@ -433,13 +465,30 @@ errno_t CLI_execute_line()
         }
         data.cmdargtoken[data.cmdNBarg].type = CMDARGTOKEN_TYPE_UNSOLVED;
 
-        if(data.Debug == 1)
+
+        if(data.Debug > 0)
+        {
+            printf("DEBUG: %s %d: data.cmdNBarg = %ld\n", __func__, __LINE__,
+                   data.cmdNBarg);
+        }
+
+        if(data.Debug > 1)
         {
             long i = 0;
+
+            if(data.Debug > 0)
+            {
+                printf("DEBUG: %s %d: TOKEN %ld type : %d\n",
+                       __func__, __LINE__,
+                       i,
+                       data.cmdargtoken[i].type);
+            }
+
             while(data.cmdargtoken[i].type != 0)
             {
 
-                printf("TOKEN %ld/%ld   \"%s\"  type : %d\n",
+                printf("DEBUG: %s %d: TOKEN %ld/%ld   \"%s\"  type : %d\n",
+                       __func__, __LINE__,
                        i,
                        data.cmdNBarg,
                        data.cmdargtoken[i].val.string,
@@ -496,13 +545,21 @@ errno_t CLI_execute_line()
             }
         }
 
+        if(data.Debug > 0)
+        {
+            printf("DEBUG: %s %d: data.parseerror = %d\n",
+                   __func__, __LINE__,
+                   data.parseerror);
+        }
+
         if(data.parseerror == 0)
         {
             if(data.cmdargtoken[0].type == CMDARGTOKEN_TYPE_COMMAND)
             {
-                if(data.Debug == 1)
+                if(data.Debug > 0)
                 {
-                    printf("EXECUTING COMMAND %ld (%s)\n",
+                    printf("DEBUG: %s %d: EXECUTING COMMAND %ld (%s)\n",
+                           __func__, __LINE__,
                            data.cmdindex,
                            data.cmd[data.cmdindex].key);
                 }
@@ -550,7 +607,6 @@ errno_t CLI_execute_line()
         for(int i = 0; i < data.calctmp_imindex; i++)
         {
             CREATE_IMAGENAME(calctmpimname, "_tmpcalc%d", i);
-            //sprintf(calctmpimname, "_tmpcalc%ld", i);
             if(image_ID(calctmpimname) != -1)
             {
                 if(data.Debug == 1)

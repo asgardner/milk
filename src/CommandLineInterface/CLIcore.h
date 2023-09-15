@@ -54,6 +54,7 @@ typedef long variableID;
 
 #include "CommandLineInterface/function_parameters.h"
 #include "CommandLineInterface/processtools.h"
+#include "CommandLineInterface/timeutils.h"
 #include "CommandLineInterface/streamCTRL/streamCTRL_TUI.h"
 
 #include "CommandLineInterface/CLIcore/CLIcore_checkargs.h"
@@ -76,6 +77,12 @@ extern char  BuildDate[200];
 extern char  BuildTime[200];
 
 extern int C_ERRNO; // C errno (from errno.h)
+
+
+#define STRINGMAXLEN_CLISTARTUPFILENAME 200
+
+#define STRINGMAXLEN_CLIPROMPT 200
+
 
 /* #define DEBUG */
 #define CFITSEXIT                                                              \
@@ -132,10 +139,10 @@ extern int C_ERRNO; // C errno (from errno.h)
     {                                                                          \
         if (INITSTATUS_##modname == 0) /* only run once */                     \
         {                                                                      \
-            strcpy(data.moduleshortname_default, MODULE_SHORTNAME_DEFAULT);    \
-            strcpy(data.moduledatestring, __DATE__);                           \
-            strcpy(data.moduletimestring, __TIME__);                           \
-            strcpy(data.modulename, (#modname));                               \
+            strncpy(data.moduleshortname_default, MODULE_SHORTNAME_DEFAULT, STRINGMAXLEN_MODULE_SHORTNAME-1);    \
+            strncpy(data.moduledatestring, __DATE__, STRINGMAXLEN_MODULE_DATESTRING-1);                           \
+            strncpy(data.moduletimestring, __TIME__, STRINGMAXLEN_MODULE_TIMESTRING-1);                           \
+            strncpy(data.modulename, (#modname), STRINGMAXLEN_MODULE_NAME);                               \
             RegisterModule(__FILE__,                                           \
                            PROJECT_NAME,                                       \
                            MODULE_DESCRIPTION,                                 \
@@ -144,9 +151,9 @@ extern int C_ERRNO; // C errno (from errno.h)
                            VERSION_PATCH);                                     \
             init_module_CLI();                                                 \
             INITSTATUS_##modname = 1;                                          \
-            strcpy(data.modulename, "");              /* reset after use */    \
-            strcpy(data.moduleshortname_default, ""); /* reset after use */    \
-            strcpy(data.moduleshortname, "");         /* reset after use */    \
+            strncpy(data.modulename, "", STRINGMAXLEN_MODULE_NAME-1);              /* reset after use */    \
+            strncpy(data.moduleshortname_default, "", STRINGMAXLEN_MODULE_SHORTNAME-1); /* reset after use */    \
+            strncpy(data.moduleshortname, "", STRINGMAXLEN_MODULE_SHORTNAME-1);         /* reset after use */    \
         }                                                                      \
     }                                                                          \
     void __attribute__((destructor)) libclose_##modname()                      \
@@ -203,14 +210,14 @@ typedef struct
 
     char name[STRINGMAXLEN_MODULE_NAME]; // module name
 
-    char shortname
-    [STRINGMAXLEN_MODULE_SHORTNAME]; // short name. If non-empty, access functions as <shortname>.<functionname>
+    // short name. If non-empty, access functions as <shortname>.<functionname>
+    char shortname[STRINGMAXLEN_MODULE_SHORTNAME];
 
     char loadname[STRINGMAXLEN_MODULE_LOADNAME];
     char sofilename[STRINGMAXLEN_MODULE_SOFILENAME];
 
-    char package
-    [STRINGMAXLEN_MODULE_PACKAGENAME]; // package to which module belongs
+    // package to which module belongs
+    char package [STRINGMAXLEN_MODULE_PACKAGENAME];
     int versionmajor;                      // package version
     int versionminor;
     int versionpatch;
@@ -279,6 +286,7 @@ typedef struct
 #define CMDARGTOKEN_TYPE_COMMAND       5
 #define CMDARGTOKEN_TYPE_RAWSTRING     6
 
+#define STRINGMAXLEN_CMDARGTOKEN_VAL 200
 typedef struct
 {
     int type;
@@ -286,7 +294,7 @@ typedef struct
     {
         double numf;
         long   numl;
-        char   string[200];
+        char   string[STRINGMAXLEN_CMDARGTOKEN_VAL];
     } val;
 } CMDARGTOKEN;
 
@@ -338,6 +346,10 @@ typedef struct
 // number of entries stored in testpoint trace array
 #define CODETESTPOINTARRAY_NBCNT 100000
 
+
+#define STRINGMAXLEN_PROCESSNAME 100
+
+
 // THIS IS WHERE EVERYTHING THAT NEEDS TO BE WIDELY ACCESSIBLE GETS STORED
 typedef struct
 {
@@ -351,8 +363,8 @@ typedef struct
     char installdir[STRINGMAXLEN_DIRNAME];
 
     char shmdir[STRINGMAXLEN_DIRNAME];
-    char shmsemdirname
-    [STRINGMAXLEN_DIRNAME]; // same ad above with .s instead of /s
+    // same ad above with .s instead of /s
+    char shmsemdirname[STRINGMAXLEN_DIRNAME];
 
     // SIGNALS
     // =================================================
@@ -428,7 +440,7 @@ typedef struct
 
     int          CLIloopON;
     int          CLIlogON;
-    char         CLIlogname[200];
+    char         CLIlogname[STRINGMAXLEN_FULLFILENAME];
     int          processinfo;       // 1 if processes info is to be logged
     int          processinfoActive; // 1 is the process is currently logged
     PROCESSINFO *pinfo;             // pointer to process info structure
@@ -437,8 +449,8 @@ typedef struct
     // =================================================
 
     int      fifoON;
-    char     processname[100];
-    char     processname0[100];
+    char     processname[STRINGMAXLEN_PROCESSNAME];
+    char     processname0[STRINGMAXLEN_PROCESSNAME];
     int      processnameflag;
     char     fifoname[STRINGMAXLEN_FULLFILENAME];
     uint32_t NBcmd;
@@ -483,6 +495,9 @@ typedef struct
     char moduledatestring[STRINGMAXLEN_MODULE_DATESTRING];
     char moduletimestring[STRINGMAXLEN_MODULE_TIMESTRING];
 
+
+
+
     // FUNCTION PARAMETER STRUCTURES (FPSs)
     // =================================================
 
@@ -494,14 +509,20 @@ typedef struct
     // These entries are set when CLI process links to FPS
     FUNCTION_PARAMETER_STRUCT *fpsptr;
     char FPS_name[STRINGMAXLEN_FPS_NAME]; // name of FPS if in use
+
+
     // Which type of FPS process is the current process ?
     // conf, run, ctrl
-    char FPS_PROCESS_TYPE
-    [STRINGMAXLEN_FPSPROCESSTYPE]; // included in log file name
+    char FPS_PROCESS_TYPE[STRINGMAXLEN_FPSPROCESSTYPE];
+    // included in log file name
+
     long     FPS_TIMESTAMP;            // included in log file name
     uint32_t FPS_CMDCODE;              // current FPS mode
     errno_t (*FPS_CONFfunc)();         // pointer to FPS conf function
     errno_t (*FPS_RUNfunc)();          // pointer to FPS run function
+
+
+
 
     // IMAGES
     // =================================================
@@ -516,9 +537,6 @@ typedef struct
 
     // shared memory default
     int SHARED_DFT;
-
-    // Number of keyword per image default
-    int NBKEYWORD_DFT;
 
     // VARIABLES
     // =================================================

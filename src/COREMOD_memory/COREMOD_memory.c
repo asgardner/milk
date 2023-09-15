@@ -66,8 +66,7 @@
 #include "read_shmim_size.h"
 #include "read_shmimall.h"
 
-#include "shmimlog.h"
-#include "shmimlogcmd.h"
+#include "logshmim.h"
 
 #include "saveall.h"
 #include "shmim_purge.h"
@@ -121,7 +120,6 @@ static errno_t init_module_CLI()
     read_shmimall_addCLIcmd();
 
     // CREATE IMAGE
-    create_image_addCLIcmd();
     CLIADDCMD_COREMOD_memory__mk2Dim();
     CLIADDCMD_COREMOD_memory__mk3Dim();
 
@@ -174,10 +172,10 @@ static errno_t init_module_CLI()
     stream_monitorlimits_addCLIcmd();
 
     // DATA LOGGING
-    logshmim_addCLIcmd();
+    //logshmim_addCLIcmd();
 
-    CLIADDCMD_COREMOD_memory__shmimlog();
-    CLIADDCMD_COREMOD_memory__shmimlogcmd();
+    //CLIADDCMD_COREMOD_memory__shmimlog(); -- find deletion commit.
+    CLIADDCMD_COREMOD_MEMORY__logshmim();
 
     // add atexit functions here
 

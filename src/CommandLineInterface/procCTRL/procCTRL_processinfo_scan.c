@@ -90,6 +90,7 @@ void *processinfo_scan(void *thptr)
     PROCESSINFO_SCAN_DEBUGLOG("START\n");
 
 
+    //long loopcnt = 0;
     while(pinfop->loop == 1)
     {
 
@@ -100,7 +101,7 @@ void *processinfo_scan(void *thptr)
         DEBUG_TRACEPOINT(" ");
 
         // timing measurement
-        clock_gettime(CLOCK_REALTIME, &t1);
+        clock_gettime(CLOCK_MILK, &t1);
         if(firstIter == 1)
         {
             tdiffv    = 0.1;
@@ -111,7 +112,7 @@ void *processinfo_scan(void *thptr)
             tdiff  = timespec_diff(t0, t1);
             tdiffv = 1.0 * tdiff.tv_sec + 1.0e-9 * tdiff.tv_nsec;
         }
-        clock_gettime(CLOCK_REALTIME, &t0);
+        clock_gettime(CLOCK_MILK, &t0);
         pinfop->dtscan = tdiffv;
 
         DEBUG_TRACEPOINT(" ");
@@ -154,12 +155,13 @@ void *processinfo_scan(void *thptr)
         // pinfolistindex is index in PROCESSINFOLIST
         {
             long pinfolistindex = 0;
+            //long pinfodispindex = 0;
             while(pinfolistindex < PROCESSINFOLISTSIZE)
             {
 
                 if(pinfop->loop == 1)
                 {
-                    DEBUG_TRACEPOINT("pinfolistindex %ld / %ld",
+                    DEBUG_TRACEPOINT("pinfolistindex %ld / %d",
                                      pinfolistindex,
                                      PROCESSINFOLISTSIZE);
 
@@ -301,6 +303,7 @@ void *processinfo_scan(void *thptr)
             }
 
 
+            //int listcnt = 0;
             for(int pinfoactindex = 0; pinfoactindex < pinfop->NBpindexActive;
                     pinfoactindex++)
             {
@@ -415,7 +418,6 @@ void *processinfo_scan(void *thptr)
                 PROCESSINFO_SCAN_DEBUGLOG(
                     "     shm name : %s\n",
                     pinfop->pinfoarray[pinfolistindex]->name);
-                #pragma GCC diagnostic ignored "-Wstringop-truncation"
                 strncpy(pinfop->pinfodisp[pinfodispindex].name,
                         pinfop->pinfoarray[pinfolistindex]->name,
                         40 - 1);
@@ -575,10 +577,11 @@ void *processinfo_scan(void *thptr)
                                         }
                                     }
 
-                                    sprintf(cpuliststring,
-                                            ",%s,",
-                                            pinfop->pinfodisp[pdispindex]
-                                            .cpusallowed);
+                                    snprintf(cpuliststring,
+                                             200,
+                                             ",%s,",
+                                             pinfop->pinfodisp[pdispindex]
+                                             .cpusallowed);
 
                                     pinfop->scandebugline = __LINE__;
 
@@ -588,9 +591,10 @@ void *processinfo_scan(void *thptr)
                                         int cpuOK = 0;
                                         int cpumin, cpumax;
 
-                                        sprintf(cpustring,
-                                                ",%d,",
-                                                pinfop->CPUids[cpu]);
+                                        snprintf(cpustring,
+                                                 16,
+                                                 ",%d,",
+                                                 pinfop->CPUids[cpu]);
                                         if(strstr(cpuliststring, cpustring) !=
                                                 NULL)
                                         {
@@ -604,11 +608,11 @@ void *processinfo_scan(void *thptr)
                                                     cpumax < pinfop->NBcpus;
                                                     cpumax++)
                                             {
-                                                #pragma GCC diagnostic ignored "-Wformat-overflow"
-                                                sprintf(cpustring,
-                                                        ",%d-%d,",
-                                                        cpumin,
-                                                        cpumax);
+                                                SNPRINTF_CHECK(cpustring,
+                                                               16,
+                                                               ",%d-%d,",
+                                                               cpumin,
+                                                               cpumax);
                                                 if(strstr(cpuliststring,
                                                           cpustring) != NULL)
                                                 {

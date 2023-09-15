@@ -27,10 +27,12 @@
  * and semindex = -1, which will automatically find a suitable semaphore
  *
  */
-errno_t processinfo_waitoninputstream_init(PROCESSINFO *processinfo,
-        imageID      trigID,
-        int          triggermode,
-        int          semindexrequested)
+errno_t processinfo_waitoninputstream_init(
+    PROCESSINFO *processinfo,
+    imageID      trigID,
+    int          triggermode,
+    int          semindexrequested
+)
 {
     DEBUG_TRACE_FSTART("%ld %d %d", trigID, triggermode, semindexrequested);
     processinfo->triggerstreamID = trigID;
@@ -148,10 +150,12 @@ errno_t processinfo_waitoninputstream_init(PROCESSINFO *processinfo,
     return RETURN_SUCCESS;
 }
 
+
+
+
 /** @brief Wait on a stream
  *
  */
-
 errno_t processinfo_waitoninputstream(PROCESSINFO *processinfo)
 {
     processinfo->triggermissedframe = 0;
@@ -243,7 +247,7 @@ errno_t processinfo_waitoninputstream(PROCESSINFO *processinfo)
 
         // get current time
         struct timespec ts;
-        if(clock_gettime(CLOCK_REALTIME, &ts) == -1)
+        if(clock_gettime(CLOCK_MILK, &ts) == -1)
         {
             perror("clock_gettime");
             exit(EXIT_FAILURE);
@@ -297,7 +301,7 @@ errno_t processinfo_waitoninputstream(PROCESSINFO *processinfo)
             // measure time spent waiting for input
             // get current time
             struct timespec ts1;
-            if(clock_gettime(CLOCK_REALTIME, &ts1) == -1)
+            if(clock_gettime(CLOCK_MILK, &ts1) == -1)
             {
                 perror("clock_gettime");
                 exit(EXIT_FAILURE);

@@ -23,7 +23,7 @@ imageID COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name,
 static errno_t COREMOD_MEMORY_stream_halfimDiff__cli()
 {
     if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_IMG) +
-            CLI_checkarg(3, CLIARG_LONG) ==
+            CLI_checkarg(3, CLIARG_INT64) ==
             0)
     {
         COREMOD_MEMORY_stream_halfimDiff(data.cmdargtoken[1].val.string,
@@ -72,7 +72,7 @@ imageID COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name,
     uint32_t           ysize;
     uint64_t           xysize;
     uint32_t          *arraysize;
-    unsigned long long cnt = 0L;
+    unsigned long long cnt;
     uint8_t            datatype;
     uint8_t            datatypeout;
 
@@ -148,8 +148,6 @@ imageID COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name,
                         0,
                         0,
                         &IDout);
-        COREMOD_MEMORY_image_set_createsem(IDstreamout_name,
-                                           IMAGE_NB_SEMAPHORE);
     }
 
     free(arraysize);
@@ -159,11 +157,13 @@ imageID COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name,
         // has new frame arrived ?
         if(data.image[ID0].md[0].sem == 0)
         {
+            #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
             while(cnt ==
                     data.image[ID0].md[0].cnt0) // test if new frame exists
             {
                 usleep(5);
             }
+            #pragma GCC diagnostic pop
             cnt = data.image[ID0].md[0].cnt0;
         }
         else

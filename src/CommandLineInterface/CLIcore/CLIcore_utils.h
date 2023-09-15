@@ -63,9 +63,9 @@ typedef struct
     char     *name;
     uint32_t *xsize;
     uint32_t *ysize;
-    int      *shared;
-    int      *NBkw;
-    int      *CBsize;
+    uint32_t  *shared;
+    uint32_t  *NBkw;
+    uint32_t  *CBsize;
 } LOCVAR_OUTIMG2D;
 
 /** @brief Template for ouput image argument to CLI function
@@ -79,28 +79,28 @@ typedef struct
      CLIARG_VISIBLE_DEFAULT,                                                   \
      (void **) &imkey.name,                                                    \
      NULL},                                                                    \
-        {CLIARG_LONG,                                                          \
+        {CLIARG_UINT32,                                                        \
          "." #imkey ".xsize",                                                  \
          "x size",                                                             \
          "256",                                                                \
          CLIARG_VISIBLE_DEFAULT,                                               \
          (void **) &imkey.xsize,                                               \
          NULL},                                                                \
-        {CLIARG_LONG,                                                          \
+        {CLIARG_UINT32,                                                        \
          "." #imkey ".ysize",                                                  \
          "y size",                                                             \
          "256",                                                                \
          CLIARG_VISIBLE_DEFAULT,                                               \
          (void **) &imkey.ysize,                                               \
          NULL},                                                                \
-        {CLIARG_LONG,                                                          \
+        {CLIARG_UINT32,                                                        \
          "." #imkey ".shared",                                                 \
          "shared flag",                                                        \
          "0",                                                                  \
          CLIARG_HIDDEN_DEFAULT,                                                \
          (void **) &imkey.shared,                                              \
          NULL},                                                                \
-        {CLIARG_LONG,                                                          \
+        {CLIARG_UINT32,                                                        \
          "." #imkey ".NBkw",                                                   \
          "number keywords",                                                    \
          "10",                                                                 \
@@ -108,7 +108,7 @@ typedef struct
          (void **) &imkey.NBkw,                                                \
          NULL},                                                                \
     {                                                                          \
-        CLIARG_LONG, "." #imkey ".CBsize", "circ buffer size", "0",            \
+        CLIARG_UINT32, "." #imkey ".CBsize", "circ buffer size", "0",          \
             CLIARG_HIDDEN_DEFAULT, (void **) &imkey.CBsize, NULL               \
     }
 
@@ -194,6 +194,8 @@ typedef struct
  *
  */
 
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
+
 #define INSERT_STD_FPSCONFfunction                                             \
     static errno_t FPSCONFfunction()                                           \
     {                                                                          \
@@ -205,8 +207,8 @@ typedef struct
             fps.cmdset.procinfo_loopcntMax =                                   \
                 CLIcmddata.cmdsettings->procinfo_loopcntMax;                   \
             fps.cmdset.triggermode = CLIcmddata.cmdsettings->triggermode;      \
-            strcpy(fps.cmdset.triggerstreamname,                               \
-                   CLIcmddata.cmdsettings->triggerstreamname);                 \
+            strncpy(fps.cmdset.triggerstreamname,                              \
+                   CLIcmddata.cmdsettings->triggerstreamname, STRINGMAXLEN_IMAGE_NAME-1); \
             fps.cmdset.semindexrequested =                                     \
                 CLIcmddata.cmdsettings->semindexrequested;                     \
             fps.cmdset.triggerdelay.tv_sec =                                   \
@@ -220,7 +222,7 @@ typedef struct
             fps_add_processinfo_entries(&fps);                                 \
         }                                                                      \
         data.fpsptr = &fps;                                                    \
-        strcpy(data.fpsptr->md->description, CLIcmddata.description);          \
+        strncpy(data.fpsptr->md->description, CLIcmddata.description, FPS_DESCR_STRMAXLEN-1);\
         CMDargs_to_FPSparams_create(&fps);                                     \
         STD_FARG_LINKfunction if (CLIcmddata.FPS_customCONFsetup != NULL)      \
         {                                                                      \
@@ -251,8 +253,8 @@ typedef struct
         CLIcmddata.cmdsettings->procinfo_loopcntMax =                          \
             data.fpsptr->cmdset.procinfo_loopcntMax;                           \
         CLIcmddata.cmdsettings->triggermode = data.fpsptr->cmdset.triggermode; \
-        strcpy(CLIcmddata.cmdsettings->triggerstreamname,                      \
-               data.fpsptr->cmdset.triggerstreamname);                         \
+        strncpy(CLIcmddata.cmdsettings->triggerstreamname,                     \
+               data.fpsptr->cmdset.triggerstreamname, STRINGMAXLEN_IMAGE_NAME-1);   \
         CLIcmddata.cmdsettings->semindexrequested =                            \
             data.fpsptr->cmdset.semindexrequested;                             \
         CLIcmddata.cmdsettings->triggerdelay.tv_sec =                          \
@@ -302,8 +304,8 @@ typedef struct
         processinfo->loopcntMax = CLIcmddata.cmdsettings->procinfo_loopcntMax; \
         processinfo->triggerstreamID = -2;                                     \
         processinfo->triggermode     = CLIcmddata.cmdsettings->triggermode;    \
-        strcpy(processinfo->triggerstreamname,                                 \
-               CLIcmddata.cmdsettings->triggerstreamname);                     \
+        strncpy(processinfo->triggerstreamname,                                \
+               CLIcmddata.cmdsettings->triggerstreamname, STRINGMAXLEN_IMAGE_NAME-1);  \
         processinfo->triggerdelay   = CLIcmddata.cmdsettings->triggerdelay;    \
         processinfo->triggertimeout = CLIcmddata.cmdsettings->triggertimeout;  \
         processinfo->triggerstreamID =                                         \
@@ -324,6 +326,8 @@ typedef struct
         DEBUG_TRACEPOINT("loopstart");                                         \
         processinfo_loopstart(processinfo);                                    \
     }
+
+
 
 #define INSERT_STD_PROCINFO_COMPUTEFUNC_LOOPSTART                              \
     while (processloopOK == 1)                                                 \
@@ -349,21 +353,47 @@ typedef struct
         if (processcompstatus == 1)                                            \
         {
 
+
+
 #define INSERT_STD_PROCINFO_COMPUTEFUNC_START                                  \
     INSERT_STD_PROCINFO_COMPUTEFUNC_INIT                                       \
     INSERT_STD_PROCINFO_COMPUTEFUNC_LOOPSTART
 
+
+
 #define INSERT_STD_PROCINFO_COMPUTEFUNC_END                                    \
     }                                                                          \
-    if (CLIcmddata.cmdsettings->flags & CLICMDFLAG_PROCINFO)                   \
-    {                                                                          \
-        processinfo_exec_end(processinfo);                                     \
+    if (CLIcmddata.cmdsettings->flags & CLICMDFLAG_PROCINFO) {                 \
+     if(processinfo != NULL) {                                                 \
+      if(data.fpsptr != NULL) {                                                \
+        if(data.fpsptr->cmdset.triggermodeptr != NULL){                        \
+          processinfo->triggermode = *data.fpsptr->cmdset.triggermodeptr;}     \
+        if(data.fpsptr->cmdset.procinfo_loopcntMax_ptr != NULL){               \
+          processinfo->loopcntMax = *data.fpsptr->cmdset.procinfo_loopcntMax_ptr;}  \
+        if(data.fpsptr->cmdset.triggerdelayptr != NULL){                       \
+          processinfo->triggerdelay = data.fpsptr->cmdset.triggerdelayptr[0];} \
+        if(data.fpsptr->cmdset.triggertimeoutptr != NULL){                     \
+          processinfo->triggertimeout = data.fpsptr->cmdset.triggertimeoutptr[0];} \
+        }}                                                                     \
+    if(processinfo != NULL) {                                              \
+          processinfo_exec_end(processinfo);}                                  \
     }                                                                          \
     }                                                                          \
     if (CLIcmddata.cmdsettings->flags & CLICMDFLAG_PROCINFO)                   \
     {                                                                          \
         processinfo_cleanExit(processinfo);                                    \
     }
+
+
+
+/**
+ *
+        if(data.fpsptr->cmdset.triggerdelayptr != NULL) {                      \
+        processinfo->triggerdelay = data.fpsptr->cmdset.triggerdelayptr[0];}   \
+        if(data.fpsptr->cmdset.triggertimeoutptr != NULL) {                    \
+        processinfo->triggerdelay = data.fpsptr->cmdset.triggertimeoutptr[0];} \
+ *
+ */
 
 /** @brief FPS run function
  *
@@ -448,7 +478,8 @@ typedef struct
     }
 
 #define INSERT_STD_FPSCLIfunctions                                             \
-    INSERT_STD_FPSCONFfunction INSERT_STD_FPSRUNfunction                       \
+    INSERT_STD_FPSCONFfunction                                                 \
+    INSERT_STD_FPSRUNfunction                                                  \
         INSERT_STD_FPSCLIfunction
 
 #define INSERT_STD_CLIREGISTERFUNC                                             \
@@ -474,7 +505,7 @@ typedef struct
 */
 static inline IMGID mkIMGID_from_name(CONST_WORD name)
 {
-    IMGID img;
+    IMGID img = {0, 0, "", NULL, NULL, 0, 0, {0, 0, 0}, 0, 0, 0};
 
     // default values for image creation
     img.datatype = _DATATYPE_FLOAT;
@@ -482,101 +513,107 @@ static inline IMGID mkIMGID_from_name(CONST_WORD name)
     img.size[0]  = 1;
     img.size[1]  = 1;
     img.shared   = 0;
-    img.NBkw     = 100;
+    img.NBkw     = NB_KEYWNODE_MAX;
     img.CBsize   = 0;
 
     char *pch;
-    char *pch1 = NULL;
+    char *pch1;
     int   nbword = 0;
+
     char  namestring[200];
-    strcpy(namestring, name);
-    pch = strtok(namestring, ">");
-    while(pch != NULL)
+    strncpy(namestring, name, 199);
+
+    pch1 = namestring;
+    if(strlen(namestring) != 0)
     {
-        pch1 = pch;
-        //printf("[%2d] %s\n", nbword, pch);
+        pch = strtok(namestring, ">");
+        while(pch != NULL)
+        {
+            pch1 = pch;
+            //printf("[%2d] %s\n", nbword, pch);
 
-        if(strcmp(pch, "s") == 0)
-        {
-            printf("    shared memory\n");
-            img.shared = 1;
-        }
+            if(strcmp(pch, "s") == 0)
+            {
+                printf("    shared memory\n");
+                img.shared = 1;
+            }
 
-        if(strcmp(pch, "tui8") == 0)
-        {
-            printf("    data type unsigned 8-bit int\n");
-            img.datatype = _DATATYPE_UINT8;
-        }
-        if(strcmp(pch, "tsi8") == 0)
-        {
-            printf("    data type signed 8-bit int\n");
-            img.datatype = _DATATYPE_INT8;
-        }
-        if(strcmp(pch, "tui16") == 0)
-        {
-            printf("    data type unsigned 16-bit int\n");
-            img.datatype = _DATATYPE_UINT16;
-        }
-        if(strcmp(pch, "tsi16") == 0)
-        {
-            printf("    data type signed 16-bit int\n");
-            img.datatype = _DATATYPE_INT16;
-        }
-        if(strcmp(pch, "tui32") == 0)
-        {
-            printf("    data type unsigned 32-bit int\n");
-            img.datatype = _DATATYPE_UINT32;
-        }
-        if(strcmp(pch, "tsi32") == 0)
-        {
-            printf("    data type signed 32-bit int\n");
-            img.datatype = _DATATYPE_INT32;
-        }
-        if(strcmp(pch, "tui64") == 0)
-        {
-            printf("    data type unsigned 64-bit int\n");
-            img.datatype = _DATATYPE_UINT64;
-        }
-        if(strcmp(pch, "tsi64") == 0)
-        {
-            printf("    data type signed 64-bit int\n");
-            img.datatype = _DATATYPE_INT64;
-        }
+            if(strcmp(pch, "tui8") == 0)
+            {
+                printf("    data type unsigned 8-bit int\n");
+                img.datatype = _DATATYPE_UINT8;
+            }
+            if(strcmp(pch, "tsi8") == 0)
+            {
+                printf("    data type signed 8-bit int\n");
+                img.datatype = _DATATYPE_INT8;
+            }
+            if(strcmp(pch, "tui16") == 0)
+            {
+                printf("    data type unsigned 16-bit int\n");
+                img.datatype = _DATATYPE_UINT16;
+            }
+            if(strcmp(pch, "tsi16") == 0)
+            {
+                printf("    data type signed 16-bit int\n");
+                img.datatype = _DATATYPE_INT16;
+            }
+            if(strcmp(pch, "tui32") == 0)
+            {
+                printf("    data type unsigned 32-bit int\n");
+                img.datatype = _DATATYPE_UINT32;
+            }
+            if(strcmp(pch, "tsi32") == 0)
+            {
+                printf("    data type signed 32-bit int\n");
+                img.datatype = _DATATYPE_INT32;
+            }
+            if(strcmp(pch, "tui64") == 0)
+            {
+                printf("    data type unsigned 64-bit int\n");
+                img.datatype = _DATATYPE_UINT64;
+            }
+            if(strcmp(pch, "tsi64") == 0)
+            {
+                printf("    data type signed 64-bit int\n");
+                img.datatype = _DATATYPE_INT64;
+            }
 
-        if(strcmp(pch, "tf32") == 0)
-        {
-            printf("    data type double (32)\n");
-            img.datatype = _DATATYPE_FLOAT;
-        }
-        if(strcmp(pch, "tf64") == 0)
-        {
-            printf("    data type float (64)\n");
-            img.datatype = _DATATYPE_DOUBLE;
-        }
+            if(strcmp(pch, "tf32") == 0)
+            {
+                printf("    data type double (32)\n");
+                img.datatype = _DATATYPE_FLOAT;
+            }
+            if(strcmp(pch, "tf64") == 0)
+            {
+                printf("    data type float (64)\n");
+                img.datatype = _DATATYPE_DOUBLE;
+            }
 
-        if(pch[0] == 'k')
-        {
-            int nbkw;
-            sscanf(pch, "k%d", &nbkw);
-            printf("    %d keywords\n", nbkw);
-            img.NBkw = nbkw;
-        }
+/*            if(pch[0] == 'k')
+            {
+                int nbkw;
+                sscanf(pch, "k%d", &nbkw);
+                printf("    %d keywords\n", nbkw);
+                img.NBkw = nbkw;
+            }
 
-        if(pch[0] == 'c')
-        {
-            int cbsize;
-            sscanf(pch, "c%d", &cbsize);
-            printf("    %d circular buffer size\n", cbsize);
-            img.CBsize = cbsize;
+            if(pch[0] == 'c')
+            {
+                int cbsize;
+                sscanf(pch, "c%d", &cbsize);
+                printf("    %d circular buffer size\n", cbsize);
+                img.CBsize = cbsize;
+            }
+*/
+            pch = strtok(NULL, ">");
+            nbword++;
         }
-
-        pch = strtok(NULL, ">");
-        nbword++;
     }
 
     img.ID        = -1;
     img.createcnt = -1;
-    strcpy(img.name, pch1);
+    strncpy(img.name, pch1, STRINGMAXLEN_IMAGE_NAME - 1);
     img.im = NULL;
     img.md = NULL;
 
@@ -606,7 +643,7 @@ static inline IMGID makeIMGID_blank()
 
     img.ID        = -1;
     img.createcnt = -1;
-    strcpy(img.name, "");
+    strncpy(img.name, "", STRINGMAXLEN_IMAGE_NAME - 1);
     img.im = NULL;
     img.md = NULL;
 
@@ -616,8 +653,8 @@ static inline IMGID makeIMGID_blank()
 
 
 
-static inline IMGID
-makeIMGID_2D(CONST_WORD name, uint32_t xsize, uint32_t ysize)
+static inline IMGID makeIMGID_2D(CONST_WORD name, uint32_t xsize,
+                                 uint32_t ysize)
 {
     IMGID img   = mkIMGID_from_name(name);
     img.naxis   = 2;
@@ -627,8 +664,8 @@ makeIMGID_2D(CONST_WORD name, uint32_t xsize, uint32_t ysize)
     return img;
 }
 
-static inline IMGID
-makeIMGID_3D(CONST_WORD name, uint32_t xsize, uint32_t ysize, uint32_t zsize)
+static inline IMGID makeIMGID_3D(CONST_WORD name, uint32_t xsize,
+                                 uint32_t ysize, uint32_t zsize)
 {
     IMGID img   = mkIMGID_from_name(name);
     img.naxis   = 3;
@@ -684,8 +721,10 @@ static inline imageID createimagefromIMGID(IMGID *img)
 
 /** Create image according to IMGID entries of existing image
  */
-static inline imageID imcreatelikewiseIMGID(IMGID *target_img,
-        IMGID *source_img)
+static inline imageID imcreatelikewiseIMGID(
+    IMGID *target_img,
+    IMGID *source_img
+)
 {
     if(target_img->ID == -1)
     {
@@ -767,7 +806,7 @@ static inline IMGID makesetIMGID(CONST_WORD name, imageID ID)
     IMGID img;
 
     img.ID = ID;
-    strcpy(img.name, name);
+    strncpy(img.name, name, STRINGMAXLEN_IMAGE_NAME - 1);
 
     img.im        = &data.image[ID];
     img.md        = &data.image[ID].md[0];
@@ -788,7 +827,6 @@ static inline IMGID makesetIMGID(CONST_WORD name, imageID ID)
  */
 static inline imageID resolveIMGID(IMGID *img, int ERRMODE)
 {
-
     // IF:
     // Not resolved before OR create counter mismatch OR not used
     if(img->ID == -1 || (img->createcnt != data.image[img->ID].createcnt) ||
@@ -839,7 +877,10 @@ static inline imageID resolveIMGID(IMGID *img, int ERRMODE)
  * @brief Check if img complies to imgtemplate
  *
  */
-static inline uint64_t IMGIDcompare(IMGID img, IMGID imgtemplate)
+static inline uint64_t IMGIDcompare(
+    IMGID img,
+    IMGID imgtemplate
+)
 {
     int compErr = 0;
 
@@ -913,8 +954,157 @@ static inline uint64_t IMGIDcompare(IMGID img, IMGID imgtemplate)
         }
     }
 
+    printf("Checking NBkw           ");
+    if(imgtemplate.NBkw != img.NBkw)
+    {
+        printf("FAIL\n");
+        printf("   %4u  %s\n", imgtemplate.NBkw, imgtemplate.name);
+        printf("   %4u  %s\n", img.NBkw, img.name);
+        compErr++;
+    }
+    else
+    {
+        printf("PASS\n");
+    }
+
+
     return compErr;
 }
+
+
+
+
+/**
+ * @brief Check if img complies to imgtemplate
+ *
+ */
+static inline uint64_t IMGIDmdcompare(
+    IMGID img,
+    IMGID imgtemplate
+)
+{
+    int compErr = 0;
+
+    printf("COMPARING %s %s\n", img.name, imgtemplate.name);
+
+    if(imgtemplate.md->datatype != _DATATYPE_UNINITIALIZED)
+    {
+        printf("Checking md->datatype       ");
+        if(imgtemplate.md->datatype != img.md->datatype)
+        {
+            printf("FAIL\n");
+            compErr++;
+        }
+        else
+        {
+            printf("PASS\n");
+        }
+    }
+
+    if(imgtemplate.md->naxis != 0)
+    {
+        printf("Checking md->naxis  %d %d    ", imgtemplate.md->naxis, img.md->naxis);
+        if(imgtemplate.md->naxis != img.md->naxis)
+        {
+            printf("FAIL\n");
+            compErr++;
+        }
+        else
+        {
+            printf("PASS\n");
+        }
+    }
+
+    if(imgtemplate.md->size[0] != 0)
+    {
+        printf("Checking md->size[0]        ");
+        if(imgtemplate.md->size[0] != img.md->size[0])
+        {
+            printf("FAIL\n");
+            compErr++;
+        }
+        else
+        {
+            printf("PASS\n");
+        }
+    }
+
+    if(imgtemplate.md->size[1] != 0)
+    {
+        printf("Checking md->size[1]        ");
+        if(imgtemplate.md->size[1] != img.md->size[1])
+        {
+            printf("FAIL\n");
+            compErr++;
+        }
+        else
+        {
+            printf("PASS\n");
+        }
+    }
+
+    if(imgtemplate.md->size[2] != 0)
+    {
+        printf("Checking md->size[2]        ");
+        if(imgtemplate.md->size[2] != img.md->size[2])
+        {
+            printf("FAIL\n");
+            compErr++;
+        }
+        else
+        {
+            printf("PASS\n");
+        }
+    }
+
+    printf("Checking NBkw           ");
+    if(imgtemplate.md->NBkw != img.md->NBkw)
+    {
+        printf("FAIL\n");
+        printf("   %4u  %s\n", imgtemplate.md->NBkw, imgtemplate.md->name);
+        printf("   %4u  %s\n", img.md->NBkw, img.md->name);
+        printf("    template : %u\n", imgtemplate.md->NBkw);
+        printf("    dest     : %u\n", img.md->NBkw);
+        compErr++;
+    }
+    else
+    {
+        printf("PASS\n");
+    }
+
+    return compErr;
+}
+
+
+
+
+
+/**
+ * @brief Connnect to stream
+ *
+ * @param imname  stream name
+ * @return IMGID
+ */
+static inline IMGID
+stream_connect(
+    char * __restrict imname
+)
+{
+    IMGID img = mkIMGID_from_name(imname);
+    resolveIMGID(&img, ERRMODE_WARN);
+
+    if(img.ID == -1)
+    {
+        // try to connect to shared memory if not in local memory already
+        read_sharedmem_image(imname);
+        resolveIMGID(&img, ERRMODE_WARN);
+    }
+
+    return img;
+}
+
+
+
 
 
 
@@ -930,10 +1120,21 @@ static inline uint64_t IMGIDcompare(IMGID img, IMGID imgtemplate)
  * @return IMGID
  */
 static inline IMGID
-stream_connect_create_2Df32(char *imname, uint32_t xsize, uint32_t ysize)
+stream_connect_create_2Df32(
+    char * __restrict imname,
+    uint32_t xsize,
+    uint32_t ysize
+)
 {
     IMGID img = mkIMGID_from_name(imname);
     resolveIMGID(&img, ERRMODE_WARN);
+
+    if(img.ID == -1)
+    {
+        // try to connect to shared memory if not in local memory already
+        read_sharedmem_image(imname);
+        resolveIMGID(&img, ERRMODE_WARN);
+    }
 
     if(img.ID != -1)
     {
@@ -944,6 +1145,7 @@ stream_connect_create_2Df32(char *imname, uint32_t xsize, uint32_t ysize)
         imgc.naxis      = 2;
         imgc.size[0]    = xsize;
         imgc.size[1]    = ysize;
+        imgc.NBkw       = NB_KEYWNODE_MAX;
         uint64_t imgerr = IMGIDcompare(img, imgc);
         printf("%lu errors\n", imgerr);
 
@@ -958,14 +1160,12 @@ stream_connect_create_2Df32(char *imname, uint32_t xsize, uint32_t ysize)
     // if not in local memory, (re)-create
     if(img.ID == -1)
     {
-        uint32_t *arraytmp;
-        arraytmp = (uint32_t *) malloc(sizeof(uint32_t) * 2);
+        uint32_t arraytmp[2];
 
         arraytmp[0] = xsize;
         arraytmp[1] = ysize;
 
-        create_image_ID(imname, 2, arraytmp, _DATATYPE_FLOAT, 1, 0, 0, &img.ID);
-        free(arraytmp);
+        create_image_ID(imname, 2, arraytmp, _DATATYPE_FLOAT, 1, NB_KEYWNODE_MAX, 0, &img.ID);
     }
 
 
@@ -982,13 +1182,23 @@ stream_connect_create_2Df32(char *imname, uint32_t xsize, uint32_t ysize)
 }
 
 
-static inline IMGID stream_connect_create_2D(char    *imname,
-        uint32_t xsize,
-        uint32_t ysize,
-        uint8_t  datatype)
+static inline IMGID stream_connect_create_2D(
+    char * __restrict imname,
+    uint32_t xsize,
+    uint32_t ysize,
+    uint8_t  datatype
+)
 {
     IMGID img = mkIMGID_from_name(imname);
     resolveIMGID(&img, ERRMODE_WARN);
+
+
+    if(img.ID == -1)
+    {
+        // try to connect to shared memory if not in local memory already
+        read_sharedmem_image(imname);
+        resolveIMGID(&img, ERRMODE_WARN);
+    }
 
     if(img.ID != -1)
     {
@@ -999,6 +1209,7 @@ static inline IMGID stream_connect_create_2D(char    *imname,
         imgc.naxis      = 2;
         imgc.size[0]    = xsize;
         imgc.size[1]    = ysize;
+        imgc.NBkw       = NB_KEYWNODE_MAX;
         uint64_t imgerr = IMGIDcompare(img, imgc);
         printf("%lu errors\n", imgerr);
 
@@ -1013,14 +1224,12 @@ static inline IMGID stream_connect_create_2D(char    *imname,
     // if not in local memory, (re)-create
     if(img.ID == -1)
     {
-        uint32_t *arraytmp;
-        arraytmp = (uint32_t *) malloc(sizeof(uint32_t) * 2);
+        uint32_t arraytmp[2];
 
         arraytmp[0] = xsize;
         arraytmp[1] = ysize;
 
-        create_image_ID(imname, 2, arraytmp, datatype, 1, 0, 0, &img.ID);
-        free(arraytmp);
+        create_image_ID(imname, 2, arraytmp, datatype, 1, NB_KEYWNODE_MAX, 0, &img.ID);
     }
 
 
@@ -1050,14 +1259,23 @@ static inline IMGID stream_connect_create_2D(char    *imname,
  * @param zsize   z size
  * @return IMGID
  */
-static inline IMGID stream_connect_create_3Df32(char    *imname,
-        uint32_t xsize,
-        uint32_t ysize,
-        uint32_t zsize)
+static inline IMGID stream_connect_create_3Df32(
+    char * __restrict imname,
+    uint32_t xsize,
+    uint32_t ysize,
+    uint32_t zsize)
 {
     printf("Running stream_connect_create_3Df32\n");
     IMGID img = mkIMGID_from_name(imname);
     resolveIMGID(&img, ERRMODE_WARN);
+
+
+    if(img.ID == -1)
+    {
+        // try to connect to shared memory if not in local memory already
+        read_sharedmem_image(imname);
+        resolveIMGID(&img, ERRMODE_WARN);
+    }
 
     if(img.ID != -1)
     {
@@ -1069,6 +1287,7 @@ static inline IMGID stream_connect_create_3Df32(char    *imname,
         imgc.size[0]    = xsize;
         imgc.size[1]    = ysize;
         imgc.size[2]    = zsize;
+        imgc.NBkw       = NB_KEYWNODE_MAX;
         uint64_t imgerr = IMGIDcompare(img, imgc);
         printf("%lu errors\n", imgerr);
 
@@ -1083,15 +1302,13 @@ static inline IMGID stream_connect_create_3Df32(char    *imname,
     // if not in local memory, (re)-create
     if(img.ID == -1)
     {
-        uint32_t *arraytmp;
-        arraytmp = (uint32_t *) malloc(sizeof(uint32_t) * 3);
+        uint32_t arraytmp[3];
 
         arraytmp[0] = xsize;
         arraytmp[1] = ysize;
         arraytmp[2] = zsize;
 
-        create_image_ID(imname, 3, arraytmp, _DATATYPE_FLOAT, 1, 0, 0, &img.ID);
-        free(arraytmp);
+        create_image_ID(imname, 3, arraytmp, _DATATYPE_FLOAT, 1, NB_KEYWNODE_MAX, 0, &img.ID);
     }
 
 
@@ -1109,15 +1326,25 @@ static inline IMGID stream_connect_create_3Df32(char    *imname,
 
 
 
-static inline IMGID stream_connect_create_3D(char    *imname,
-        uint32_t xsize,
-        uint32_t ysize,
-        uint32_t zsize,
-        uint8_t  datatype)
+static inline IMGID stream_connect_create_3D(
+    char * __restrict imname,
+    uint32_t xsize,
+    uint32_t ysize,
+    uint32_t zsize,
+    uint8_t  datatype
+)
 {
     printf("Running stream_connect_create_3Df32\n");
     IMGID img = mkIMGID_from_name(imname);
     resolveIMGID(&img, ERRMODE_WARN);
+
+
+    if(img.ID == -1)
+    {
+        // try to connect to shared memory if not in local memory already
+        read_sharedmem_image(imname);
+        resolveIMGID(&img, ERRMODE_WARN);
+    }
 
     if(img.ID != -1)
     {
@@ -1129,6 +1356,7 @@ static inline IMGID stream_connect_create_3D(char    *imname,
         imgc.size[0]    = xsize;
         imgc.size[1]    = ysize;
         imgc.size[2]    = zsize;
+        imgc.NBkw       = NB_KEYWNODE_MAX;
         uint64_t imgerr = IMGIDcompare(img, imgc);
         printf("%lu errors\n", imgerr);
 
@@ -1143,15 +1371,15 @@ static inline IMGID stream_connect_create_3D(char    *imname,
     // if not in local memory, (re)-create
     if(img.ID == -1)
     {
-        uint32_t *arraytmp;
-        arraytmp = (uint32_t *) malloc(sizeof(uint32_t) * 3);
+        uint32_t arraytmp[3];
 
         arraytmp[0] = xsize;
         arraytmp[1] = ysize;
         arraytmp[2] = zsize;
 
-        create_image_ID(imname, 3, arraytmp, datatype, 1, 0, 0, &img.ID);
-        free(arraytmp);
+        printf("CREATING image size %u %u %u\n", xsize, ysize, zsize);
+
+        create_image_ID(imname, 3, arraytmp, datatype, 1, NB_KEYWNODE_MAX, 0, &img.ID);
     }
 
 

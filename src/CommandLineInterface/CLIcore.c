@@ -96,8 +96,8 @@ int C_ERRNO;
 int Verbose    = 0;
 int Listimfile = 0;
 
-char CLIstartupfilename[200] = "CLIstartup.txt";
 int milk_cli_loaded = 0;
+char CLIstartupfilename[STRINGMAXLEN_CLISTARTUPFILENAME] = "CLIstartup.txt";
 
 // fifo input
 static int    fifofd;
@@ -175,7 +175,8 @@ static errno_t CLIcore__load_module_as__cli()
     DEBUG_TRACEPOINT("calling CLI_checkarg");
     if(0 + CLI_checkarg(1, CLIARG_STR) + CLI_checkarg(2, CLIARG_STR) == 0)
     {
-        strcpy(data.moduleshortname, data.cmdargtoken[2].val.string);
+        strncpy(data.moduleshortname, data.cmdargtoken[2].val.string,
+                STRINGMAXLEN_MODULE_SHORTNAME - 1);
         load_module_shared(data.cmdargtoken[1].val.string);
         return CLICMD_SUCCESS;
     }
@@ -229,7 +230,7 @@ errno_t milk_usleep__cli()
 errno_t functionparameter_CTRLscreen__cli()
 {
     DEBUG_TRACEPOINT("calling CLI_checkarg");
-    if((CLI_checkarg(1, CLIARG_LONG) == 0) &&
+    if((CLI_checkarg(1, CLIARG_INT64) == 0) &&
             (CLI_checkarg(2, CLIARG_STR) == 0) &&
             (CLI_checkarg(3, CLIARG_STR) == 0))
     {
@@ -292,21 +293,6 @@ void fnExit_fifoclose()
 static errno_t runCLI_initialize()
 {
     DEBUG_TRACE_FSTART();
-
-    // NOTE: change to function call to ImageStreamIO_typename
-    /* TYPESIZE[_DATATYPE_UINT8]                  = SIZEOF_DATATYPE_UINT8;
-     TYPESIZE[_DATATYPE_INT8]                   = SIZEOF_DATATYPE_INT8;
-     TYPESIZE[_DATATYPE_UINT16]                 = SIZEOF_DATATYPE_UINT16;
-     TYPESIZE[_DATATYPE_INT16]                  = SIZEOF_DATATYPE_INT16;
-     TYPESIZE[_DATATYPE_UINT32]                 = SIZEOF_DATATYPE_UINT32;
-     TYPESIZE[_DATATYPE_INT32]                  = SIZEOF_DATATYPE_INT32;
-     TYPESIZE[_DATATYPE_UINT64]                 = SIZEOF_DATATYPE_UINT64;
-     TYPESIZE[_DATATYPE_INT64]                  = SIZEOF_DATATYPE_INT64;
-     TYPESIZE[_DATATYPE_FLOAT]                  = SIZEOF_DATATYPE_FLOAT;
-     TYPESIZE[_DATATYPE_DOUBLE]                 = SIZEOF_DATATYPE_DOUBLE;
-     TYPESIZE[_DATATYPE_COMPLEX_FLOAT]          = SIZEOF_DATATYPE_COMPLEX_FLOAT;
-     TYPESIZE[_DATATYPE_COMPLEX_DOUBLE]         = SIZEOF_DATATYPE_COMPLEX_DOUBLE;*/
-    //    TYPESIZE[_DATATYPE_EVENT_UI8_UI8_UI16_UI8] = SIZEOF_DATATYPE_EVENT_UI8_UI8_UI16_UI8;
 
     // get PID and write it to shell env variable MILK_CLI_PID
     CLIPID = getpid();
@@ -385,8 +371,7 @@ static errno_t runCLI_initialize()
     data.overwrite     = 0;
     data.precision     = 0;  // float is default precision
     data.SHARED_DFT    = 0;  // do not allocate shared memory for images
-    data.NBKEYWORD_DFT = 50; // allocate memory for 10 keyword per image
-    sprintf(data.SAVEDIR, ".");
+    snprintf(data.SAVEDIR, STRINGMAXLEN_DIRNAME, ".");
 
     data.CLIlogON          = 0; // log every command
     data.fifoON            = 0;
@@ -398,6 +383,11 @@ static errno_t runCLI_initialize()
     data.sigact.sa_handler = sig_handler;
     sigemptyset(&data.sigact.sa_mask);
     data.sigact.sa_flags = 0;
+
+    // Request the kernel for a sigint if parent dies
+    // This is useful if stdin is a pipe from the parent process
+    // and the parent dies suddenly. This confuses libreadline.
+    prctl(PR_SET_PDEATHSIG, SIGINT);
 
     data.signal_USR1 = 0;
     data.signal_USR2 = 0;
@@ -460,10 +450,12 @@ errno_t runCLI(int argc, char *argv[], char *promptstring)
     int            cliwaitus     = 100;
     struct timeval tv; // sleep 100 us after reading FIFO
 
-    strcpy(data.processname, argv[0]);
+
+
+    strncpy(data.processname, argv[0], STRINGMAXLEN_PROCESSNAME - 1);
 
     // Set CLI prompt
-    char prompt[200];
+    char prompt[STRINGMAXLEN_CLIPROMPT];
     runCLI_prompt(promptstring, prompt);
 
     // CLI initialize
@@ -476,7 +468,6 @@ errno_t runCLI(int argc, char *argv[], char *promptstring)
 
     // initialize fifo to process name
     DEBUG_TRACEPOINT("set default fifo name");
-    //sprintf(data.fifoname, "%s.fifo.%07d", data.processname, getpid());
     WRITE_FULLFILENAME(data.fifoname,
                        "%s/.%s.fifo.%07d",
                        data.shmdir,
@@ -526,6 +517,11 @@ errno_t runCLI(int argc, char *argv[], char *promptstring)
 
     DEBUG_TRACEPOINT("Initialize data control block");
     CLI_data_init();
+
+    if(data.Debug > 0)
+    {
+        printf("DEBUG: %s: start\n", __func__);
+    }
 
     runCLI_cmd_init();
 
@@ -647,6 +643,7 @@ errno_t runCLI(int argc, char *argv[], char *promptstring)
                 fifofd,
                 &cli_fdin_set); // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set.
         }
+
         FD_SET(
             fileno(stdin),
             &cli_fdin_set); // Sets the bit for the file descriptor fifofd in the file descriptor set cli_fdin_set.
@@ -674,6 +671,7 @@ errno_t runCLI(int argc, char *argv[], char *promptstring)
         DEBUG_TRACEPOINT("loop entry");
         while((data.CLIexecuteCMDready == 0) && (data.CLIloopON == 1))
         {
+            // Special interrupt clause if CLI mode (not FIFO) AND stdin has been closed.
             if(data.signal_INT == 1)
             {
                 // stop CLI input loop
@@ -684,7 +682,7 @@ errno_t runCLI(int argc, char *argv[], char *promptstring)
                 // CLI loop delay to keep CPU load light
                 struct timespec nsts;
                 nsts.tv_sec  = 0;
-                nsts.tv_nsec = 300000; // 0.3 ms delay
+                nsts.tv_nsec = 3000000; // 3 ms delay
                 nanosleep(&nsts, NULL);
             }
 
@@ -756,12 +754,16 @@ errno_t runCLI(int argc, char *argv[], char *promptstring)
                         if(buf0[0] == '\n')
                         {
                             buf1[total_bytes - 1] = '\0';
-                            strcpy(data.CLIcmdline, buf1);
+                            strncpy(data.CLIcmdline, buf1, STRINGMAXLEN_CLICMDLINE - 1);
 
                             DEBUG_TRACEPOINT(
                                 "CLI executing line: "
                                 "%s",
                                 data.CLIcmdline);
+                            if(data.Debug > 0)
+                            {
+                                printf("DEBUG: %s: execute line, fifo mode\n", __func__);
+                            }
                             CLI_execute_line();
                             DEBUG_TRACEPOINT("CLI line executed");
 
@@ -1082,7 +1084,7 @@ static int command_line_process_options(int argc, char **argv)
 {
     int                option_index = 0;
     struct sched_param schedpar;
-    char               command[200];
+    char               command[STRINGMAXLEN_COMMAND];
 
     static struct option long_options[] =
     {
@@ -1115,7 +1117,7 @@ static int command_line_process_options(int argc, char **argv)
 
         c = getopt_long(argc,
                         argv,
-                        "hvidoe:m:n:p:fF:s:",
+                        "hvid:oe:m:n:p:fF:s:",
                         long_options,
                         &option_index);
 
@@ -1156,11 +1158,6 @@ static int command_line_process_options(int argc, char **argv)
                 exit(EXIT_SUCCESS);
                 break;
 
-            case 'd':
-                data.Debug = atoi(optarg);
-                printf("Debug = %d\n", data.Debug);
-                break;
-
             case 'o':
                 puts("CAUTION - WILL OVERWRITE EXISTING FITS FILES\n");
                 data.overwrite = 1;
@@ -1171,16 +1168,24 @@ static int command_line_process_options(int argc, char **argv)
                     "Idle mode: only runs process when X is idle (pid "
                     "%ld)\n",
                     (long) getpid());
-                sprintf(command, "runidle %ld > /dev/null &\n", (long) getpid());
+                snprintf(command, STRINGMAXLEN_COMMAND, "runidle %ld > /dev/null &\n",
+                         (long) getpid());
                 if(system(command) != 0)
                 {
                     PRINT_ERROR("system() returns non-zero value");
                 }
                 break;
 
+
+            case 'd':
+                printf("debug level : '%s'\n", optarg);
+                data.Debug = atoi(optarg);
+                printf("Debug = %d\n", data.Debug);
+                break;
+
             case 'm':
                 printf("Starting memory monitor on '%s'\n", optarg);
-                memory_monitor(optarg);
+                //memory_monitor(optarg);
                 break;
 
             case 'n':
@@ -1188,16 +1193,16 @@ static int command_line_process_options(int argc, char **argv)
                 {
                     printf("process name '%s'\n", optarg);
                 }
-                strcpy(data.processname, optarg);
+                strncpy(data.processname, optarg, STRINGMAXLEN_PROCESSNAME - 1);
                 data.processnameflag = 1; // this process has been named
 
                 // extract first word before '.'
                 // it can be used to name processinfo and function parameter structure for process
                 char tmpstring[200];
-                strcpy(tmpstring, data.processname);
+                strncpy(tmpstring, data.processname, STRINGMAXLEN_PROCESSNAME - 1);
                 char *firstword;
                 firstword = strtok(tmpstring, ".");
-                strcpy(data.processname0, firstword);
+                strncpy(data.processname0, firstword, STRINGMAXLEN_PROCESSNAME - 1);
                 prctl(PR_SET_NAME, optarg, 0, 0, 0);
                 break;
 
@@ -1231,12 +1236,12 @@ static int command_line_process_options(int argc, char **argv)
             case 'F':
                 printf("using input fifo '%s'\n", optarg);
                 data.fifoON = 1;
-                sprintf(data.fifoname, "%s", optarg);
+                snprintf(data.fifoname, STRINGMAXLEN_FULLFILENAME, "%s", optarg);
                 printf("FIFO NAME = %s\n", data.fifoname);
                 break;
 
             case 's':
-                strcpy(CLIstartupfilename, optarg);
+                strncpy(CLIstartupfilename, optarg, STRINGMAXLEN_CLISTARTUPFILENAME - 1);
                 if(data.quiet == 0)
                 {
                     printf("Startup file : %s\n", CLIstartupfilename);

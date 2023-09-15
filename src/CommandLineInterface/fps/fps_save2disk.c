@@ -19,8 +19,10 @@
 
 
 
-int functionparameter_SaveParam2disk(FUNCTION_PARAMETER_STRUCT *fpsentry,
-                                     const char                *paramname)
+int functionparameter_SaveParam2disk(
+    FUNCTION_PARAMETER_STRUCT *fpsentry,
+    const char                *paramname
+)
 {
     int pindex;
 
@@ -52,31 +54,33 @@ int functionparameter_SaveFPS2disk_dir(FUNCTION_PARAMETER_STRUCT *fpsentry,
         mkdir(dirname, 0700);
     }
 
-    sprintf(fname, "%s/%s.fps", dirname, fpsentry->md->name);
+    snprintf(fname, STRINGMAXLEN_FULLFILENAME, "%s/%s.fps", dirname,
+             fpsentry->md->name);
     fpoutval = fopen(fname, "w");
 
     pid_t tid;
     tid = syscall(SYS_gettid);
 
     // Get GMT time
-    char            timestring[200];
+    char            timestring[TIMESTRINGLEN];
     struct timespec tnow;
     time_t          now;
 
-    clock_gettime(CLOCK_REALTIME, &tnow);
+    clock_gettime(CLOCK_MILK, &tnow);
     now = tnow.tv_sec;
     struct tm *uttime;
     uttime = gmtime(&now);
 
-    sprintf(timestring,
-            "%04d-%02d-%02dT%02d:%02d:%02d.%09ld",
-            1900 + uttime->tm_year,
-            1 + uttime->tm_mon,
-            uttime->tm_mday,
-            uttime->tm_hour,
-            uttime->tm_min,
-            uttime->tm_sec,
-            tnow.tv_nsec);
+    SNPRINTF_CHECK(timestring,
+                   TIMESTRINGLEN,
+                   "%04d-%02d-%02dT%02d:%02d:%02d.%09ld",
+                   1900 + uttime->tm_year,
+                   1 + uttime->tm_mon,
+                   uttime->tm_mday,
+                   uttime->tm_hour,
+                   uttime->tm_min,
+                   uttime->tm_sec,
+                   tnow.tv_nsec);
 
     fprintf(fpoutval, "# TIMESTRING %s\n", timestring);
     fprintf(fpoutval, "# PID        %d\n", getpid());
@@ -113,8 +117,8 @@ int functionparameter_SaveFPS2disk(FUNCTION_PARAMETER_STRUCT *fps)
     WRITE_FULLFILENAME(outdir, "%s/%s", fps->md->workdir, fps->md->datadir);
     functionparameter_SaveFPS2disk_dir(fps, outdir);
 
-    char timestring[100];
-    char timestringnow[100];
+    char timestring[TIMESTRINGLEN];
+    char timestringnow[TIMESTRINGLEN];
 
     // assemble timestrings
     mkUTtimestring_microsec(timestring, fps->md->runpidstarttime);
@@ -252,8 +256,8 @@ errno_t fps_write_RUNoutput_image(FUNCTION_PARAMETER_STRUCT *fps,
                                   const char                *outname)
 {
     char ffname[STRINGMAXLEN_FULLFILENAME];
-    char timestring[100];
-    char timestringnow[100];
+    char timestring[TIMESTRINGLEN];
+    char timestringnow[TIMESTRINGLEN];
 
     // assemble timestrings
     mkUTtimestring_microsec(timestring, fps->md->runpidstarttime);
@@ -293,8 +297,8 @@ FILE *fps_write_RUNoutput_file(FUNCTION_PARAMETER_STRUCT *fps,
     FILE *fp;
 
     char ffname[STRINGMAXLEN_FULLFILENAME];
-    char timestring[100];
-    char timestringnow[100];
+    char timestring[TIMESTRINGLEN];
+    char timestringnow[TIMESTRINGLEN];
 
     // assemble timestrings
     mkUTtimestring_microsec(timestring, fps->md->runpidstarttime);

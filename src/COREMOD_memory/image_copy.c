@@ -18,9 +18,15 @@
 
 imageID copy_image_ID(const char *name, const char *newname, int shared);
 
+
+
 imageID chname_image_ID(const char *ID_name, const char *new_name);
 
+
+
 errno_t COREMOD_MEMORY_cp2shm(const char *IDname, const char *IDshmname);
+
+
 
 // ==========================================
 // Command line interface wrapper function(s)
@@ -41,20 +47,6 @@ static errno_t copy_image_ID__cli()
     return CLICMD_SUCCESS;
 }
 
-static errno_t copy_image_ID_sharedmem__cli()
-{
-    if(data.cmdargtoken[1].type != CLIARG_IMG)
-    {
-        printf("Image %s does not exist\n", data.cmdargtoken[1].val.string);
-        return CLICMD_INVALID_ARG;
-    }
-
-    copy_image_ID(data.cmdargtoken[1].val.string,
-                  data.cmdargtoken[2].val.string,
-                  1);
-
-    return CLICMD_SUCCESS;
-}
 
 static errno_t chname_image_ID__cli()
 {
@@ -99,7 +91,7 @@ errno_t image_copy_addCLIcmd()
         "cp im1 im4",
         "long copy_image_ID(const char *name, const char *newname, 0)");
 
-    RegisterCLIcommand(
+  /*  RegisterCLIcommand(
         "cpsh",
         __FILE__,
         copy_image_ID_sharedmem__cli,
@@ -107,6 +99,8 @@ errno_t image_copy_addCLIcmd()
         "source, dest",
         "cp im1 im4",
         "long copy_image_ID(const char *name, const char *newname, 1)");
+*/
+
 
     RegisterCLIcommand(
         "mv",
@@ -129,7 +123,13 @@ errno_t image_copy_addCLIcmd()
     return RETURN_SUCCESS;
 }
 
-imageID copy_image_ID(const char *name, const char *newname, int shared)
+
+
+imageID copy_image_ID(
+    const char * restrict name,
+    const char * restrict newname,
+    int shared
+)
 {
     imageID   ID;
     imageID   IDout;
@@ -177,6 +177,7 @@ imageID copy_image_ID(const char *name, const char *newname, int shared)
                     newname);
             newim = 1;
         }
+
         if(data.image[ID].md[0].datatype != data.image[IDout].md[0].datatype)
         {
             fprintf(stderr,
@@ -201,7 +202,7 @@ imageID copy_image_ID(const char *name, const char *newname, int shared)
                         size,
                         datatype,
                         shared,
-                        data.NBKEYWORD_DFT,
+                        NB_KEYWNODE_MAX,
                         0,
                         NULL);
         IDout = image_ID(newname);
@@ -230,89 +231,9 @@ imageID copy_image_ID(const char *name, const char *newname, int shared)
     }
     data.image[IDout].md[0].write = 1;
 
-    if(datatype == _DATATYPE_UINT8)
-    {
-        memcpy(data.image[IDout].array.UI8,
-               data.image[ID].array.UI8,
-               SIZEOF_DATATYPE_UINT8 * nelement);
-    }
-
-    if(datatype == _DATATYPE_INT8)
-    {
-        memcpy(data.image[IDout].array.SI8,
-               data.image[ID].array.SI8,
-               SIZEOF_DATATYPE_INT8 * nelement);
-    }
-
-    if(datatype == _DATATYPE_UINT16)
-    {
-        memcpy(data.image[IDout].array.UI16,
-               data.image[ID].array.UI16,
-               SIZEOF_DATATYPE_UINT16 * nelement);
-    }
-
-    if(datatype == _DATATYPE_INT16)
-    {
-        memcpy(data.image[IDout].array.SI16,
-               data.image[ID].array.SI16,
-               SIZEOF_DATATYPE_INT8 * nelement);
-    }
-
-    if(datatype == _DATATYPE_UINT32)
-    {
-        memcpy(data.image[IDout].array.UI32,
-               data.image[ID].array.UI32,
-               SIZEOF_DATATYPE_UINT32 * nelement);
-    }
-
-    if(datatype == _DATATYPE_INT32)
-    {
-        memcpy(data.image[IDout].array.SI32,
-               data.image[ID].array.SI32,
-               SIZEOF_DATATYPE_INT32 * nelement);
-    }
-
-    if(datatype == _DATATYPE_UINT64)
-    {
-        memcpy(data.image[IDout].array.UI64,
-               data.image[ID].array.UI64,
-               SIZEOF_DATATYPE_UINT64 * nelement);
-    }
-
-    if(datatype == _DATATYPE_INT64)
-    {
-        memcpy(data.image[IDout].array.SI64,
-               data.image[ID].array.SI64,
-               SIZEOF_DATATYPE_INT64 * nelement);
-    }
-
-    if(datatype == _DATATYPE_FLOAT)
-    {
-        memcpy(data.image[IDout].array.F,
-               data.image[ID].array.F,
-               SIZEOF_DATATYPE_FLOAT * nelement);
-    }
-
-    if(datatype == _DATATYPE_DOUBLE)
-    {
-        memcpy(data.image[IDout].array.D,
-               data.image[ID].array.D,
-               SIZEOF_DATATYPE_DOUBLE * nelement);
-    }
-
-    if(datatype == _DATATYPE_COMPLEX_FLOAT)
-    {
-        memcpy(data.image[IDout].array.CF,
-               data.image[ID].array.CF,
-               SIZEOF_DATATYPE_COMPLEX_FLOAT * nelement);
-    }
-
-    if(datatype == _DATATYPE_COMPLEX_DOUBLE)
-    {
-        memcpy(data.image[IDout].array.CD,
-               data.image[ID].array.CD,
-               SIZEOF_DATATYPE_COMPLEX_DOUBLE * nelement);
-    }
+    memcpy(data.image[IDout].array.raw,
+           data.image[ID].array.raw,
+           ImageStreamIO_typesize(datatype) * nelement);
 
     COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
 
@@ -324,7 +245,13 @@ imageID copy_image_ID(const char *name, const char *newname, int shared)
     return IDout;
 }
 
-imageID chname_image_ID(const char *ID_name, const char *new_name)
+
+
+
+imageID chname_image_ID(
+    const char * restrict ID_name,
+    const char * restrict new_name
+)
 {
     imageID ID;
 
@@ -350,19 +277,22 @@ imageID chname_image_ID(const char *ID_name, const char *new_name)
     return ID;
 }
 
+
+
 /** copy an image to shared memory
  *
  *
  */
-errno_t COREMOD_MEMORY_cp2shm(const char *IDname, const char *IDshmname)
+errno_t COREMOD_MEMORY_cp2shm(
+    const char * restrict IDname,
+    const char * restrict IDshmname
+)
 {
     imageID   ID;
     imageID   IDshm;
     uint8_t   datatype;
     long      naxis;
     uint32_t *sizearray;
-    char     *ptr1;
-    char     *ptr2;
     long      k;
     int       axis;
     int       shmOK;
@@ -418,93 +348,9 @@ errno_t COREMOD_MEMORY_cp2shm(const char *IDname, const char *IDshmname)
 
     data.image[IDshm].md[0].write = 1;
 
-    switch(datatype)
-    {
+    memcpy(data.image[IDshm].array.raw, data.image[ID].array.raw,
+           ImageStreamIO_typesize(datatype) * data.image[ID].md[0].nelement);
 
-        case _DATATYPE_FLOAT:
-            ptr1 = (char *) data.image[ID].array.F;
-            ptr2 = (char *) data.image[IDshm].array.F;
-            memcpy((void *) ptr2,
-                   (void *) ptr1,
-                   SIZEOF_DATATYPE_FLOAT * data.image[ID].md[0].nelement);
-            break;
-
-        case _DATATYPE_DOUBLE:
-            ptr1 = (char *) data.image[ID].array.D;
-            ptr2 = (char *) data.image[IDshm].array.D;
-            memcpy((void *) ptr2,
-                   (void *) ptr1,
-                   SIZEOF_DATATYPE_DOUBLE * data.image[ID].md[0].nelement);
-            break;
-
-        case _DATATYPE_INT8:
-            ptr1 = (char *) data.image[ID].array.SI8;
-            ptr2 = (char *) data.image[IDshm].array.SI8;
-            memcpy((void *) ptr2,
-                   (void *) ptr1,
-                   SIZEOF_DATATYPE_INT8 * data.image[ID].md[0].nelement);
-            break;
-
-        case _DATATYPE_UINT8:
-            ptr1 = (char *) data.image[ID].array.UI8;
-            ptr2 = (char *) data.image[IDshm].array.UI8;
-            memcpy((void *) ptr2,
-                   (void *) ptr1,
-                   SIZEOF_DATATYPE_UINT8 * data.image[ID].md[0].nelement);
-            break;
-
-        case _DATATYPE_INT16:
-            ptr1 = (char *) data.image[ID].array.SI16;
-            ptr2 = (char *) data.image[IDshm].array.SI16;
-            memcpy((void *) ptr2,
-                   (void *) ptr1,
-                   SIZEOF_DATATYPE_INT16 * data.image[ID].md[0].nelement);
-            break;
-
-        case _DATATYPE_UINT16:
-            ptr1 = (char *) data.image[ID].array.UI16;
-            ptr2 = (char *) data.image[IDshm].array.UI16;
-            memcpy((void *) ptr2,
-                   (void *) ptr1,
-                   SIZEOF_DATATYPE_UINT16 * data.image[ID].md[0].nelement);
-            break;
-
-        case _DATATYPE_INT32:
-            ptr1 = (char *) data.image[ID].array.SI32;
-            ptr2 = (char *) data.image[IDshm].array.SI32;
-            memcpy((void *) ptr2,
-                   (void *) ptr1,
-                   SIZEOF_DATATYPE_INT32 * data.image[ID].md[0].nelement);
-            break;
-
-        case _DATATYPE_UINT32:
-            ptr1 = (char *) data.image[ID].array.UI32;
-            ptr2 = (char *) data.image[IDshm].array.UI32;
-            memcpy((void *) ptr2,
-                   (void *) ptr1,
-                   SIZEOF_DATATYPE_UINT32 * data.image[ID].md[0].nelement);
-            break;
-
-        case _DATATYPE_INT64:
-            ptr1 = (char *) data.image[ID].array.SI64;
-            ptr2 = (char *) data.image[IDshm].array.SI64;
-            memcpy((void *) ptr2,
-                   (void *) ptr1,
-                   SIZEOF_DATATYPE_INT64 * data.image[ID].md[0].nelement);
-            break;
-
-        case _DATATYPE_UINT64:
-            ptr1 = (char *) data.image[ID].array.UI64;
-            ptr2 = (char *) data.image[IDshm].array.UI64;
-            memcpy((void *) ptr2,
-                   (void *) ptr1,
-                   SIZEOF_DATATYPE_UINT64 * data.image[ID].md[0].nelement);
-            break;
-
-        default:
-            printf("data type not supported\n");
-            break;
-    }
     COREMOD_MEMORY_image_set_sempost_byID(IDshm, -1);
     data.image[IDshm].md[0].cnt0++;
     data.image[IDshm].md[0].write = 0;

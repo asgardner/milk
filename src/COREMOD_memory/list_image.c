@@ -104,8 +104,11 @@ errno_t init_list_image_ID_ncurses(const char *termttyname)
 
 errno_t list_image_ID_ncurses()
 {
-    char      str[300];
+    int strmaxlen = 300;
+    char      str[strmaxlen];
+    int str1maxlen = 500;
     char      str1[500];
+    int str2maxlen = 512;
     char      str2[512];
     long      i, j;
     long long tmp_long;
@@ -117,7 +120,7 @@ errno_t list_image_ID_ncurses()
     struct timespec timenow;
     double          timediff;
 
-    clock_gettime(CLOCK_REALTIME, &timenow);
+    clock_gettime(CLOCK_MILK, &timenow);
 
     set_term(listim_scr);
 
@@ -155,7 +158,7 @@ errno_t list_image_ID_ncurses()
             {
                 attron(A_BOLD | COLOR_PAIR(6));
             }
-            sprintf(str, "%10s ", data.image[i].name);
+            snprintf(str, strmaxlen, "%10s ", data.image[i].name);
             printw("%s", str);
 
             if(data.image[i].md[0].shared == 1)
@@ -167,70 +170,23 @@ errno_t list_image_ID_ncurses()
                 attroff(A_BOLD | COLOR_PAIR(6));
             }
 
-            sprintf(str, "[ %6ld", (long) data.image[i].md[0].size[0]);
+            snprintf(str, strmaxlen, "[ %6ld", (long) data.image[i].md[0].size[0]);
 
             for(j = 1; j < data.image[i].md[0].naxis; j++)
             {
-                sprintf(str1,
-                        "%s x %6ld",
-                        str,
-                        (long) data.image[i].md[0].size[j]);
+                snprintf(str1,
+                         str1maxlen,
+                         "%s x %6ld",
+                         str,
+                         (long) data.image[i].md[0].size[j]);
             }
-            sprintf(str2, "%s]", str1);
+            snprintf(str2, str2maxlen, "%s]", str1);
 
             printw("%-28s", str2);
 
             attron(COLOR_PAIR(3));
-            n = 0;
 
-            if(datatype == _DATATYPE_UINT8)
-            {
-                n = snprintf(type, STYPESIZE, "UINT8  ");
-            }
-            if(datatype == _DATATYPE_INT8)
-            {
-                n = snprintf(type, STYPESIZE, "INT8   ");
-            }
-            if(datatype == _DATATYPE_UINT16)
-            {
-                n = snprintf(type, STYPESIZE, "UINT16 ");
-            }
-            if(datatype == _DATATYPE_INT16)
-            {
-                n = snprintf(type, STYPESIZE, "INT16  ");
-            }
-            if(datatype == _DATATYPE_UINT32)
-            {
-                n = snprintf(type, STYPESIZE, "UINT32 ");
-            }
-            if(datatype == _DATATYPE_INT32)
-            {
-                n = snprintf(type, STYPESIZE, "INT32  ");
-            }
-            if(datatype == _DATATYPE_UINT64)
-            {
-                n = snprintf(type, STYPESIZE, "UINT64 ");
-            }
-            if(datatype == _DATATYPE_INT64)
-            {
-                n = snprintf(type, STYPESIZE, "INT64  ");
-            }
-            if(datatype == _DATATYPE_FLOAT)
-            {
-                n = snprintf(type, STYPESIZE, "FLOAT  ");
-            }
-            if(datatype == _DATATYPE_DOUBLE)
-            {
-                n = snprintf(type, STYPESIZE, "DOUBLE ");
-            }
-            if(datatype == _DATATYPE_COMPLEX_FLOAT)
-            {
-                n = snprintf(type, STYPESIZE, "CFLOAT ");
-            }
-            if(datatype == _DATATYPE_COMPLEX_DOUBLE)
-            {
-                n = snprintf(type, STYPESIZE, "CDOUBLE");
-            }
+            n = snprintf(type, STYPESIZE, "%s", ImageStreamIO_typename_7(datatype));
 
             printw("%7s ", type);
 
@@ -262,6 +218,7 @@ errno_t list_image_ID_ncurses()
             {
                 printw("%15.9f\n", timediff);
             }
+
         }
         else
         {
@@ -292,28 +249,28 @@ errno_t list_image_ID_ncurses()
 
     //attron(A_BOLD);
 
-    sprintf(str, "%ld image(s)      ", compute_nb_image());
+    snprintf(str, strmaxlen, "%ld image(s)      ", compute_nb_image());
     if(sizeGb > 0)
     {
-        sprintf(str1, "%s %ld GB", str, (long)(sizeGb));
+        snprintf(str1, str1maxlen, "%s %ld GB", str, (long)(sizeGb));
         strcpy(str, str1);
     }
 
     if(sizeMb > 0)
     {
-        sprintf(str1, "%s %ld MB", str, (long)(sizeMb));
+        snprintf(str1, str1maxlen, "%s %ld MB", str, (long)(sizeMb));
         strcpy(str, str1);
     }
 
     if(sizeKb > 0)
     {
-        sprintf(str1, "%s %ld KB", str, (long)(sizeKb));
+        snprintf(str1, str1maxlen, "%s %ld KB", str, (long)(sizeKb));
         strcpy(str, str1);
     }
 
     if(sizeb > 0)
     {
-        sprintf(str1, "%s %ld B", str, (long)(sizeb));
+        snprintf(str1, str1maxlen, "%s %ld B", str, (long)(sizeb));
         strcpy(str, str1);
     }
 
@@ -335,6 +292,10 @@ void close_list_image_ID_ncurses(void)
     data.MEM_MONITOR = 0;
 }
 
+
+
+
+
 errno_t list_image_ID_ofp(FILE *fo)
 {
     long               i;
@@ -344,8 +305,10 @@ errno_t list_image_ID_ofp(FILE *fo)
     uint8_t            datatype;
     int                n;
     unsigned long long sizeb, sizeKb, sizeMb, sizeGb;
-    char               str[500];
-    char               str1[512];
+    int strmaxlen = 500;
+    char               str[strmaxlen];
+    int str1maxlen = 512;
+    char               str1[str1maxlen];
     struct timespec    timenow;
     double             timediff;
     //struct mallinfo minfo;
@@ -353,7 +316,7 @@ errno_t list_image_ID_ofp(FILE *fo)
     sizeb = compute_image_memory();
     //minfo = mallinfo();
 
-    clock_gettime(CLOCK_REALTIME, &timenow);
+    clock_gettime(CLOCK_MILK, &timenow);
     //fprintf(fo, "time:  %ld.%09ld\n", timenow.tv_sec % 60, timenow.tv_nsec);
 
     fprintf(fo, "\n");
@@ -395,71 +358,23 @@ errno_t list_image_ID_ofp(FILE *fo)
             }
             //fprintf(fo, "%s", str);
 
-            sprintf(str, "[ %6ld", (long) data.image[i].md[0].size[0]);
+            snprintf(str, strmaxlen, "[ %6ld", (long) data.image[i].md[0].size[0]);
 
             for(j = 1; j < data.image[i].md[0].naxis; j++)
             {
-                #pragma GCC diagnostic ignored "-Wformat-overflow"
-                sprintf(str1,
-                        "%s x %6ld",
-                        str,
-                        (long) data.image[i].md[0].size[j]);
+                snprintf(str1,
+                         str1maxlen,
+                         "%s x %6ld",
+                         str,
+                         (long) data.image[i].md[0].size[j]);
                 strcpy(str, str1);
             }
-            sprintf(str1, "%s]", str);
+            snprintf(str1, str1maxlen, "%s]", str);
             strcpy(str, str1);
 
             fprintf(fo, "%-32s", str);
 
-            n = 0;
-            if(datatype == _DATATYPE_UINT8)
-            {
-                n = snprintf(type, STYPESIZE, "UINT8  ");
-            }
-            if(datatype == _DATATYPE_INT8)
-            {
-                n = snprintf(type, STYPESIZE, "INT8   ");
-            }
-            if(datatype == _DATATYPE_UINT16)
-            {
-                n = snprintf(type, STYPESIZE, "UINT16 ");
-            }
-            if(datatype == _DATATYPE_INT16)
-            {
-                n = snprintf(type, STYPESIZE, "INT16  ");
-            }
-            if(datatype == _DATATYPE_UINT32)
-            {
-                n = snprintf(type, STYPESIZE, "UINT32 ");
-            }
-            if(datatype == _DATATYPE_INT32)
-            {
-                n = snprintf(type, STYPESIZE, "INT32  ");
-            }
-            if(datatype == _DATATYPE_UINT64)
-            {
-                n = snprintf(type, STYPESIZE, "UINT64 ");
-            }
-            if(datatype == _DATATYPE_INT64)
-            {
-                n = snprintf(type, STYPESIZE, "INT64  ");
-            }
-            if(datatype == _DATATYPE_FLOAT)
-            {
-                n = snprintf(type, STYPESIZE, "FLOAT  ");
-            }
-            if(datatype == _DATATYPE_DOUBLE)
-            {
-                n = snprintf(type, STYPESIZE, "DOUBLE ");
-            }
-            if(datatype == _DATATYPE_COMPLEX_FLOAT)
-            {
-                n = snprintf(type, STYPESIZE, "CFLOAT ");
-            }
-            if(datatype == _DATATYPE_COMPLEX_DOUBLE)
-            {
-                n = snprintf(type, STYPESIZE, "CDOUBLE");
-            }
+            n = snprintf(type, STYPESIZE, "%s", ImageStreamIO_typename_7(datatype));
 
             fprintf(fo, "%7s ", type);
 
@@ -529,6 +444,10 @@ errno_t list_image_ID_ofp(FILE *fo)
     return RETURN_SUCCESS;
 }
 
+
+
+
+
 errno_t list_image_ID_ofp_simple(FILE *fo)
 {
     long i, j;
@@ -554,11 +473,17 @@ errno_t list_image_ID_ofp_simple(FILE *fo)
                 fprintf(fo, " %4ld", (long) data.image[i].md[0].size[j]);
             }
             fprintf(fo, "\n");
+
         }
     fprintf(fo, "\n");
 
     return RETURN_SUCCESS;
 }
+
+
+
+
+
 
 errno_t list_image_ID()
 {
@@ -575,6 +500,9 @@ errno_t list_image_ID()
    size
    type
  */
+
+
+
 
 errno_t list_image_ID_file(const char *fname)
 {
@@ -602,56 +530,7 @@ errno_t list_image_ID_file(const char *fname)
                 fprintf(fp, " %ld", (long) data.image[i].md[0].size[j]);
             }
 
-            n = 0;
-
-            if(datatype == _DATATYPE_UINT8)
-            {
-                n = snprintf(type, STYPESIZE, "UINT8  ");
-            }
-            if(datatype == _DATATYPE_INT8)
-            {
-                n = snprintf(type, STYPESIZE, "INT8   ");
-            }
-            if(datatype == _DATATYPE_UINT16)
-            {
-                n = snprintf(type, STYPESIZE, "UINT16 ");
-            }
-            if(datatype == _DATATYPE_INT16)
-            {
-                n = snprintf(type, STYPESIZE, "INT16  ");
-            }
-            if(datatype == _DATATYPE_UINT32)
-            {
-                n = snprintf(type, STYPESIZE, "UINT32 ");
-            }
-            if(datatype == _DATATYPE_INT32)
-            {
-                n = snprintf(type, STYPESIZE, "INT32  ");
-            }
-            if(datatype == _DATATYPE_UINT64)
-            {
-                n = snprintf(type, STYPESIZE, "UINT64 ");
-            }
-            if(datatype == _DATATYPE_INT64)
-            {
-                n = snprintf(type, STYPESIZE, "INT64  ");
-            }
-            if(datatype == _DATATYPE_FLOAT)
-            {
-                n = snprintf(type, STYPESIZE, "FLOAT  ");
-            }
-            if(datatype == _DATATYPE_DOUBLE)
-            {
-                n = snprintf(type, STYPESIZE, "DOUBLE ");
-            }
-            if(datatype == _DATATYPE_COMPLEX_FLOAT)
-            {
-                n = snprintf(type, STYPESIZE, "CFLOAT ");
-            }
-            if(datatype == _DATATYPE_COMPLEX_DOUBLE)
-            {
-                n = snprintf(type, STYPESIZE, "CDOUBLE");
-            }
+            n = snprintf(type, STYPESIZE, "%s", ImageStreamIO_typename_7(datatype));
 
             if(n >= STYPESIZE)
             {

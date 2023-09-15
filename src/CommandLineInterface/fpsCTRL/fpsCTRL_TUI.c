@@ -8,6 +8,10 @@
 #include <math.h>
 #include <time.h>
 
+#include <unistd.h>
+#include <stdio.h>
+
+
 #include "CommandLineInterface/CLIcore.h"
 
 #include "COREMOD_tools/COREMOD_tools.h"
@@ -49,6 +53,8 @@ fpsCTRLscreen_print_DisplayMode_status(
 
     int  stringmaxlen = 500;
     char monstring[stringmaxlen];
+    memset(monstring, 0, stringmaxlen * sizeof(
+               char)); // Must use memset for a C VLA
 
     screenprint_setbold();
 
@@ -148,6 +154,8 @@ inline static void fpsCTRLscreen_print_help()
     print_help_entry("s", "rescan");
     print_help_entry("T / CRTL+t",
                      "initialize (T)mux session / kill (t)mux session");
+    print_help_entry("CRTL+a",
+                     "(a)ttach tmux session (then, CTRL+b, D to detach.)");
     print_help_entry("CTRL+e", "(E)rase FPS and tmux sessions");
     print_help_entry("O / CTRL+o", "start/stop C(O)NF process");
     print_help_entry("u", "(u)pdate CONF process");
@@ -194,8 +202,10 @@ inline static void fpsCTRLscreen_print_FPShelp(
     // module load string
     int mloadstring_maxlen = 2000;
     char mloadstring[mloadstring_maxlen];
+    memset(mloadstring, 0, sizeof(mloadstring)); // We could macro this eventually
     char mloadstringcp[mloadstring_maxlen];
-    sprintf(mloadstring, " ");
+    memset(mloadstringcp, 0, sizeof(mloadstringcp));
+    snprintf(mloadstring, mloadstring_maxlen, " ");
     for(int m = 0;
             m < data.fpsarray[keywnode[fpsCTRLvar->nodeSelected].fpsindex].md->NBmodule;
             m++)
@@ -208,23 +218,26 @@ inline static void fpsCTRLscreen_print_FPShelp(
         strcpy(mloadstring, mloadstringcp);
     }
 
-    char helpfunctionstring[2000];
-    sprintf(helpfunctionstring,
-            "MILK_QUIET=1 MILK_FPSPROCINFO=1 %s-exec -n %s \"%s;%s ?\"\n",
-            data.fpsarray[keywnode[fpsCTRLvar->nodeSelected].fpsindex].md->callprogname,
-            data.fpsarray[keywnode[fpsCTRLvar->nodeSelected].fpsindex].md->name,
-            mloadstring,
-            data.fpsarray[keywnode[fpsCTRLvar->nodeSelected].fpsindex].md->callfuncname
-           );
+    char helpfunctionstring[2000] = {0};
+    snprintf(helpfunctionstring,
+             2000,
+             "MILK_QUIET=1 MILK_FPSPROCINFO=1 %s-exec -n %s \"%s;%s ?\"\n",
+             data.fpsarray[keywnode[fpsCTRLvar->nodeSelected].fpsindex].md->callprogname,
+             data.fpsarray[keywnode[fpsCTRLvar->nodeSelected].fpsindex].md->name,
+             mloadstring,
+             data.fpsarray[keywnode[fpsCTRLvar->nodeSelected].fpsindex].md->callfuncname
+            );
 
     //  TUI_printfw("%s", helpfunctionstring);
 
     //  TUI_newline();
 
     {
-        FILE *fp;
+        FILE *fp = NULL;
+        //int status = 0;
         int LINESLEN = 200;
         char line[LINESLEN];
+        memset(line, 0, sizeof(line));
 
 
         fp = popen(helpfunctionstring, "r");
@@ -281,10 +294,10 @@ errno_t functionparameter_CTRLscreen(
 {
     DEBUG_TRACE_FSTART();
 
-    FPSCTRL_PROCESS_VARS fpsCTRLvar;
+    FPSCTRL_PROCESS_VARS fpsCTRLvar = {0};
 
     // keyword tree
-    KEYWORD_TREE_NODE *keywnode;
+    KEYWORD_TREE_NODE *keywnode = NULL;
 
 
     int       loopOK  = 1;
@@ -298,12 +311,23 @@ errno_t functionparameter_CTRLscreen(
     int run_display = 1;
     loopOK          = 1;
 
-    struct timespec tnow;
-    clock_gettime(CLOCK_REALTIME, &tnow);
-    data.FPS_TIMESTAMP = tnow.tv_sec;
-    strcpy(data.FPS_PROCESS_TYPE, "ctrl");
+    {
+        struct timespec tnow = {0};
+        clock_gettime(CLOCK_MILK, &tnow);
+        data.FPS_TIMESTAMP = tnow.tv_sec;
+        strcpy(data.FPS_PROCESS_TYPE, "ctrl");
+    }
 
-    functionparameter_outlog("FPSCTRL", "START\n");
+
+    {
+        char cwd[PATH_MAX];
+        if ( getcwd(cwd, sizeof(cwd)) == NULL )
+        {
+            strcpy(cwd, "ERROR");
+        }
+        functionparameter_outlog("FPSCTRLSTART", "%s", cwd);
+    }
+
 
     DEBUG_TRACEPOINT("function start");
 
@@ -326,8 +350,7 @@ errno_t functionparameter_CTRLscreen(
 
     // All parameters held in this array
     //
-    keywnode = (KEYWORD_TREE_NODE *) malloc(sizeof(KEYWORD_TREE_NODE) *
-                                            NB_KEYWNODE_MAX);
+    keywnode = calloc(NB_KEYWNODE_MAX, sizeof(*keywnode));
     if(keywnode == NULL)
     {
         PRINT_ERROR("malloc error: can't allocate keywnode");
@@ -345,9 +368,8 @@ errno_t functionparameter_CTRLscreen(
 
     // Set up instruction buffer to sequence commands
     //
-    FPSCTRL_TASK_ENTRY *fpsctrltasklist;
-    fpsctrltasklist = (FPSCTRL_TASK_ENTRY *) malloc(sizeof(FPSCTRL_TASK_ENTRY) *
-                      NB_FPSCTRL_TASK_MAX);
+    FPSCTRL_TASK_ENTRY *fpsctrltasklist = calloc(NB_FPSCTRL_TASK_MAX,
+                                          sizeof(*fpsctrltasklist));
     if(fpsctrltasklist == NULL)
     {
         PRINT_ERROR("malloc error");
@@ -361,9 +383,8 @@ errno_t functionparameter_CTRLscreen(
 
     // Set up task queue list
     //
-    FPSCTRL_TASK_QUEUE *fpsctrlqueuelist;
-    fpsctrlqueuelist = (FPSCTRL_TASK_QUEUE *) malloc(
-                           sizeof(FPSCTRL_TASK_QUEUE) * NB_FPSCTRL_TASKQUEUE_MAX);
+    FPSCTRL_TASK_QUEUE *fpsctrlqueuelist = calloc(NB_FPSCTRL_TASKQUEUE_MAX,
+                                           sizeof(* fpsctrlqueuelist));
     if(fpsctrlqueuelist == NULL)
     {
         PRINT_ERROR("malloc error");
@@ -668,8 +689,16 @@ errno_t functionparameter_CTRLscreen(
     }
 
 
-    functionparameter_outlog("FPSCTRL", "STOP");
 
+
+    {
+        char cwd[PATH_MAX];
+        if ( getcwd(cwd, sizeof(cwd)) == NULL )
+        {
+            strcpy(cwd, "ERROR");
+        }
+        functionparameter_outlog("FPSCTRLSTOP", "%s", cwd);
+    }
 
     DEBUG_TRACEPOINT("Disconnect from FPS entries");
     for(int fpsindex = 0; fpsindex < fpsCTRLvar.NBfps; fpsindex++)

@@ -23,7 +23,7 @@ imageID COREMOD_TOOLS_statusStat(const char *IDstat_name, long indexmax);
 
 errno_t COREMOD_TOOLS_statusStat_cli()
 {
-    if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_LONG) == 0)
+    if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_INT64) == 0)
     {
         COREMOD_TOOLS_statusStat(data.cmdargtoken[1].val.string,
                                  data.cmdargtoken[2].val.numl);
@@ -105,7 +105,7 @@ imageID COREMOD_TOOLS_statusStat(const char *IDstat_name, long indexmax)
     printf("Measuring status distribution \n");
     fflush(stdout);
 
-    clock_gettime(CLOCK_REALTIME, &t1);
+    clock_gettime(CLOCK_MILK, &t1);
     for(k = 0; k < NBkiter; k++)
     {
         double tdiffv;
@@ -117,7 +117,7 @@ imageID COREMOD_TOOLS_statusStat(const char *IDstat_name, long indexmax)
             data.image[IDout].array.SI64[st]++;
         }
 
-        clock_gettime(CLOCK_REALTIME, &t2);
+        clock_gettime(CLOCK_MILK, &t2);
         tdiff  = timespec_diff(t1, t2);
         tdiffv = 1.0 * tdiff.tv_sec + 1.0e-9 * tdiff.tv_nsec;
 

@@ -22,7 +22,7 @@ errno_t function_parameter_struct_create(int NBparamMAX, const char *name);
 
 static errno_t fps_create__cli()
 {
-    if(0 + CLI_checkarg(1, CLIARG_LONG) +
+    if(0 + CLI_checkarg(1, CLIARG_INT64) +
             CLI_checkarg_noerrmsg(2, CLIARG_STR) ==
             0)
     {
@@ -62,9 +62,9 @@ errno_t function_parameter_struct_create(
     const char *name
 )
 {
-    int                       index;
-    char                     *mapv;
-    FUNCTION_PARAMETER_STRUCT fps;
+    //int                       index;
+    char                     *mapv = NULL;
+    FUNCTION_PARAMETER_STRUCT fps = {0};
 
     //  FUNCTION_PARAMETER_STRUCT_MD *funcparammd;
     //  FUNCTION_PARAMETER *funcparamarray;
@@ -76,7 +76,7 @@ errno_t function_parameter_struct_create(
     char shmdname[200];
     function_parameter_struct_shmdirname(shmdname);
 
-    if(snprintf(SM_fname, sizeof(SM_fname), "%s/%s.fps.shm", shmdname, name) <
+    if(snprintf(SM_fname, 200, "%s/%s.fps.shm", shmdname, name) <
             0)
     {
         PRINT_ERROR("snprintf error");
@@ -146,14 +146,17 @@ errno_t function_parameter_struct_create(
 
     fps.md->NBparamMAX = NBparamMAX;
 
+    memset(fps.parray, 0, NBparamMAX * sizeof(*fps.parray));
+    /*
     for(index = 0; index < NBparamMAX; index++)
     {
         fps.parray[index].fpflag = 0; // not active
         fps.parray[index].cnt0   = 0; // update counter
     }
+    */
 
-    #pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(fps.md->name, name, STRINGMAXLEN_FPS_NAME - 1);
+    #pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(fps.md->callprogname,
             data.package_name,
             FPS_CALLPROGNAME_STRMAXLEN - 1);
@@ -176,21 +179,39 @@ errno_t function_parameter_struct_create(
     fps.md->sourceline = 0;
 
     // set default fpsdatadir
-    sprintf(fps.md->datadir, "fps.%s.datadir", fps.md->name);
+    snprintf(fps.md->datadir, FPS_DIR_STRLENMAX, "fps.%s.datadir", fps.md->name);
     // and create the directory
     mkdir(fps.md->datadir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
     // set default fpsconfdir
-    sprintf(fps.md->confdir, "fps.%s.confdir", fps.md->name);
+    snprintf(fps.md->confdir, FPS_DIR_STRLENMAX, "fps.%s.confdir", fps.md->name);
     // and create the directory
     mkdir(fps.md->confdir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+
+    // Get keywordarray from environment variable
+    char *kwarray = getenv("FPS_KEYWORDARRAY");
+    if(kwarray)
+    {
+        strncpy(fps.md->keywordarray,
+                kwarray,
+                FPS_KEYWORDARRAY_STRMAXLEN - 1);
+    }
+    else
+    {
+        strncpy(fps.md->keywordarray,
+                ":",
+                FPS_KEYWORDARRAY_STRMAXLEN - 1);
+    }
+
+
 
     // write currently loaded modules to fps
     fps.md->NBmodule = 0;
     for(int m = 0; m < data.NBmodule; m++)
     {
-        if(data.module[m].type ==
-                MODULE_TYPE_CUSTOMLOAD) // custom loaded module
+        // custom loaded module
+        if(data.module[m].type == MODULE_TYPE_CUSTOMLOAD)
         {
             strncpy(fps.md->modulename[fps.md->NBmodule],
                     data.module[m].loadname,
@@ -202,6 +223,12 @@ errno_t function_parameter_struct_create(
     fps.md->signal     = (uint64_t) FUNCTION_PARAMETER_STRUCT_SIGNAL_CONFRUN;
     fps.md->confwaitus = (uint64_t) 1000; // 1 kHz default
     fps.md->msgcnt     = 0;
+
+    // initialize pointers
+    fps.cmdset.triggermodeptr = NULL;
+    fps.cmdset.procinfo_loopcntMax_ptr = NULL;
+    fps.cmdset.triggerdelayptr = NULL;
+    fps.cmdset.triggertimeoutptr = NULL;
 
     munmap(fps.md, sharedsize);
 

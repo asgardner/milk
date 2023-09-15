@@ -25,7 +25,7 @@ imageID image_ID(const char *name)
             {
                 loopOK = 0;
                 tmpID  = i;
-                clock_gettime(CLOCK_REALTIME,
+                clock_gettime(CLOCK_MILK,
                               &data.image[i].md[0].lastaccesstime);
             }
         }
@@ -79,30 +79,44 @@ imageID image_ID_noaccessupdate(const char *name)
 }
 
 /* next available ID number */
-imageID next_avail_image_ID()
+imageID next_avail_image_ID(
+    imageID preferredID
+)
 {
     DEBUG_TRACE_FSTART();
 
     imageID i;
     imageID ID = -1;
 
-#ifdef _OPENMP
-    #pragma omp critical
+    if ( (preferredID > -1)
+            && (preferredID<data.NB_MAX_IMAGE)
+            && (data.image[preferredID].used == 0) )
     {
-#endif
-        for(i = 0; i < data.NB_MAX_IMAGE; i++)
-        {
-            if(data.image[i].used == 0)
-            {
-                ID                  = i;
-                data.image[ID].used = 1;
-                break;
-            }
-        }
-#ifdef _OPENMP
+        ID = preferredID;
+        data.image[ID].used = 1;
     }
+    else
+    {
+
+
+#ifdef _OPENMP
+        #pragma omp critical
+        {
+#endif
+            for(i = 0; i < data.NB_MAX_IMAGE; i++)
+            {
+                if(data.image[i].used == 0)
+                {
+                    ID                  = i;
+                    data.image[ID].used = 1;
+                    break;
+                }
+            }
+#ifdef _OPENMP
+        }
 #endif
 
+    }
     if(ID == -1)
     {
         printf("ERROR: ran out of image IDs - cannot allocate new ID\n");

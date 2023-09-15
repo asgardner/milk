@@ -25,7 +25,12 @@ static int   DLib_index;
 static void *DLib_handle[1000];
 static char  libnameloaded[STRINGMAXLEN_MODULE_SOFILENAME];
 
-errno_t load_sharedobj(const char *__restrict libname)
+
+
+
+errno_t load_sharedobj(
+    const char *__restrict libname
+)
 {
     DEBUG_TRACE_FSTART();
 
@@ -69,7 +74,11 @@ errno_t load_sharedobj(const char *__restrict libname)
     return RETURN_SUCCESS;
 }
 
-errno_t load_module_shared(const char *__restrict modulename)
+
+
+errno_t load_module_shared(
+    const char *__restrict modulename
+)
 {
     DEBUG_TRACE_FSTART();
     char libname[STRINGMAXLEN_MODULE_SOFILENAME];
@@ -123,26 +132,42 @@ errno_t load_module_shared(const char *__restrict modulename)
 
     DEBUG_TRACEPOINT("[%5d] Loading shared object \"%s\"", DLib_index, libname);
 
+
+
+
+
     // a custom module is about to be loaded, so we set the type accordingly
     // this variable will be written by module register function into module struct
-    data.moduletype = MODULE_TYPE_CUSTOMLOAD;
-    #pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(data.moduleloadname,
             modulenameLC,
             STRINGMAXLEN_MODULE_LOADNAME - 1);
     strncpy(data.modulesofilename, libname, STRINGMAXLEN_MODULE_SOFILENAME - 1);
+
+
+
     if(load_sharedobj(libname) == RETURN_SUCCESS)
     {
-        //
+        // RegisterModule called here
     }
-    // reset to default for next load
-    data.moduletype = MODULE_TYPE_STARTUP;
-    strncpy(data.moduleloadname, "", STRINGMAXLEN_MODULE_LOADNAME - 1);
-    strncpy(data.modulesofilename, "", STRINGMAXLEN_MODULE_SOFILENAME - 1);
+
+
+    data.module[data.moduleindex].type = MODULE_TYPE_CUSTOMLOAD;
+
+    strncpy(data.module[data.moduleindex].sofilename,
+            data.modulesofilename,
+            STRINGMAXLEN_MODULE_SOFILENAME - 1);
+
+    strncpy(data.module[data.moduleindex].loadname,
+            data.moduleloadname,
+            STRINGMAXLEN_MODULE_LOADNAME - 1);
+
 
     DEBUG_TRACE_FEXIT();
     return RETURN_SUCCESS;
 }
+
+
+
 
 errno_t load_module_shared_ALL()
 {
@@ -236,6 +261,11 @@ errno_t load_module_shared_ALL()
     return RETURN_SUCCESS;
 }
 
+
+
+
+
+
 errno_t RegisterModule(const char *__restrict FileName,
                        const char *__restrict PackageName,
                        const char *__restrict InfoString,
@@ -247,15 +277,21 @@ errno_t RegisterModule(const char *__restrict FileName,
 
     int OKmsg = 0;
 
-    //printf("REGISTERING MODULE %s\n", FileName);
+    int moduleindex =  data.NBmodule;
+    data.moduleindex = moduleindex; // current module index
+
+    data.NBmodule++;
+
+
 
     if(strlen(data.modulename) == 0)
     {
-        strcpy(data.module[data.NBmodule].name, "???");
+        strncpy(data.module[moduleindex].name, "???", STRINGMAXLEN_MODULE_NAME - 1);
     }
     else
     {
-        strcpy(data.module[data.NBmodule].name, data.modulename);
+        strncpy(data.module[moduleindex].name, data.modulename,
+                STRINGMAXLEN_MODULE_NAME - 1);
     }
 
     int stringlen = strlen(data.moduleshortname);
@@ -265,37 +301,35 @@ errno_t RegisterModule(const char *__restrict FileName,
         if(strlen(data.moduleshortname_default) > 0)
         {
             // otherwise, construct call key as <shortname_default>.<CLIkey>
-            strcpy(data.moduleshortname, data.moduleshortname_default);
+            strncpy(data.moduleshortname, data.moduleshortname_default,
+                    STRINGMAXLEN_MODULE_SHORTNAME - 1);
         }
     }
 
-    data.moduleindex = data.NBmodule; // current module index
+    strncpy(data.module[moduleindex].package, PackageName,
+            STRINGMAXLEN_MODULE_PACKAGENAME - 1);
+    strncpy(data.module[moduleindex].info, InfoString,
+            STRINGMAXLEN_MODULE_INFOSTRING - 1);
 
-    strcpy(data.module[data.NBmodule].package, PackageName);
-    strcpy(data.module[data.NBmodule].info, InfoString);
+    strncpy(data.module[moduleindex].shortname, data.moduleshortname,
+            STRINGMAXLEN_MODULE_SHORTNAME - 1);
 
-    strcpy(data.module[data.NBmodule].shortname, data.moduleshortname);
+    strncpy(data.module[moduleindex].datestring, data.moduledatestring,
+            STRINGMAXLEN_MODULE_DATESTRING - 1);
+    strncpy(data.module[moduleindex].timestring, data.moduletimestring,
+            STRINGMAXLEN_MODULE_TIMESTRING - 1);
 
-    strcpy(data.module[data.NBmodule].datestring, data.moduledatestring);
-    strcpy(data.module[data.NBmodule].timestring, data.moduletimestring);
+    data.module[moduleindex].versionmajor = versionmajor;
+    data.module[moduleindex].versionminor = versionminor;
+    data.module[moduleindex].versionpatch = versionpatch;
 
-    data.module[data.NBmodule].versionmajor = versionmajor;
-    data.module[data.NBmodule].versionminor = versionminor;
-    data.module[data.NBmodule].versionpatch = versionpatch;
+    data.module[moduleindex].type = data.moduletype;
 
-    data.module[data.NBmodule].type = data.moduletype;
 
-    strncpy(data.module[data.NBmodule].loadname,
-            data.moduleloadname,
-            STRINGMAXLEN_MODULE_LOADNAME - 1);
-    strncpy(data.module[data.NBmodule].sofilename,
-            data.modulesofilename,
-            STRINGMAXLEN_MODULE_SOFILENAME - 1);
+
 
     //printf("--- libnameloaded : %s\n", libnameloaded);
-    strncpy(data.module[data.NBmodule].sofilename,
-            libnameloaded,
-            STRINGMAXLEN_MODULE_SOFILENAME - 1);
+
 
     if(data.progStatus == 0)
     {
@@ -312,9 +346,9 @@ errno_t RegisterModule(const char *__restrict FileName,
     {
         OKmsg = 1;
         DEBUG_TRACEPOINT(
-            "  %02ld  Found unloaded shared object in ./libs/ -> LOADING "
+            "  %02d  Found unloaded shared object in ./libs/ -> LOADING "
             "%10s  module %40s",
-            data.NBmodule,
+            moduleindex,
             PackageName,
             FileName);
         fflush(stdout);
@@ -323,19 +357,38 @@ errno_t RegisterModule(const char *__restrict FileName,
     if(OKmsg == 0)
     {
         printf(
-            "  %02ld  ERROR: module load requested outside of normal step "
+            "  %02d  ERROR: module load requested outside of normal step "
             "-> LOADING %10s  module %40s",
-            data.NBmodule,
+            moduleindex,
             PackageName,
             FileName);
         fflush(stdout);
     }
 
-    data.NBmodule++;
+
+    // default
+    // may be overridden by load_module_shared
+    //
+    //data.moduletype = MODULE_TYPE_STARTUP;
+
+    data.module[data.moduleindex].type = MODULE_TYPE_STARTUP;
+
+    //strncpy(data.modulesofilename, "", STRINGMAXLEN_MODULE_SOFILENAME - 1);
+    strncpy(data.module[data.moduleindex].sofilename,
+            "",
+            STRINGMAXLEN_MODULE_SOFILENAME - 1);
+
+    //strncpy(data.modulesofilename, "", STRINGMAXLEN_MODULE_SOFILENAME - 1);
+    strncpy(data.module[data.moduleindex].loadname,
+            "",
+            STRINGMAXLEN_MODULE_LOADNAME - 1);
 
     DEBUG_TRACE_FEXIT();
     return RETURN_SUCCESS;
 }
+
+
+
 
 // Legacy function
 //
@@ -358,35 +411,40 @@ uint32_t RegisterCLIcommand(const char *__restrict CLIkey,
 
     if(data.cmd[data.NBcmd].moduleindex == -1)
     {
-        strcpy(data.cmd[data.NBcmd].module, "MAIN");
-        strcpy(data.cmd[data.NBcmd].key, CLIkey);
+        strncpy(data.cmd[data.NBcmd].module, "MAIN", STRINGMAXLEN_MODULE_NAME - 1);
+        strncpy(data.cmd[data.NBcmd].key, CLIkey, STRINGMAXLEN_CMD_KEY - 1);
     }
     else
     {
 
         if(strlen(data.module[data.moduleindex].shortname) == 0)
         {
-            strcpy(data.cmd[data.NBcmd].key, CLIkey);
+            strncpy(data.cmd[data.NBcmd].key, CLIkey, STRINGMAXLEN_CMD_KEY - 1);
         }
         else
         {
             // otherwise, construct call key as <shortname>.<CLIkey>
             #pragma GCC diagnostic ignored "-Wrestrict"
-            sprintf(data.cmd[data.NBcmd].key,
-                    "%s.%s",
-                    data.module[data.moduleindex].shortname,
-                    CLIkey);
+            snprintf(data.cmd[data.NBcmd].key,
+                     STRINGMAXLEN_CMD_KEY,
+                     "%s.%s",
+                     data.module[data.moduleindex].shortname,
+                     CLIkey);
+            #pragma GCC diagnostic pop
         }
     }
 
     DEBUG_TRACEPOINT("set module name");
     if(strlen(data.modulename) == 0)
     {
-        strcpy(data.cmd[data.NBcmd].module, "unknown");
+        strncpy(data.cmd[data.NBcmd].module, "unknown", STRINGMAXLEN_MODULE_NAME - 1);
     }
     else
     {
-        strcpy(data.cmd[data.NBcmd].module, data.modulename);
+        #pragma GCC diagnostic ignored "-Wstringop-truncation"
+        strncpy(data.cmd[data.NBcmd].module, data.modulename,
+                STRINGMAXLEN_MODULE_NAME - 1);
+        #pragma GCC diagnostic pop
     }
 
     DEBUG_TRACEPOINT("load function data");
@@ -438,24 +496,31 @@ uint32_t RegisterCLIcmd(
     data.cmd[data.NBcmd].moduleindex = data.moduleindex;
     if(data.cmd[data.NBcmd].moduleindex == -1)
     {
-        strcpy(data.cmd[data.NBcmd].module, "MAIN");
-        strcpy(data.cmd[data.NBcmd].key, CLIcmddata.key);
+        #pragma GCC diagnostic ignored "-Wstringop-truncation"
+        strncpy(data.cmd[data.NBcmd].module, "MAIN", STRINGMAXLEN_MODULE_NAME - 1);
+        #pragma GCC diagnostic pop
+        
+        #pragma GCC diagnostic ignored "-Wstringop-truncation"
+        strncpy(data.cmd[data.NBcmd].key, CLIcmddata.key, STRINGMAXLEN_CMD_KEY - 1);
+        #pragma GCC diagnostic pop
     }
     else
     {
 
         if(strlen(data.module[data.moduleindex].shortname) == 0)
         {
-            strcpy(data.cmd[data.NBcmd].key, CLIcmddata.key);
+            strncpy(data.cmd[data.NBcmd].key, CLIcmddata.key, STRINGMAXLEN_CMD_KEY);
         }
         else
         {
             // otherwise, construct call key as <shortname>.<CLIkey>
+            #pragma GCC diagnostic ignored "-Wrestrict"
             int slen = snprintf(data.cmd[data.NBcmd].key,
                                 STRINGMAXLEN_CMD_KEY,
                                 "%s.%s",
                                 data.module[data.moduleindex].shortname,
                                 CLIcmddata.key);
+            #pragma GCC diagnostic pop
             if(slen < 1)
             {
                 PRINT_ERROR("failed to write call key");
@@ -471,24 +536,33 @@ uint32_t RegisterCLIcmd(
 
     if(strlen(data.modulename) == 0)
     {
-        strcpy(data.cmd[data.NBcmd].module, "unknown");
+        #pragma GCC diagnostic ignored "-Wstringop-truncation"
+        strncpy(data.cmd[data.NBcmd].module, "unknown", STRINGMAXLEN_MODULE_NAME - 1);
+        #pragma GCC diagnostic pop
     }
     else
     {
-        strcpy(data.cmd[data.NBcmd].module, data.modulename);
+        #pragma GCC diagnostic ignored "-Wstringop-truncation"
+        strncpy(data.cmd[data.NBcmd].module, data.modulename,
+                STRINGMAXLEN_MODULE_NAME - 1);
+        #pragma GCC diagnostic pop
     }
 
     DEBUG_TRACEPOINT("settingsrcfile to %s", CLIcmddata.sourcefilename);
-    strcpy(data.cmd[data.NBcmd].srcfile, CLIcmddata.sourcefilename);
+    strncpy(data.cmd[data.NBcmd].srcfile, CLIcmddata.sourcefilename,
+            STRINGMAXLEN_CMD_SRCFILE - 1);
     data.cmd[data.NBcmd].fp = CLIfptr;
-    strcpy(data.cmd[data.NBcmd].info, CLIcmddata.description);
+    strncpy(data.cmd[data.NBcmd].info, CLIcmddata.description,
+            STRINGMAXLEN_CMD_INFO - 1);
 
     // assemble argument syntax string for help
     char argstring[STRINGMAXLEN_CMD_SYNTAX];
     CLIhelp_make_argstring(CLIcmddata.funcfpscliarg,
                            CLIcmddata.nbarg,
                            argstring);
-    strcpy(data.cmd[data.NBcmd].syntax, argstring);
+    #pragma GCC diagnostic ignored "-Wstringop-truncation"
+    strncpy(data.cmd[data.NBcmd].syntax, argstring, STRINGMAXLEN_CMD_SYNTAX - 1);
+    #pragma GCC diagnostic pop
 
     // assemble example string for help
     char cmdexamplestring[STRINGMAXLEN_CMD_EXAMPLE];
@@ -496,9 +570,13 @@ uint32_t RegisterCLIcmd(
                                   CLIcmddata.nbarg,
                                   CLIcmddata.key,
                                   cmdexamplestring);
-    strcpy(data.cmd[data.NBcmd].example, cmdexamplestring);
+    #pragma GCC diagnostic ignored "-Wstringop-truncation"
+    strncpy(data.cmd[data.NBcmd].example, cmdexamplestring,
+            STRINGMAXLEN_CMD_EXAMPLE - 1);
+    #pragma GCC diagnostic pop
 
-    strcpy(data.cmd[data.NBcmd].Ccall, "--callstring--");
+    strncpy(data.cmd[data.NBcmd].Ccall, "--callstring--",
+            STRINGMAXLEN_CMD_CCALL - 1);
 
     DEBUG_TRACEPOINT(
         "define arguments to CLI function from content of "
@@ -515,12 +593,24 @@ uint32_t RegisterCLIcmd(
                 CLIcmddata.funcfpscliarg[argi].type;
             data.cmd[data.NBcmd].argdata[argi].flag =
                 CLIcmddata.funcfpscliarg[argi].flag;
-            strcpy(data.cmd[data.NBcmd].argdata[argi].descr,
-                   CLIcmddata.funcfpscliarg[argi].descr);
-            strcpy(data.cmd[data.NBcmd].argdata[argi].fpstag,
-                   CLIcmddata.funcfpscliarg[argi].fpstag);
-            strcpy(data.cmd[data.NBcmd].argdata[argi].example,
-                   CLIcmddata.funcfpscliarg[argi].example);
+
+            #pragma GCC diagnostic ignored "-Wstringop-truncation"
+            strncpy(data.cmd[data.NBcmd].argdata[argi].descr,
+                    CLIcmddata.funcfpscliarg[argi].descr,
+                    STRINGMAXLEN_FPSCLIARG_DESCR - 1);
+            #pragma GCC diagnostic pop
+
+            #pragma GCC diagnostic ignored "-Wstringop-truncation"
+            strncpy(data.cmd[data.NBcmd].argdata[argi].fpstag,
+                    CLIcmddata.funcfpscliarg[argi].fpstag,
+                    STRINGMAXLEN_FPSCLIARG_TAG - 1);
+            #pragma GCC diagnostic pop
+
+            #pragma GCC diagnostic ignored "-Wstringop-truncation"
+            strncpy(data.cmd[data.NBcmd].argdata[argi].example,
+                    CLIcmddata.funcfpscliarg[argi].example,
+                    STRINGMAXLEN_FPSCLIARG_EXAMPLE - 1);
+            #pragma GCC diagnostic pop
 
             // Set default values
             switch(data.cmd[data.NBcmd].argdata[argi].type)
@@ -572,18 +662,21 @@ uint32_t RegisterCLIcmd(
                     break;
 
                 case CLIARG_STR_NOT_IMG:
-                    strcpy(data.cmd[data.NBcmd].argdata[argi].val.s,
-                           CLIcmddata.funcfpscliarg[argi].example);
+                    strncpy(data.cmd[data.NBcmd].argdata[argi].val.s,
+                            CLIcmddata.funcfpscliarg[argi].example,
+                            STRINGMAXLEN_CLICMDARG - 1);
                     break;
 
                 case CLIARG_IMG:
-                    strcpy(data.cmd[data.NBcmd].argdata[argi].val.s,
-                           CLIcmddata.funcfpscliarg[argi].example);
+                    strncpy(data.cmd[data.NBcmd].argdata[argi].val.s,
+                            CLIcmddata.funcfpscliarg[argi].example,
+                            STRINGMAXLEN_CLICMDARG - 1);
                     break;
 
                 case CLIARG_STR:
-                    strcpy(data.cmd[data.NBcmd].argdata[argi].val.s,
-                           CLIcmddata.funcfpscliarg[argi].example);
+                    strncpy(data.cmd[data.NBcmd].argdata[argi].val.s,
+                            CLIcmddata.funcfpscliarg[argi].example,
+                            STRINGMAXLEN_CLICMDARG - 1);
                     break;
             }
         }

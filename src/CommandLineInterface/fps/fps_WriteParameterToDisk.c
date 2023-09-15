@@ -27,10 +27,11 @@
  *
  *
  */
-int functionparameter_WriteParameterToDisk(FUNCTION_PARAMETER_STRUCT *fpsentry,
-        int                        pindex,
-        char                      *tagname,
-        char *commentstr)
+int functionparameter_WriteParameterToDisk(
+    FUNCTION_PARAMETER_STRUCT *fpsentry,
+    int                        pindex,
+    char                      *tagname,
+    char *commentstr)
 {
     char  fname[STRINGMAXLEN_FULLFILENAME];
     FILE *fp;
@@ -44,24 +45,25 @@ int functionparameter_WriteParameterToDisk(FUNCTION_PARAMETER_STRUCT *fpsentry,
     struct timespec tnow;
     time_t          now;
 
-    clock_gettime(CLOCK_REALTIME, &tnow);
+    clock_gettime(CLOCK_MILK, &tnow);
     now = tnow.tv_sec;
     struct tm *uttime;
     uttime = gmtime(&now);
 
-    sprintf(timestring,
-            "%04d%02d%02d%02d%02d%02d.%09ld %8ld [%6d %6d] %s",
-            1900 + uttime->tm_year,
-            1 + uttime->tm_mon,
-            uttime->tm_mday,
-            uttime->tm_hour,
-            uttime->tm_min,
-            uttime->tm_sec,
-            tnow.tv_nsec,
-            fpsentry->parray[pindex].cnt0,
-            getpid(),
-            (int) tid,
-            commentstr);
+    snprintf(timestring,
+             200,
+             "%04d%02d%02d%02d%02d%02d.%09ld %8ld [%6d %6d] %s",
+             1900 + uttime->tm_year,
+             1 + uttime->tm_mon,
+             uttime->tm_mday,
+             uttime->tm_hour,
+             uttime->tm_min,
+             uttime->tm_sec,
+             tnow.tv_nsec,
+             fpsentry->parray[pindex].cnt0,
+             getpid(),
+             (int) tid,
+             commentstr);
 
     if(strcmp(tagname, "setval") == 0)  // VALUE
     {

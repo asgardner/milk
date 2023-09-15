@@ -45,7 +45,7 @@ imageID COREMOD_MEMORY_image_streamupdateloop_semtrig(const char *IDinname,
 static errno_t COREMOD_MEMORY_image_streamburst__cli()
 {
     if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_IMG) +
-            CLI_checkarg(3, CLIARG_LONG) ==
+            CLI_checkarg(3, CLIARG_INT64) ==
             0)
     {
         COREMOD_MEMORY_image_streamburst(data.cmdargtoken[1].val.string,
@@ -62,10 +62,10 @@ static errno_t COREMOD_MEMORY_image_streamburst__cli()
 static errno_t COREMOD_MEMORY_image_streamupdateloop__cli()
 {
     if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_STR) +
-            CLI_checkarg(3, CLIARG_LONG) + CLI_checkarg(4, CLIARG_LONG) +
-            CLI_checkarg(5, CLIARG_LONG) + CLI_checkarg(6, CLIARG_LONG) +
-            CLI_checkarg(7, CLIARG_STR) + CLI_checkarg(8, CLIARG_LONG) +
-            CLI_checkarg(9, CLIARG_LONG) ==
+            CLI_checkarg(3, CLIARG_INT64) + CLI_checkarg(4, CLIARG_INT64) +
+            CLI_checkarg(5, CLIARG_INT64) + CLI_checkarg(6, CLIARG_INT64) +
+            CLI_checkarg(7, CLIARG_STR) + CLI_checkarg(8, CLIARG_INT64) +
+            CLI_checkarg(9, CLIARG_INT64) ==
             0)
     {
         COREMOD_MEMORY_image_streamupdateloop(data.cmdargtoken[1].val.string,
@@ -88,9 +88,9 @@ static errno_t COREMOD_MEMORY_image_streamupdateloop__cli()
 static errno_t COREMOD_MEMORY_image_streamupdateloop_semtrig__cli()
 {
     if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_STR) +
-            CLI_checkarg(3, CLIARG_LONG) + CLI_checkarg(4, CLIARG_LONG) +
-            CLI_checkarg(5, CLIARG_STR) + CLI_checkarg(6, CLIARG_LONG) +
-            CLI_checkarg(7, CLIARG_LONG) ==
+            CLI_checkarg(3, CLIARG_INT64) + CLI_checkarg(4, CLIARG_INT64) +
+            CLI_checkarg(5, CLIARG_STR) + CLI_checkarg(6, CLIARG_INT64) +
+            CLI_checkarg(7, CLIARG_INT64) ==
             0)
     {
         COREMOD_MEMORY_image_streamupdateloop_semtrig(
@@ -167,10 +167,10 @@ errno_t COREMOD_MEMORY_image_streamburst(const char *IDin_name,
     int                RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
 
-    char *ptr0s = NULL; // source start 3D array ptr
-    char *ptr0 = NULL;  // source
-    char *ptr1 = NULL;  // dest
-    long  framesize = 0L;
+    char *ptr0s; // source start 3D array ptr
+    char *ptr0;  // source
+    char *ptr1;  // dest
+    long  framesize;
 
     struct timespec tim;
 
@@ -213,78 +213,11 @@ errno_t COREMOD_MEMORY_image_streamburst(const char *IDin_name,
         return RETURN_FAILURE;
     }
 
-    switch(datatype)
-    {
-        case _DATATYPE_INT8:
-            ptr0s     = (char *) data.image[IDin].array.SI8;
-            ptr1      = (char *) data.image[IDout].array.SI8;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_INT8;
-            break;
-
-        case _DATATYPE_UINT8:
-            ptr0s     = (char *) data.image[IDin].array.UI8;
-            ptr1      = (char *) data.image[IDout].array.UI8;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_UINT8;
-            break;
-
-        case _DATATYPE_INT16:
-            ptr0s     = (char *) data.image[IDin].array.SI16;
-            ptr1      = (char *) data.image[IDout].array.SI16;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_INT16;
-            break;
-
-        case _DATATYPE_UINT16:
-            ptr0s     = (char *) data.image[IDin].array.UI16;
-            ptr1      = (char *) data.image[IDout].array.UI16;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_UINT16;
-            break;
-
-        case _DATATYPE_INT32:
-            ptr0s     = (char *) data.image[IDin].array.SI32;
-            ptr1      = (char *) data.image[IDout].array.SI32;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_INT32;
-            break;
-
-        case _DATATYPE_UINT32:
-            ptr0s     = (char *) data.image[IDin].array.UI32;
-            ptr1      = (char *) data.image[IDout].array.UI32;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_UINT32;
-            break;
-
-        case _DATATYPE_INT64:
-            ptr0s     = (char *) data.image[IDin].array.SI64;
-            ptr1      = (char *) data.image[IDout].array.SI64;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_INT64;
-            break;
-
-        case _DATATYPE_UINT64:
-            ptr0s     = (char *) data.image[IDin].array.UI64;
-            ptr1      = (char *) data.image[IDout].array.UI64;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_UINT64;
-            break;
-
-        case _DATATYPE_FLOAT:
-            ptr0s     = (char *) data.image[IDin].array.F;
-            ptr1      = (char *) data.image[IDout].array.F;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * sizeof(float);
-            break;
-
-        case _DATATYPE_DOUBLE:
-            ptr0s     = (char *) data.image[IDin].array.D;
-            ptr1      = (char *) data.image[IDout].array.D;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * sizeof(double);
-            break;
-    }
+    ptr0s     = (char *) data.image[IDin].array.raw;
+    ptr1      = (char *) data.image[IDout].array.raw;
+    framesize = data.image[IDin].md[0].size[0] *
+                data.image[IDin].md[0].size[1] *
+                ImageStreamIO_typesize(datatype);
 
     tim.tv_sec  = 0;
     tim.tv_nsec = (long)(1000 * periodus);
@@ -345,7 +278,7 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
     long               cubeindex;
     char               imname[200];
     long               IDsync;
-    unsigned long long cntsync = 0L;
+    unsigned long long cntsync;
     long               pcnt         = 0;
     long               offsetfr     = 0;
     long               offsetfrcnt  = 0;
@@ -356,10 +289,10 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
     uint32_t *arraysize;
     long      naxis;
     uint8_t   datatype;
-    char     *ptr0s = NULL; // source start 3D array ptr
-    char     *ptr0 = NULL;  // source
-    char     *ptr1 = NULL;  // dest
-    long      framesize = 0;
+    char     *ptr0s; // source start 3D array ptr
+    char     *ptr0;  // source
+    char     *ptr1;  // dest
+    long      framesize;
     //    int        semval;
 
     int                RT_priority = 80; //any number from 0-99
@@ -378,7 +311,7 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
                        SCHED_FIFO,
                        &schedpar); //other option is SCHED_RR, might be faster
 
-    PROCESSINFO *processinfo = NULL;
+    PROCESSINFO *processinfo;
     if(data.processinfo == 1)
     {
         // CREATE PROCESSINFO ENTRY
@@ -404,7 +337,7 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
         return RETURN_FAILURE;
     }
 
-    int sync_semwaitindex = 0;
+    int sync_semwaitindex;
     IDin      = (long *) malloc(sizeof(long) * NBcubes);
     SyncSlice = 0;
     if(NBcubes == 1)
@@ -458,7 +391,6 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
     if(IDout == -1)
     {
         create_image_ID(IDoutname, 2, arraysize, datatype, 1, 0, 0, &IDout);
-        COREMOD_MEMORY_image_set_createsem(IDoutname, IMAGE_NB_SEMAPHORE);
     }
 
     cubeindex = 0;
@@ -504,11 +436,13 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
 
         if(NBcubes > 1)
         {
+            #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
             if(cntsync != data.image[IDsync].md[0].cnt0)
             {
                 pcnt++;
                 cntsync = data.image[IDsync].md[0].cnt0;
             }
+            #pragma GCC diagnostic pop
             if(pcnt == period)
             {
                 pcnt         = 0;
@@ -535,91 +469,13 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
             }
         }
 
-        switch(datatype)
-        {
+        ptr0s     = (char *) data.image[IDin[cubeindex]].array.raw;
+        ptr1      = (char *) data.image[IDout].array.raw;
+        framesize = data.image[IDin[cubeindex]].md[0].size[0] *
+                    data.image[IDin[cubeindex]].md[0].size[1] *
+                    ImageStreamIO_typesize(datatype);
 
-            case _DATATYPE_INT8:
-                ptr0s     = (char *) data.image[IDin[cubeindex]].array.SI8;
-                ptr1      = (char *) data.image[IDout].array.SI8;
-                framesize = data.image[IDin[cubeindex]].md[0].size[0] *
-                            data.image[IDin[cubeindex]].md[0].size[1] *
-                            SIZEOF_DATATYPE_INT8;
-                break;
-
-            case _DATATYPE_UINT8:
-                ptr0s     = (char *) data.image[IDin[cubeindex]].array.UI8;
-                ptr1      = (char *) data.image[IDout].array.UI8;
-                framesize = data.image[IDin[cubeindex]].md[0].size[0] *
-                            data.image[IDin[cubeindex]].md[0].size[1] *
-                            SIZEOF_DATATYPE_UINT8;
-                break;
-
-            case _DATATYPE_INT16:
-                ptr0s     = (char *) data.image[IDin[cubeindex]].array.SI16;
-                ptr1      = (char *) data.image[IDout].array.SI16;
-                framesize = data.image[IDin[cubeindex]].md[0].size[0] *
-                            data.image[IDin[cubeindex]].md[0].size[1] *
-                            SIZEOF_DATATYPE_INT16;
-                break;
-
-            case _DATATYPE_UINT16:
-                ptr0s     = (char *) data.image[IDin[cubeindex]].array.UI16;
-                ptr1      = (char *) data.image[IDout].array.UI16;
-                framesize = data.image[IDin[cubeindex]].md[0].size[0] *
-                            data.image[IDin[cubeindex]].md[0].size[1] *
-                            SIZEOF_DATATYPE_UINT16;
-                break;
-
-            case _DATATYPE_INT32:
-                ptr0s     = (char *) data.image[IDin[cubeindex]].array.SI32;
-                ptr1      = (char *) data.image[IDout].array.SI32;
-                framesize = data.image[IDin[cubeindex]].md[0].size[0] *
-                            data.image[IDin[cubeindex]].md[0].size[1] *
-                            SIZEOF_DATATYPE_INT32;
-                break;
-
-            case _DATATYPE_UINT32:
-                ptr0s     = (char *) data.image[IDin[cubeindex]].array.UI32;
-                ptr1      = (char *) data.image[IDout].array.UI32;
-                framesize = data.image[IDin[cubeindex]].md[0].size[0] *
-                            data.image[IDin[cubeindex]].md[0].size[1] *
-                            SIZEOF_DATATYPE_UINT32;
-                break;
-
-            case _DATATYPE_INT64:
-                ptr0s     = (char *) data.image[IDin[cubeindex]].array.SI64;
-                ptr1      = (char *) data.image[IDout].array.SI64;
-                framesize = data.image[IDin[cubeindex]].md[0].size[0] *
-                            data.image[IDin[cubeindex]].md[0].size[1] *
-                            SIZEOF_DATATYPE_INT64;
-                break;
-
-            case _DATATYPE_UINT64:
-                ptr0s     = (char *) data.image[IDin[cubeindex]].array.UI64;
-                ptr1      = (char *) data.image[IDout].array.UI64;
-                framesize = data.image[IDin[cubeindex]].md[0].size[0] *
-                            data.image[IDin[cubeindex]].md[0].size[1] *
-                            SIZEOF_DATATYPE_UINT64;
-                break;
-
-            case _DATATYPE_FLOAT:
-                ptr0s     = (char *) data.image[IDin[cubeindex]].array.F;
-                ptr1      = (char *) data.image[IDout].array.F;
-                framesize = data.image[IDin[cubeindex]].md[0].size[0] *
-                            data.image[IDin[cubeindex]].md[0].size[1] *
-                            sizeof(float);
-                break;
-
-            case _DATATYPE_DOUBLE:
-                ptr0s     = (char *) data.image[IDin[cubeindex]].array.D;
-                ptr1      = (char *) data.image[IDout].array.D;
-                framesize = data.image[IDin[cubeindex]].md[0].size[0] *
-                            data.image[IDin[cubeindex]].md[0].size[1] *
-                            sizeof(double);
-                break;
-        }
-
-        clock_gettime(CLOCK_REALTIME, &t0);
+        clock_gettime(CLOCK_MILK, &t0);
 
         ptr0                          = ptr0s + kk * framesize;
         data.image[IDout].md[0].write = 1;
@@ -639,7 +495,7 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
         {
             usleep(twait1);
 
-            clock_gettime(CLOCK_REALTIME, &t1);
+            clock_gettime(CLOCK_MILK, &t1);
             tdiff  = timespec_diff(t0, t1);
             tdiffv = 1.0 * tdiff.tv_sec + 1.0e-9 * tdiff.tv_nsec;
 
@@ -663,7 +519,9 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
         }
         else
         {
+            #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
             sem_wait(data.image[IDsync].semptr[sync_semwaitindex]);
+            #pragma GCC diagnostic pop
         }
 
         if(loopCTRLexit == 1)
@@ -675,7 +533,7 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
                 struct tm      *tstoptm;
                 char            msgstring[STRINGMAXLEN_PROCESSINFO_STATUSMSG];
 
-                clock_gettime(CLOCK_REALTIME, &tstop);
+                clock_gettime(CLOCK_MILK, &tstop);
                 tstoptm = gmtime(&tstop.tv_sec);
 
                 sprintf(msgstring,
@@ -688,7 +546,7 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
                 strncpy(processinfo->statusmsg,
                         msgstring,
                         STRINGMAXLEN_PROCESSINFO_STATUSMSG - 1);
-
+                #pragma GCC diagnostic pop
                 processinfo->loopstat = 3; // clean exit
             }
         }
@@ -696,7 +554,9 @@ COREMOD_MEMORY_image_streamupdateloop(const char                 *IDinname,
         loopcnt++;
         if(data.processinfo == 1)
         {
+            #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
             processinfo->loopcnt = loopcnt;
+            #pragma GCC diagnostic pop
         }
     }
 
@@ -725,10 +585,10 @@ imageID COREMOD_MEMORY_image_streamupdateloop_semtrig(
     uint32_t *arraysize;
     long      naxis;
     uint8_t   datatype;
-    char     *ptr0s = NULL; // source start 3D array ptr
-    char     *ptr0 = NULL;  // source
-    char     *ptr1 = NULL;  // dest
-    long      framesize = 0;
+    char     *ptr0s; // source start 3D array ptr
+    char     *ptr0;  // source
+    char     *ptr1;  // dest
+    long      framesize;
     //    int        semval;
 
     int                RT_priority = 80; //any number from 0-99
@@ -760,82 +620,13 @@ imageID COREMOD_MEMORY_image_streamupdateloop_semtrig(
     if(IDout == -1)
     {
         create_image_ID(IDoutname, 2, arraysize, datatype, 1, 0, 0, &IDout);
-        COREMOD_MEMORY_image_set_createsem(IDoutname, IMAGE_NB_SEMAPHORE);
     }
 
-    switch(datatype)
-    {
-
-        case _DATATYPE_INT8:
-            ptr0s     = (char *) data.image[IDin].array.SI8;
-            ptr1      = (char *) data.image[IDout].array.SI8;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_INT8;
-            break;
-
-        case _DATATYPE_UINT8:
-            ptr0s     = (char *) data.image[IDin].array.UI8;
-            ptr1      = (char *) data.image[IDout].array.UI8;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_UINT8;
-            break;
-
-        case _DATATYPE_INT16:
-            ptr0s     = (char *) data.image[IDin].array.SI16;
-            ptr1      = (char *) data.image[IDout].array.SI16;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_INT16;
-            break;
-
-        case _DATATYPE_UINT16:
-            ptr0s     = (char *) data.image[IDin].array.UI16;
-            ptr1      = (char *) data.image[IDout].array.UI16;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_UINT16;
-            break;
-
-        case _DATATYPE_INT32:
-            ptr0s     = (char *) data.image[IDin].array.SI32;
-            ptr1      = (char *) data.image[IDout].array.SI32;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_INT32;
-            break;
-
-        case _DATATYPE_UINT32:
-            ptr0s     = (char *) data.image[IDin].array.UI32;
-            ptr1      = (char *) data.image[IDout].array.UI32;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_UINT32;
-            break;
-
-        case _DATATYPE_INT64:
-            ptr0s     = (char *) data.image[IDin].array.SI64;
-            ptr1      = (char *) data.image[IDout].array.SI64;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_INT64;
-            break;
-
-        case _DATATYPE_UINT64:
-            ptr0s     = (char *) data.image[IDin].array.UI64;
-            ptr1      = (char *) data.image[IDout].array.UI64;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * SIZEOF_DATATYPE_UINT64;
-            break;
-
-        case _DATATYPE_FLOAT:
-            ptr0s     = (char *) data.image[IDin].array.F;
-            ptr1      = (char *) data.image[IDout].array.F;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * sizeof(float);
-            break;
-
-        case _DATATYPE_DOUBLE:
-            ptr0s     = (char *) data.image[IDin].array.D;
-            ptr1      = (char *) data.image[IDout].array.D;
-            framesize = data.image[IDin].md[0].size[0] *
-                        data.image[IDin].md[0].size[1] * sizeof(double);
-            break;
-    }
+    ptr0s     = (char *) data.image[IDin].array.raw;
+    ptr1      = (char *) data.image[IDout].array.raw;
+    framesize = data.image[IDin].md[0].size[0] *
+                data.image[IDin].md[0].size[1] *
+                ImageStreamIO_typesize(datatype);
 
     IDsync = image_ID(IDsync_name);
 

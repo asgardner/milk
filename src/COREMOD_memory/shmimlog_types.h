@@ -15,14 +15,19 @@ typedef struct
     int  partial;  // 1 if partial cube
     long cubesize; // size of the cube
 
+    float timespan; // measured execution time for saving
+    int writerRTprio; // writer real-time priority
+
+
     int saveascii;
     // 0 : Not saving ascii
     // 1 : Saving ascii: arraycnt0, arraycnt1, arraytime
     // 2 : ???
+    char compress_string[200];
 
-    char fname_auxFITSheader[STRINGMAXLEN_FILENAME];
+    char fname_auxFITSheader[STRINGMAXLEN_FULLFILENAME];
 
-    char      fnameascii[STRINGMAXLEN_FILENAME]; // name of frame to be saved
+    char      fnameascii[STRINGMAXLEN_FULLFILENAME]; // name of frame to be saved
     uint64_t *arrayindex;
     uint64_t *arraycnt0;
     uint64_t *arraycnt1;
@@ -31,20 +36,7 @@ typedef struct
     double *arrayaqtime; // frame source time, earlier
 } STREAMSAVE_THREAD_MESSAGE;
 
-typedef struct
-{
-    int       on; /**<  1 if logging, 0 otherwise */
-    long long cnt;
-    long long filecnt;
-    long      interval; /**<  log every x frames (default = 1) */
-    int       logexit;  /**<  toggle to 1 when exiting */
-    char      fname[STRINGMAXLEN_FULLFILENAME];
 
-    // circular buffer
-    uint32_t CBsize;
 
-    uint32_t CBindex; // last frame grabbed
-    uint64_t CBcycle; // last frame grabbed
-} LOGSHIM_CONF;
 
 #endif

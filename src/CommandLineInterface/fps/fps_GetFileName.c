@@ -11,10 +11,11 @@
  * Most recent parameter value stored in this file
  *
  */
-int functionparameter_GetFileName(FUNCTION_PARAMETER_STRUCT *fps,
-                                  FUNCTION_PARAMETER        *fparam,
-                                  char                      *outfname,
-                                  char                      *tagname)
+int functionparameter_GetFileName(
+    FUNCTION_PARAMETER_STRUCT *fps,
+    FUNCTION_PARAMETER        *fparam,
+    char                      *outfname,
+    char                      *tagname)
 {
     char ffname[STRINGMAXLEN_FULLFILENAME];
     char fname1[STRINGMAXLEN_FILENAME];
@@ -45,8 +46,7 @@ int functionparameter_GetFileName(FUNCTION_PARAMETER_STRUCT *fps,
     }
 
     char ffname1[STRINGMAXLEN_FULLFILENAME]; // full filename
-    #pragma GCC diagnostic ignored "-Wformat-truncation"
-    snprintf(ffname1, STRINGMAXLEN_FULLFILENAME, "%s%s", ffname, fname1);
+    WRITE_FULLFILENAME(ffname1,  "%s%s", ffname, fname1);
 
     strcpy(outfname, ffname1);
 

@@ -289,9 +289,10 @@ float functionparameter_GetParamValue_TIMESPEC(FUNCTION_PARAMETER_STRUCT *fps,
     int fpsi   = functionparameter_GetParamIndex(fps, paramname);
     value_sec  = fps->parray[fpsi].val.ts[0].tv_sec;
     value_nsec = fps->parray[fpsi].val.ts[0].tv_nsec;
-    fps->parray[fpsi].val.ts[1].tv_sec  = value_sec;
-    fps->parray[fpsi].val.ts[1].tv_nsec = value_nsec;
-
+    #pragma GCC diagnostic ignored "-Warray-bounds"
+    fps->parray[fpsi].val.ts[3].tv_sec  = value_sec;
+    fps->parray[fpsi].val.ts[3].tv_nsec = value_nsec;
+    #pragma GCC diagnostic pop
     float value = 1.0 * value_sec + 1.0e-9 * value_nsec;
     return value;
 }

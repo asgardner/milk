@@ -63,36 +63,55 @@
 #define FPTYPE_EXECFILENAME 0x00000800 // executable file
 
 #define FPTYPE_DIRNAME 0x00001000 // directory name
-#define FPTYPE_STREAMNAME                                                      \
-    0x00002000 // stream name -> process may load from shm if required. See loading stream section below and associated flags
+
+// stream name -> process may load from shm if required. See loading stream section below and associated flags
+#define FPTYPE_STREAMNAME 0x00002000
+
 #define FPTYPE_STRING 0x00004000 // generic string
-#define FPTYPE_ONOFF                                                           \
-    0x00008000 // uses ONOFF bit flag, string[0] and string[1] for OFF and ON descriptions respectively. setval saves ONOFF as integer
+
+// uses ONOFF bit flag, string[0] and string[1] for OFF and ON descriptions respectively. setval saves ONOFF as integer
+#define FPTYPE_ONOFF  0x00008000
+
+
 #define FPTYPE_PROCESS 0x00010000
 
 #define FPTYPE_FPSNAME 0x00020000 // connection to another FPS
+
+#define STRINGMAXLEN_FPSTYPE  20
+
+
+
 
 #define FUNCTION_PARAMETER_DESCR_STRMAXLEN 64
 #define FUNCTION_PARAMETER_STRMAXLEN       64
 
 // Function Parameter (FP) flags
 
+
 // parameter use and visibility
-#define FPFLAG_ACTIVE 0x0000000000000001 // is this entry registered ?
-#define FPFLAG_USED                                                            \
-    0x0000000000000002 // is this entry used ? if not, skip all checks
-#define FPFLAG_VISIBLE                                                         \
-    0x0000000000000004 // is this entry visible (=displayed) ?
+
+// is this entry registered ?
+#define FPFLAG_ACTIVE       0x0000000000000001
+
+// is this entry used ? if not, skip all checks
+#define FPFLAG_USED         0x0000000000000002
+
+// is this entry visible (=displayed) ?
+#define FPFLAG_VISIBLE      0x0000000000000004
 
 // write permission
-#define FPFLAG_WRITE                                                           \
-    0x0000000000000010 // is value writable when neither CONF and RUN are active
-#define FPFLAG_WRITECONF                                                       \
-    0x0000000000000020 // can user change value at configuration time ?
-#define FPFLAG_WRITERUN                                                        \
-    0x0000000000000040 // can user change value at run time ?
-#define FPFLAG_WRITESTATUS                                                     \
-    0x0000000000000080 // current write status (computed from above flags, initialized at 1)
+
+// is value writable when neither CONF and RUN are active
+#define FPFLAG_WRITE        0x0000000000000010
+
+// can user change value at configuration time ?
+#define FPFLAG_WRITECONF    0x0000000000000020
+
+// can user change value at run time ?
+#define FPFLAG_WRITERUN     0x0000000000000040
+
+// current write status (computed from above flags, initialized at 1)
+#define FPFLAG_WRITESTATUS  0x0000000000000080
 
 // logging and saving
 #define FPFLAG_LOG          0x0000000000000100 // log on change
@@ -100,18 +119,29 @@
 #define FPFLAG_SAVEONCLOSE  0x0000000000000400 // save to disk on close
 
 // special types
-#define FPFLAG_IMPORTED                                                        \
-    0x0000000000001000 // is this entry imported from another parameter ?
-#define FPFLAG_FEEDBACK                                                        \
-    0x0000000000002000 // is there a separate current value feedback ?
-#define FPFLAG_ONOFF 0x0000000000004000 // bit controlled under TYPE_ONOFF
+
+// is this entry imported from another parameter ?
+#define FPFLAG_IMPORTED     0x0000000000001000
+
+// is there a separate current value feedback ?
+#define FPFLAG_FEEDBACK     0x0000000000002000
+
+// bit controlled under TYPE_ONOFF
+// status of ON/OFF entries is defined by the value of this bit
+// AND the value of the uint64_t integer holding the parameter
+// The bit value is used for FPS-style control
+// The parameter value if used for non-FPS control (command line)
+//
+#define FPFLAG_ONOFF        0x0000000000004000
 
 // parameter testing
-#define FPFLAG_CHECKINIT                                                       \
-    0x0000000000010000 // should parameter be initialized prior to function start ?
-#define FPFLAG_MINLIMIT 0x0000000000020000 // enforce min limit
-#define FPFLAG_MAXLIMIT 0x0000000000040000 // enforce max limit
-#define FPFLAG_ERROR    0x0000000000080000 // is current parameter value OK ?
+
+// should parameter be initialized prior to function start ?
+#define FPFLAG_CHECKINIT    0x0000000000010000
+
+#define FPFLAG_MINLIMIT     0x0000000000020000 // enforce min limit
+#define FPFLAG_MAXLIMIT     0x0000000000040000 // enforce max limit
+#define FPFLAG_ERROR        0x0000000000080000 // is current parameter value OK ?
 
 // if FPTYPE_STREAMNAME
 // STREAM FLAGS: actions and tests related to streams
@@ -271,7 +301,7 @@
 #define FPFLAG_DEFAULT_STATUS FPFLAG_ACTIVE | FPFLAG_USED | FPFLAG_VISIBLE
 
 #define FUNCTION_PARAMETER_NBPARAM_DEFAULT                                     \
-    100 // size of dynamically allocated array of parameters
+    200 // size of dynamically allocated array of parameters
 
 typedef struct
 {
@@ -400,16 +430,17 @@ typedef struct
 #define FPS_MSG_FLAG_ERROR 0x0008 // if ERROR, then cannot start function
 #define FPS_MSG_FLAG_INFO  0x0010
 
-#define FPS_CWD_STRLENMAX          200
-#define FPS_DIR_STRLENMAX          200
-#define FPS_SRCDIR_STRLENMAX       200
-#define FPS_PNAME_STRMAXLEN        100
-#define FPS_CALLPROGNAME_STRMAXLEN 80
-#define FPS_CALLFUNCNAME_STRMAXLEN 100
-#define FPS_DESCR_STRMAXLEN        200
-#define STRINGMAXLEN_FPS_DIRNAME   200
+#define FPS_CWD_STRLENMAX            200
+#define FPS_DIR_STRLENMAX            200
+#define FPS_SRCDIR_STRLENMAX         200
+#define FPS_PNAME_STRMAXLEN          100
+#define FPS_CALLPROGNAME_STRMAXLEN    80
+#define FPS_CALLFUNCNAME_STRMAXLEN   100
+#define FPS_DESCR_STRMAXLEN          200
+#define FPS_KEYWORDARRAY_STRMAXLEN   200
+#define STRINGMAXLEN_FPS_DIRNAME     200
 
-#define FPS_MAXNB_MODULE     20
+#define FPS_MAXNB_MODULE     50
 #define FPS_MODULE_STRMAXLEN 200
 
 // metadata
@@ -421,6 +452,11 @@ typedef struct
     char name[STRINGMAXLEN_FPS_NAME]; // example: pname-01-32
 
     char description[FPS_DESCR_STRMAXLEN];
+
+    // keyword array, convenient to classify/sort FPSs
+    // Upon FPS creation by function_parameter_struct_create, keywordarray is imported from env variable FPS_KEYWORDARRAY
+    // syntax is ":keyw0:keyw1:keyw2:"
+    char keywordarray[FPS_KEYWORDARRAY_STRMAXLEN];
 
     // where should processes run from ?
     char workdir[FPS_CWD_STRLENMAX];
@@ -503,6 +539,14 @@ typedef struct
 
     CMDSETTINGS cmdset; // local copy of cmd settings
 } FUNCTION_PARAMETER_STRUCT;
+
+
+// mapping from FPS to procinfo
+typedef struct
+{
+    struct timespec triggerdelay[2];
+} FPS2PROCINFOMAP;
+
 
 //
 // Tasks can be sequenced
@@ -597,15 +641,14 @@ typedef struct
     int      scheduler_wrowstart;
 } FPSCTRL_PROCESS_VARS;
 
-#define NB_KEYWNODE_MAX 10000
+#define NB_KEYWNODE_MAX 1000
 #define MAX_NB_CHILD    500
 
 typedef struct
 {
     char keywordfull[FUNCTION_PARAMETER_KEYWORD_STRMAXLEN *
                                                           FUNCTION_PARAMETER_KEYWORD_MAXLEVEL];
-    char keyword[FUNCTION_PARAMETER_KEYWORD_MAXLEVEL]
-    [FUNCTION_PARAMETER_KEYWORD_STRMAXLEN];
+    char keyword[FUNCTION_PARAMETER_KEYWORD_MAXLEVEL][FUNCTION_PARAMETER_KEYWORD_STRMAXLEN];
     int keywordlevel;
 
     int parent_index;
@@ -675,9 +718,10 @@ typedef struct
                            fps.md->sourcefname,                                \
                            fps.md->sourceline);                                \
             functionparameter_outlog("FPSINIT", msgstring);                    \
-            functionparameter_outlog_namelink();                               \
         }                                                                      \
     } while (0)
+
+
 
 /** @brief Connect to FPS
  *
@@ -699,6 +743,9 @@ typedef struct
             return RETURN_FAILURE;                                             \
         }                                                                      \
     } while (0)
+
+
+
 
 /** @brief Start FPS configuration loop
  */
@@ -722,6 +769,8 @@ typedef struct
         if (function_parameter_FPCONFloopstep(&fps) == 1)                      \
         {
 
+
+
 /** @brief End FPS configuration loop
  */
 #define FPS_CONFLOOP_END                                                       \
@@ -734,7 +783,7 @@ typedef struct
  */
 
 #define FPSPROCINFOLOOP_RUNINIT(...)                                           \
-    PROCESSINFO *processinfo;                                                  \
+    PROCESSINFO *processinfo = NULL;                                                  \
     int          processloopOK = 1;                                            \
     do                                                                         \
     {                                                                          \
@@ -766,7 +815,7 @@ typedef struct
     FUNCTION_PARAMETER_STRUCT fps;                                             \
     do                                                                         \
     {                                                                          \
-        sprintf(data.FPS_name, "%s-%06ld", (shortname), (long) getpid());      \
+        snprintf(data.FPS_name,STRINGMAXLEN_FPS_NAME,  "%s-%06ld", (shortname), (long) getpid());      \
         data.FPS_CMDCODE = FPSCMDCODE_FPSINIT;                                 \
         FPSCONF_##funcstring();                                                \
         function_parameter_struct_connect(data.FPS_name,                       \
@@ -781,7 +830,7 @@ typedef struct
     static errno_t FPSEXECfunction()                                           \
     {                                                                          \
         FUNCTION_PARAMETER_STRUCT fps;                                         \
-        sprintf(data.FPS_name, "%s-%06ld", CLIcmddata.key, (long) getpid());   \
+        snprintf(data.FPS_name, STRINGMAXLEN_FPS_NAME, "%s-%06ld", CLIcmddata.key, (long) getpid());   \
         data.FPS_CMDCODE = FPSCMDCODE_FPSINIT;                                 \
         FPSCONFfunction();                                                     \
         function_parameter_struct_connect(data.FPS_name,                       \

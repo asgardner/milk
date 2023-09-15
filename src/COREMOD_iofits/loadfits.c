@@ -46,7 +46,7 @@ static CLICMDARGDEF farg[] =
         NULL
     },
     {
-        CLIARG_LONG,
+        CLIARG_INT64,
         ".errmode",
         "FITSIO errors mode \n(0:ignore) (1:warning) (2:error) (3:exit)",
         "1",
@@ -82,10 +82,12 @@ static errno_t help_function()
 /// LOADFITS_ERRMODE_ERROR   (2) return error
 /// LOADFITS_ERRMODE_EXIT    (3) exit program at error
 
-errno_t load_fits(const char *restrict file_name,
-                  const char *restrict ID_name,
-                  int      errmode,
-                  imageID *IDout)
+errno_t load_fits(
+    const char * __restrict file_name,
+    const char * __restrict ID_name,
+    int      errmode,
+    imageID *IDout
+)
 {
     DEBUG_TRACE_FSTART();
 
@@ -164,7 +166,7 @@ errno_t load_fits(const char *restrict file_name,
                 }
             }
         }
-        printf("fileOK = %d\n", fileOK);
+        //printf("fileOK = %d\n", fileOK);
 
         if(fileOK == 0)
         {
@@ -232,7 +234,6 @@ errno_t load_fits(const char *restrict file_name,
         fits_read_key(fptr, TLONG, "NAXIS", &naxis, comment, &status);
         FITSIO_CHECK_ERROR(status, errmode, "File %s has no NAXIS", file_name);
     }
-    printf("naxis = %ld\n", naxis);
     DEBUG_TRACEPOINT("naxis = %ld", naxis);
 
     for(long i = 0; i < naxis; i++)
@@ -281,17 +282,6 @@ errno_t load_fits(const char *restrict file_name,
         FITSIO_CHECK_ERROR(status, errmode, "bscake set errror");
     }
 
-    if(1)
-    {
-        printf("[%ld", (long) naxes[0]);
-        for(long i = 1; i < naxis; i++)
-        {
-            printf(",%ld", (long) naxes[i]);
-        }
-        printf("] %d %f %f\n", bitpix, bscale, bzero);
-        fflush(stdout);
-    }
-
     nelements = 1;
     for(long i = 0; i < naxis; i++)
     {
@@ -306,7 +296,7 @@ errno_t load_fits(const char *restrict file_name,
                         naxes,
                         _DATATYPE_FLOAT,
                         data.SHARED_DFT,
-                        data.NBKEYWORD_DFT,
+                        NB_KEYWNODE_MAX,
                         0,
                         &ID);
 
@@ -335,7 +325,7 @@ errno_t load_fits(const char *restrict file_name,
                         naxes,
                         _DATATYPE_DOUBLE,
                         data.SHARED_DFT,
-                        data.NBKEYWORD_DFT,
+                        NB_KEYWNODE_MAX,
                         0,
                         &ID);
 
@@ -365,7 +355,7 @@ errno_t load_fits(const char *restrict file_name,
                         naxes,
                         _DATATYPE_UINT16,
                         data.SHARED_DFT,
-                        data.NBKEYWORD_DFT,
+                        NB_KEYWNODE_MAX,
                         0,
                         &ID);
 
@@ -395,7 +385,7 @@ errno_t load_fits(const char *restrict file_name,
                         naxes,
                         _DATATYPE_INT32,
                         data.SHARED_DFT,
-                        data.NBKEYWORD_DFT,
+                        NB_KEYWNODE_MAX,
                         0,
                         &ID);
         larray = (long *) malloc(sizeof(long) * nelements);
@@ -437,7 +427,7 @@ errno_t load_fits(const char *restrict file_name,
                         naxes,
                         _DATATYPE_INT64,
                         data.SHARED_DFT,
-                        data.NBKEYWORD_DFT,
+                        NB_KEYWNODE_MAX,
                         0,
                         &ID);
         larray = (long *) malloc(sizeof(long) * nelements);
@@ -480,7 +470,7 @@ errno_t load_fits(const char *restrict file_name,
                         naxes,
                         _DATATYPE_FLOAT,
                         data.SHARED_DFT,
-                        data.NBKEYWORD_DFT,
+                        NB_KEYWNODE_MAX,
                         0,
                         &ID);
         barray = (unsigned char *) malloc(sizeof(unsigned char) * naxes[1] *
@@ -532,7 +522,7 @@ errno_t load_fits(const char *restrict file_name,
                              "BZERO",
                              0
                             };
-    printf("%d FITS keywords detected\n", nbFITSkeys);
+    //printf("%d FITS keywords detected\n", nbFITSkeys);
     for(int kwnum = 0; kwnum < nbFITSkeys; kwnum++)
     {
         char keyname[9];
@@ -573,11 +563,11 @@ errno_t load_fits(const char *restrict file_name,
             if(strlen(tailstr) == 0)
             {
                 kwtypeOK = 1;
-                printf("%3d FITS KEYW [L] %-8s= %20ld / %s\n",
+                /*printf("%3d FITS KEYW [L] %-8s= %20ld / %s\n",
                        kwnum,
                        keyname,
                        kwlongval,
-                       kwcomment);
+                       kwcomment);*/
                 image_keyword_addL(img, keyname, kwlongval, kwcomment);
             }
 
@@ -588,22 +578,22 @@ errno_t load_fits(const char *restrict file_name,
                 if(strlen(tailstr) == 0)
                 {
                     kwtypeOK = 1;
-                    printf("%3d FITS KEYW [D] %-8s= %20g / %s\n",
+                    /*printf("%3d FITS KEYW [D] %-8s= %20g / %s\n",
                            kwnum,
                            keyname,
                            kwdoubleval,
-                           kwcomment);
+                           kwcomment);*/
                     image_keyword_addD(img, keyname, kwdoubleval, kwcomment);
                 }
 
                 if(kwtypeOK == 0)
                 {
                     // default to string
-                    printf("%3d FITS KEYW [S] %-8s= %-20s / %s\n",
+                    /*printf("%3d FITS KEYW [S] %-8s= %-20s / %s\n",
                            kwnum,
                            keyname,
                            kwvaluestr,
-                           kwcomment);
+                           kwcomment);*/
                     // remove leading and trailing '
                     kwvaluestr[strlen(kwvaluestr) - 1] = '\0';
                     char *kwvaluestr1;
@@ -622,8 +612,6 @@ errno_t load_fits(const char *restrict file_name,
                            "fits_close_file error in image %s",
                            file_name);
     }
-
-    list_image_ID();
 
     if(IDout != NULL)
     {

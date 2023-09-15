@@ -400,7 +400,8 @@ errno_t list_commands()
     for(unsigned int i = 0; i < data.NBcmd; i++)
     {
         strncpy(cmdinfoshort, data.cmd[i].info, cmdinfoslen - 1);
-        printf("   %-16s %-20s %-40s %-30s\n",
+        printf("%4u >   %-16s %-20s %-40s %-30s\n",
+               i,
                data.cmd[i].key,
                data.cmd[i].module,
                cmdinfoshort,
@@ -451,9 +452,9 @@ errno_t list_commands_module(const char *__restrict modulename)
 
         for(unsigned int i = 0; i < data.NBcmd; i++)
         {
-            char cmpstring[200];
-            //            sprintf(cmpstring, "%s", basename(data.cmd[i].module));
-            sprintf(cmpstring, "%s", data.cmd[i].module);
+            int cmdstrlen = 200;
+            char cmpstring[cmdstrlen];
+            snprintf(cmpstring, cmdstrlen, "%s", data.cmd[i].module);
 
             if(strcmp(modulename, cmpstring) == 0)
             {
@@ -483,25 +484,7 @@ errno_t list_commands_module(const char *__restrict modulename)
             }
         }
     }
-    /*       for(unsigned int i = 0; i < data.NBcmd; i++)
-           {
-               char cmpstring[200];
-               sprintf(cmpstring, "%s", basename(data.cmd[i].module));
 
-               if(strncmp(modulename, cmpstring, strlen(modulename)) == 0)
-               {
-                   if(mOK == 0)
-                   {
-                       printf("---- MODULES %s* commands  ---------\n", modulename);
-                   }
-                   strncpy(cmdinfoshort, data.cmd[i].info, 38);
-                   printf("   %-16s %-20s %-40s %-30s\n", data.cmd[i].key,
-                          data.cmd[i].module, cmdinfoshort, data.cmd[i].example);
-                   mOK = 1;
-               }
-           }
-       }
-    */
     return RETURN_SUCCESS;
 }
 
@@ -524,12 +507,28 @@ int CLIhelp_make_argstring(CLICMDARGDEF fpscliarg[],
 
             switch(fpscliarg[arg].type)
             {
-                case CLIARG_FLOAT:
-                    strcpy(typestring, "float");
+                case CLIARG_FLOAT32:
+                    strcpy(typestring, "float32");
                     break;
 
-                case CLIARG_LONG:
-                    strcpy(typestring, "long");
+                case CLIARG_FLOAT64:
+                    strcpy(typestring, "float64");
+                    break;
+
+                case CLIARG_INT32:
+                    strcpy(typestring, "int32");
+                    break;
+
+                case CLIARG_UINT32:
+                    strcpy(typestring, "uint32");
+                    break;
+
+                case CLIARG_INT64:
+                    strcpy(typestring, "int64");
+                    break;
+
+                case CLIARG_UINT64:
+                    strcpy(typestring, "uint64");
                     break;
 
                 case CLIARG_STR_NOT_IMG:
@@ -547,11 +546,12 @@ int CLIhelp_make_argstring(CLICMDARGDEF fpscliarg[],
 
             if(arg == 0)
             {
-                sprintf(tmpstr,
-                        "<%s [%s] ->(%s)>",
-                        fpscliarg[arg].descr,
-                        typestring,
-                        fpscliarg[arg].fpstag);
+                snprintf(tmpstr,
+                         STRINGMAXLEN_CMD_SYNTAX,
+                         "<%s [%s] ->(%s)>",
+                         fpscliarg[arg].descr,
+                         typestring,
+                         fpscliarg[arg].fpstag);
             }
             else
             {
@@ -572,7 +572,6 @@ int CLIhelp_make_argstring(CLICMDARGDEF fpscliarg[],
             }
         }
     }
-    #pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(outargstring, tmpstr, STRINGMAXLEN_CMD_SYNTAX - 1);
 
     return strlen(outargstring);
@@ -590,7 +589,7 @@ int CLIhelp_make_cmdexamplestring(CLICMDARGDEF fpscliarg[],
 {
     char tmpstr[STRINGMAXLEN_CMD_EXAMPLE];
 
-    sprintf(tmpstr, "%s", shortname);
+    snprintf(tmpstr, STRINGMAXLEN_CMD_EXAMPLE, "%s", shortname);
 
     for(int arg = 0; arg < nbarg; arg++)
     {
@@ -849,6 +848,13 @@ errno_t help_command(
                         SNPRINTF_CHECK(valuestring,
                                        STRINGMAXLEN_CLICMDARG,
                                        "[  STR  ]  %s",
+                                       data.cmd[cmdi].argdata[argi].val.s);
+                        break;
+
+                    case CLIARG_STREAM:
+                        SNPRINTF_CHECK(valuestring,
+                                       STRINGMAXLEN_CLICMDARG,
+                                       "[ STREA ]  %s",
                                        data.cmd[cmdi].argdata[argi].val.s);
                         break;
                 }

@@ -35,7 +35,7 @@ errno_t write_process_log()
 
     if(fplog != NULL)
     {
-        char timestring[20];
+        char timestring[TIMESTRINGLEN];
         mkUTtimestring_nanosec(timestring, data.testpoint.time);
 
         fprintf(fplog, "%18ld  %s ", logcnt, timestring);
@@ -73,8 +73,7 @@ static void set_terminal_echo_on()
     tcsetattr(0, TCSADRAIN, &termInfo);
 }
 
-#if 0
-static void fprintf_stdout(FILE *f, char const *fmt, ...)
+static void __attribute__((unused)) fprintf_stdout(FILE *f, char const *fmt, ...) 
 {
     va_list ap;
     va_start(ap, fmt);
@@ -84,7 +83,6 @@ static void fprintf_stdout(FILE *f, char const *fmt, ...)
     vfprintf(f, fmt, ap);
     va_end(ap);
 }
-#endif
 
 /** @brief signal catching
  *
@@ -169,7 +167,7 @@ errno_t write_process_exit_report(const char *__restrict errortypestring __attri
 
         struct timespec tnow;
         //        time_t now;
-        clock_gettime(CLOCK_REALTIME, &tnow);
+        clock_gettime(CLOCK_MILK, &tnow);
         tvsec0 = tnow.tv_sec;
         uttime = gmtime(&tvsec0);
         fprintf_stdout(fpexit,

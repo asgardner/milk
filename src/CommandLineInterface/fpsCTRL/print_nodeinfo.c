@@ -26,13 +26,17 @@ void fpsCTRLscreen_print_nodeinfo(FUNCTION_PARAMETER_STRUCT *fps,
                      nodeSelected,
                      keywnode[nodeSelected].fpsindex);
 
-    TUI_printfw("======== FPS info ( # %5d)", keywnode[nodeSelected].fpsindex);
+    TUI_printfw("======== FPS info ( # %2d) fd = %d (sdterr = %d)",
+                keywnode[nodeSelected].fpsindex,
+                fps[keywnode[nodeSelected].fpsindex].SMfd,
+                fileno(stderr));
     TUI_newline();
 
     char teststring[200];
-    sprintf(teststring,
-            "%s",
-            fps[keywnode[nodeSelected].fpsindex].md->sourcefname);
+    snprintf(teststring,
+             200,
+             "%s",
+             fps[keywnode[nodeSelected].fpsindex].md->sourcefname);
     DEBUG_TRACEPOINT("TEST STRING : %s", teststring);
 
     DEBUG_TRACEPOINT("TEST LINE : %d",
@@ -66,7 +70,13 @@ void fpsCTRLscreen_print_nodeinfo(FUNCTION_PARAMETER_STRUCT *fps,
     TUI_newline();
 
     DEBUG_TRACEPOINT(" ");
-    TUI_printfw("    FPS work     directory    : %s",
+
+    TUI_printfw("    KEYWORDARRAY: %s",
+                fps[keywnode[nodeSelected].fpsindex].md->keywordarray);
+    TUI_newline();
+
+
+    TUI_printfw("    FPS work directory    : %s",
                 fps[keywnode[nodeSelected].fpsindex].md->workdir);
     TUI_newline();
 
@@ -78,7 +88,8 @@ void fpsCTRLscreen_print_nodeinfo(FUNCTION_PARAMETER_STRUCT *fps,
     TUI_newline();
 
     DEBUG_TRACEPOINT(" ");
-    TUI_printfw("    FPS tmux sessions     :  ");
+    TUI_printfw("    FPS tmux sessions  [%2d] %s  :  ",
+                keywnode[nodeSelected].fpsindex, fps[keywnode[nodeSelected].fpsindex].md->name);
 
     EXECUTE_SYSTEM_COMMAND("tmux has-session -t %s:ctrl 2> /dev/null",
                            fps[keywnode[nodeSelected].fpsindex].md->name);
@@ -171,7 +182,7 @@ void fpsCTRLscreen_print_nodeinfo(FUNCTION_PARAMETER_STRUCT *fps,
 
     if(keywnode[nodeSelected].leaf > 0)  // If this is not a directory
     {
-        char typestring[100];
+        char typestring[STRINGMAXLEN_FPSTYPE];
         functionparameter_GetTypeString(
             fps[fpsindexSelected].parray[pindexSelected].type,
             typestring);

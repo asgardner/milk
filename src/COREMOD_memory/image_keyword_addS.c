@@ -78,7 +78,6 @@ errno_t image_keyword_addS(
     {
         //printf("writing kw %3d / %3d  \"%s\"  %d %d %d\n", kw, NBkw, kwname, strlen(kwname), strlen(kwval), strlen(comment));
 
-        #pragma GCC diagnostic ignored "-Wstringop-truncation"
         strncpy(img.im->kw[kw].name, kwname, KEYWORD_MAX_STRING);
         img.im->kw[kw].type = 'S';
         strncpy(img.im->kw[kw].value.valstr, kwval, KEYWORD_MAX_STRING);

@@ -38,7 +38,7 @@ errno_t COREMOD_TOOLS_mvProcTset_cli()
 
 errno_t COREMOD_TOOLS_mvProcTsetExt_cli()
 {
-    if(0 + CLI_checkarg(1, CLIARG_LONG) +
+    if(0 + CLI_checkarg(1, CLIARG_INT64) +
             CLI_checkarg(2, CLIARG_STR_NOT_IMG) ==
             0)
     {
@@ -68,8 +68,8 @@ errno_t COREMOD_TOOLS_mvProcCPUset_cli()
 
 errno_t COREMOD_TOOLS_mvProcCPUsetExt_cli()
 {
-    if(0 + CLI_checkarg(1, CLIARG_LONG) + CLI_checkarg(2, CLIARG_STR_NOT_IMG) +
-            CLI_checkarg(3, CLIARG_LONG) ==
+    if(0 + CLI_checkarg(1, CLIARG_INT64) + CLI_checkarg(2, CLIARG_STR_NOT_IMG) +
+            CLI_checkarg(3, CLIARG_INT64) ==
             0)
     {
         COREMOD_TOOLS_mvProcCPUsetExt(data.cmdargtoken[1].val.numl,
@@ -221,11 +221,26 @@ int COREMOD_TOOLS_mvProcCPUsetExt(const int   pid,
     if(system("which cset > /dev/null 2>&1"))
     {
         // Command doesn't exist...
+        printf("Error: cset command is not installed\n");
     }
     else
     {
         // Command does exist
-        EXECUTE_SYSTEM_COMMAND_ERRCHECK("%s", command);
+        EXECUTE_SYSTEM_COMMAND("%s", command);
+        if(data.retvalue != 0)
+        {
+            if(data.retvalue == 512)
+            {
+                PRINT_ERROR("Error: cset-proc returns error 512 - cpuset %s does not exist.\n",
+                            csetname);
+            }
+            else
+            {
+                // Re-raise as would EXECUTE_SYTEM_COMMAND_ERRCHECK
+                PRINT_ERROR("Error: cset-proc returns error %d.", data.retvalue);
+                abort();
+            }
+        }
     }
 
     if(rtprio > 0)

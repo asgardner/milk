@@ -33,7 +33,7 @@ static CLICMDARGDEF farg[] =
         NULL
     },
     {
-        CLIARG_LONG,
+        CLIARG_INT64,
         ".errmode",
         "errors mode \n(0:ignore) (1:warning) (2:error) (3:exit)",
         "1",
@@ -94,14 +94,17 @@ CLIADDCMD_COREMOD_memory__delete_image()
  * DELETE_IMAGE_ERRMODE_EXIT
  *
  */
-errno_t delete_image(IMGID img, int errmode)
+errno_t delete_image(
+    IMGID *img,
+    int errmode
+)
 {
     DEBUG_TRACE_FSTART();
 
     long s;
     char fname[STRINGMAXLEN_FULLFILENAME];
 
-    imageID ID = img.ID;
+    imageID ID = img->ID;
 
     if(ID == -1)
     {
@@ -133,6 +136,7 @@ errno_t delete_image(IMGID img, int errmode)
     else
     {
         data.image[ID].used = 0;
+        img->ID = -1;
 
         if(data.image[ID].md[0].shared == 1)
         {
@@ -286,7 +290,7 @@ errno_t delete_image_ID(const char *__restrict imname, int errmode)
 
     if(ID != -1)
     {
-        delete_image(img, errmode);
+        delete_image(&img, errmode);
     }
 
     DEBUG_TRACE_FEXIT();

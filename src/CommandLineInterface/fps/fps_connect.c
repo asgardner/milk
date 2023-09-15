@@ -14,6 +14,7 @@
 #include "fps_shmdirname.h"
 
 
+#include "timeutils.h"
 
 
 /** @brief Connect to function parameter structure
@@ -23,14 +24,16 @@
  *
  * fpsconnectmode can take following value
  *
- * FPSCONNECT_SIMPLE : simple connect, don't try load streams
+ * FPSCONNECT_SIMPLE : connect only, don't try load streams
  * FPSCONNECT_CONF   : connect as CONF process
  * FPSCONNECT_RUN    : connect as RUN process
  *
  */
-long function_parameter_struct_connect(const char                *name,
-                                       FUNCTION_PARAMETER_STRUCT *fps,
-                                       int fpsconnectmode)
+long function_parameter_struct_connect(
+    const char                *name,
+    FUNCTION_PARAMETER_STRUCT *fps,
+    int fpsconnectmode
+)
 {
     int  stringmaxlen = 500;
     char SM_fname[stringmaxlen];
@@ -41,9 +44,52 @@ long function_parameter_struct_connect(const char                *name,
 
     char shmdname[stringmaxlen];
 
+
+
+    if( data.FPS_TIMESTAMP == 0 )
+    {
+        {
+            struct timespec tnow = {0};
+            clock_gettime(CLOCK_MILK, &tnow);
+            data.FPS_TIMESTAMP = tnow.tv_sec;
+        }
+
+        switch( fpsconnectmode )
+        {
+
+        case FPSCONNECT_CONF:
+            snprintf(data.FPS_PROCESS_TYPE,
+                     STRINGMAXLEN_FPSPROCESSTYPE,
+                     "conf-%s",
+                     name);
+            break;
+
+        case FPSCONNECT_RUN:
+            snprintf(data.FPS_PROCESS_TYPE,
+                     STRINGMAXLEN_FPSPROCESSTYPE,
+                     "run-%s",
+                     name);
+            break;
+
+        case FPSCONNECT_SIMPLE:
+            snprintf(data.FPS_PROCESS_TYPE,
+                     STRINGMAXLEN_FPSPROCESSTYPE,
+                     "init-%s",
+                     name);
+            break;
+
+        }
+
+
+        functionparameter_outlog("CONNECTION", ">>>>");
+        functionparameter_outlog_namelink();
+    }
+
+
+
     DEBUG_TRACEPOINT("Connect to fps %s\n", name);
 
-    if(fps->SMfd > 0)
+    if(fps->SMfd > 2)
     {
         printf("[%s %s %d] File descriptor already allocated (%d) -> closing\n",
                __FILE__,
@@ -56,8 +102,7 @@ long function_parameter_struct_connect(const char                *name,
 
     function_parameter_struct_shmdirname(shmdname);
 
-    if(snprintf(SM_fname, sizeof(SM_fname), "%s/%s.fps.shm", shmdname, name) <
-            0)
+    if(snprintf(SM_fname, stringmaxlen, "%s/%s.fps.shm", shmdname, name) < 0)
     {
         PRINT_ERROR("snprintf error");
     }
@@ -94,13 +139,13 @@ long function_parameter_struct_connect(const char                *name,
     if(fpsconnectmode == FPSCONNECT_CONF)
     {
         fps->md->confpid = getpid(); // write process PID into FPS
-        clock_gettime(CLOCK_REALTIME, &fps->md->confpidstarttime);
+        clock_gettime(CLOCK_MILK, &fps->md->confpidstarttime);
     }
 
     if(fpsconnectmode == FPSCONNECT_RUN)
     {
         fps->md->runpid = getpid(); // write process PID into FPS
-        clock_gettime(CLOCK_REALTIME, &fps->md->runpidstarttime);
+        clock_gettime(CLOCK_MILK, &fps->md->runpidstarttime);
     }
 
     mapv = (char *) fps->md;
@@ -227,6 +272,7 @@ long function_parameter_struct_connect(const char                *name,
 
         {
             // procinfo_loopcntMax
+            fps->cmdset.procinfo_loopcntMax_ptr = NULL;
             int pindex =
                 functionparameter_GetParamIndex(fps, ".procinfo.loopcntMax");
             if(pindex > -1)
@@ -235,6 +281,8 @@ long function_parameter_struct_connect(const char                *name,
                 {
                     fps->cmdset.procinfo_loopcntMax =
                         fps->parray[pindex].val.i64[0];
+
+                    fps->cmdset.procinfo_loopcntMax_ptr = fps->parray[pindex].val.i64;
                 }
             }
         }
@@ -268,6 +316,7 @@ long function_parameter_struct_connect(const char                *name,
 
         {
             // triggermode
+            fps->cmdset.triggermodeptr = NULL;
             int pindex =
                 functionparameter_GetParamIndex(fps, ".procinfo.triggermode");
             if(pindex > -1)
@@ -275,6 +324,8 @@ long function_parameter_struct_connect(const char                *name,
                 if(fps->parray[pindex].type == FPTYPE_INT64)
                 {
                     fps->cmdset.triggermode = fps->parray[pindex].val.i64[0];
+
+                    fps->cmdset.triggermodeptr = fps->parray[pindex].val.i64;
                 }
             }
         }
@@ -296,6 +347,7 @@ long function_parameter_struct_connect(const char                *name,
 
         {
             // triggerdelay
+            fps->cmdset.triggerdelayptr = NULL;
             int pindex =
                 functionparameter_GetParamIndex(fps, ".procinfo.triggerdelay");
             if(pindex > -1)
@@ -306,12 +358,15 @@ long function_parameter_struct_connect(const char                *name,
                         fps->parray[pindex].val.ts[0].tv_sec;
                     fps->cmdset.triggerdelay.tv_nsec =
                         fps->parray[pindex].val.ts[0].tv_nsec;
+
+                    fps->cmdset.triggerdelayptr = fps->parray[pindex].val.ts;
                 }
             }
         }
 
         {
             // triggertimeout
+            fps->cmdset.triggertimeoutptr = NULL;
             int pindex =
                 functionparameter_GetParamIndex(fps,
                                                 ".procinfo.triggertimeout");
@@ -323,6 +378,8 @@ long function_parameter_struct_connect(const char                *name,
                         fps->parray[pindex].val.ts[0].tv_sec;
                     fps->cmdset.triggertimeout.tv_nsec =
                         fps->parray[pindex].val.ts[0].tv_nsec;
+
+                    fps->cmdset.triggertimeoutptr = fps->parray[pindex].val.ts;
                 }
             }
         }

@@ -16,7 +16,7 @@ static CLICMDARGDEF farg[] = {{
         NULL
     },
     {
-        CLIARG_LONG,
+        CLIARG_INT64,
         ".xsize",
         "x size",
         "512",
@@ -25,7 +25,7 @@ static CLICMDARGDEF farg[] = {{
         NULL
     },
     {
-        CLIARG_LONG,
+        CLIARG_INT64,
         ".ysize",
         "y size",
         "512",
@@ -34,7 +34,7 @@ static CLICMDARGDEF farg[] = {{
         NULL
     },
     {
-        CLIARG_LONG,
+        CLIARG_INT64,
         ".zsize",
         "z size",
         "512",
@@ -45,15 +45,17 @@ static CLICMDARGDEF farg[] = {{
 };
 
 static CLICMDDATA CLIcmddata = {"mk3Dim",
-                                "make 3D image\n"
-                                "attributes: s>    : shared\n"
-                                "            k20>  : 20 keywords\n",
+                                "make 3D image",
                                 CLICMD_FIELDS_DEFAULTS
                                };
 
 // detailed help
 static errno_t help_function()
 {
+    printf("attributes :\n"
+           " s> shared\n"
+           "k20> : 20 keywords");
+
     return RETURN_SUCCESS;
 }
 

@@ -8,10 +8,12 @@
  *
  */
 
-errno_t processinfo_update_output_stream(PROCESSINFO *processinfo,
-        imageID      outstreamID)
+errno_t processinfo_update_output_stream(
+    PROCESSINFO *processinfo,
+    imageID      outstreamID
+)
 {
-    if(data.image[outstreamID].md[0].shared == 1)
+    if(data.image[outstreamID].md->shared == 1)
     {
         imageID IDin;
 
@@ -34,7 +36,7 @@ errno_t processinfo_update_output_stream(PROCESSINFO *processinfo,
 
             DEBUG_TRACEPOINT("timing");
             struct timespec ts;
-            if(clock_gettime(CLOCK_REALTIME, &ts) == -1)
+            if(clock_gettime(CLOCK_MILK, &ts) == -1)
             {
                 perror("clock_gettime");
                 exit(EXIT_FAILURE);
@@ -42,7 +44,7 @@ errno_t processinfo_update_output_stream(PROCESSINFO *processinfo,
 
             // write first streamproctrace entry
             DEBUG_TRACEPOINT("trigger info");
-            data.image[outstreamID].streamproctrace[0].triggermode =
+            data.image[outstreamID].streamproctrace[0].trigsemindex =
                 processinfo->triggermode;
 
             data.image[outstreamID].streamproctrace[0].procwrite_PID = getpid();
@@ -67,6 +69,7 @@ errno_t processinfo_update_output_stream(PROCESSINFO *processinfo,
                     data.image[IDin].md[0].cnt0;
             }
         }
+
         DEBUG_TRACEPOINT(" ");
     }
 

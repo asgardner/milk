@@ -28,11 +28,11 @@ imageID COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name,
 
 static errno_t COREMOD_MEMORY_PixMapDecode_U__cli()
 {
-    if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_LONG) +
-            CLI_checkarg(3, CLIARG_LONG) + CLI_checkarg(4, CLIARG_STR_NOT_IMG) +
+    if(0 + CLI_checkarg(1, CLIARG_IMG) + CLI_checkarg(2, CLIARG_INT64) +
+            CLI_checkarg(3, CLIARG_INT64) + CLI_checkarg(4, CLIARG_STR_NOT_IMG) +
             CLI_checkarg(5, CLIARG_IMG) + CLI_checkarg(6, CLIARG_STR_NOT_IMG) +
             CLI_checkarg(7, CLIARG_STR_NOT_IMG) +
-            CLI_checkarg(8, CLIARG_LONG) ==
+            CLI_checkarg(8, CLIARG_INT64) ==
             0)
     {
         COREMOD_MEMORY_PixMapDecode_U(data.cmdargtoken[1].val.string,
@@ -75,20 +75,25 @@ errno_t stream_pixmapdecode_addCLIcmd()
     return RETURN_SUCCESS;
 }
 
+
+
+
 //
 // pixel decode for unsigned short
 // sem0, cnt0 gets updated at each full frame
 // sem1 gets updated for each slice
 // cnt1 contains the slice index that was just written
 //
-imageID COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name,
-                                      uint32_t    xsizeim,
-                                      uint32_t    ysizeim,
-                                      const char *NBpix_fname,
-                                      const char *IDmap_name,
-                                      const char *IDout_name,
-                                      const char *IDout_pixslice_fname,
-                                      uint32_t    reverse)
+imageID COREMOD_MEMORY_PixMapDecode_U(
+    const char *inputstream_name,
+    uint32_t    xsizeim,
+    uint32_t    ysizeim,
+    const char *NBpix_fname,
+    const char *IDmap_name,
+    const char *IDout_name,
+    const char *IDout_pixslice_fname,
+    uint32_t    reverse
+)
 {
     imageID            IDout = -1;
     imageID            IDin;
@@ -114,7 +119,7 @@ imageID COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name,
     //    long long iter;
     //    int r;
     long tmpl0, tmpl1;
-    int  semr = 0;
+    int  semr;
 
     double          *dtarray;
     struct timespec *tarray;
@@ -218,9 +223,9 @@ imageID COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name,
     create_image_ID(IDout_name,
                     2,
                     sizearray,
-                    data.image[IDin].md[0].datatype,
+                    data.image[IDin].md->datatype,
                     1,
-                    25,
+                    data.image[IDin].md->NBkw,
                     0,
                     &IDout);
 
@@ -234,8 +239,6 @@ imageID COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name,
         strcpy(data.image[IDout].kw[kw].comment,
                data.image[IDin].kw[kw].comment);
     }
-
-    COREMOD_MEMORY_image_set_createsem(IDout_name, IMAGE_NB_SEMAPHORE);
 
     dtarray = (double *) malloc(sizeof(double) * NBslice);
     if(dtarray == NULL)
@@ -326,6 +329,8 @@ imageID COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name,
         delete_image_ID("outpixsl", DELETE_IMAGE_ERRMODE_WARNING);
     }
 
+
+    processinfo->loopcntMax = -1;
     processinfo_WriteMessage(processinfo, "Starting loop");
 
     // ==================================
@@ -350,7 +355,7 @@ imageID COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name,
         }
         else
         {
-            if(clock_gettime(CLOCK_REALTIME, &ts) == -1)
+            if(clock_gettime(CLOCK_MILK, &ts) == -1)
             {
                 perror("clock_gettime");
                 exit(EXIT_FAILURE);
@@ -375,7 +380,9 @@ imageID COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name,
 
         if(processinfo_compute_status(processinfo) == 1)
         {
+            #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
             if(semr == 0)
+            #pragma GCC diagnostic pop
             {
                 slice = data.image[IDin].md[0].cnt1;
                 if(slice > oldslice + 1)
@@ -388,7 +395,7 @@ imageID COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name,
                     slice = 0;
                 }
 
-                //   clock_gettime(CLOCK_REALTIME, &tarray[slice]);
+                //   clock_gettime(CLOCK_MILK, &tarray[slice]);
                 //  dtarray[slice] = 1.0*tarray[slice].tv_sec + 1.0e-9*tarray[slice].tv_nsec;
                 data.image[IDout].md[0].write = 1;
 

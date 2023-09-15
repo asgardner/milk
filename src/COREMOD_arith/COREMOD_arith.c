@@ -50,6 +50,7 @@
 //#include "COREMOD_arith/COREMOD_arith.h"
 
 #include "image_crop.h"
+#include "image_cropmask.h"
 #include "image_dxdy.h"
 #include "image_merge3D.h"
 #include "image_stats.h"
@@ -65,32 +66,16 @@
 
 #include "execute_arith.h"
 
-/* ================================================================== */
-/* ================================================================== */
-/*           MACROS, DEFINES                                          */
-/* ================================================================== */
-/* ================================================================== */
+
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
-/* ================================================================== */
-/* ================================================================== */
-/*            INITIALIZE LIBRARY                                      */
-/* ================================================================== */
-/* ================================================================== */
 
-// Module initialization macro in CLIcore.h
-// macro argument defines module name for bindings
-//
 INIT_MODULE_LIB(COREMOD_arith)
 
-/* ================================================================== */
-/* ================================================================== */
-/*            COMMAND LINE INTERFACE (CLI) FUNCTIONS                  */
-/* ================================================================== */
-/* ================================================================== */
+
 
 static errno_t init_module_CLI()
 {
@@ -101,7 +86,9 @@ static errno_t init_module_CLI()
 
     image_arith__im_f_f__im_addCLIcmd();
 
-    image_merge3D_addCLIcmd();
+    CLIADDCMD_COREMOD_arith__image_merge();
+
+    CLIADDCMD_COREMODE_arith__cropmask();
 
     // add atexit functions here
 
