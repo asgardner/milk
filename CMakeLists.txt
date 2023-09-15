@@ -25,7 +25,7 @@ SET(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
 # ccache
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "ccache")
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache) # Less useful to do it for linking, see edit2
 endif(CCACHE_FOUND)
 
@@ -66,7 +66,7 @@ set(WARNING_FLAGS "-Wall -Wextra -Werror")
 set(C_STD "-std=c18")
 set(CXX_STD "-std=c++17")
 set(ARCH_DEBUG "-march=x86-64")
-set(ARCH_OPT "-march=native")
+set(ARCH_OPT "-march=skylake")
 set(COMMON_FLAGS "-pipe ${WARNING_FLAGS} ${SANITIZE_FLAGS} ${STACK_PROTECT_FLAGS} ${SOURCE_FLAGS}")
 set(CMAKE_C_FLAGS_DEBUG   "-O3 -g ${COMMON_FLAGS} ${ARCH_DEBUG} ${C_STD}")
 set(CMAKE_CXX_FLAGS_DEBUG "-O3 -g ${COMMON_FLAGS} ${ARCH_DEBUG} ${CXX_STD}")
@@ -168,3 +168,9 @@ install(CODE "execute_process(COMMAND systemctl enable --now milk-zmq)")
 install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/chai-src/cacao/src/gains-server.service /etc/systemd/system)")
 install(CODE "execute_process(COMMAND systemctl daemon-reload)")
 install(CODE "execute_process(COMMAND systemctl enable --now gains-server)")
+
+# power monitor server
+install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/chai-src/mon/src/power-monitor.service /etc/systemd/system)")
+install(CODE "execute_process(COMMAND systemctl daemon-reload)")
+install(CODE "execute_process(COMMAND systemctl enable --now power-monitor)")
+
