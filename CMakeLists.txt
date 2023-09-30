@@ -164,13 +164,4 @@ install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/cacao-ad
 install(CODE "execute_process(COMMAND systemctl daemon-reload)")
 install(CODE "execute_process(COMMAND systemctl enable --now milk-zmq)")
 
-# gains server
-install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/chai-src/cacao/src/gains-server.service /etc/systemd/system)")
-install(CODE "execute_process(COMMAND systemctl daemon-reload)")
-install(CODE "execute_process(COMMAND systemctl enable --now gains-server)")
-
-# power monitor server
-install(CODE "execute_process(COMMAND cp -v ${CMAKE_SOURCE_DIR}/plugins/chai-src/mon/src/power-monitor.service /etc/systemd/system)")
-install(CODE "execute_process(COMMAND systemctl daemon-reload)")
-install(CODE "execute_process(COMMAND systemctl enable --now power-monitor)")
 
